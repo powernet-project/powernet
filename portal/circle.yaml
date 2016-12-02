@@ -1,0 +1,29 @@
+machine:
+  python:
+    version: python2.7
+
+  environment:
+    GCLOUD_PROJECT: "powernet-portal"
+
+dependencies:
+  pre:
+    # Download App Engine SDK
+    # This is not necessary to deploy, its only necessary  to run local tests importing the App Engine SDK
+    - curl -o $HOME/google_appengine_1.9.30.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.30.zip
+    - unzip -q -d $HOME $HOME/google_appengine_1.9.30.zip
+
+    # Retrieve our secrets from the CircleCI environment
+    - echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
+
+    # vendor our dependencies
+    - mkdir -p lib
+    - pip install -r requirements.txt -t lib
+
+    # Make sure gcloud is up to date
+    - gcloud --quiet components update app
+
+    # authenticate gcloud
+    - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
+
+    # Replace <your-project-id>
+    - gcloud config set project $GCLOUD_PROJECT
