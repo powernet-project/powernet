@@ -1,7 +1,4 @@
 machine:
-  python:
-    version: python2.7
-
   environment:
     GCLOUD_PROJECT: "powernet-portal"
 
