@@ -20,7 +20,7 @@ dependencies:
     - pip install -r portal/requirements.txt -t lib
 
     # Make sure gcloud is up to date
-    - gcloud --quiet components update app
+    - gcloud --quiet components update portal/app
 
     # authenticate gcloud
     - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
