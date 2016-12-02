@@ -1,4 +1,6 @@
 machine:
+  python:
+    version: 2.7.9
   environment:
     GCLOUD_PROJECT: "powernet-portal"
 
@@ -24,3 +26,14 @@ dependencies:
 
     # Replace <your-project-id>
     - gcloud config set project $GCLOUD_PROJECT
+
+test:
+  override:
+    # run local unit tests
+
+deployment:
+    staging:
+        branch: master
+        commands:
+        # deploy to AppEngine
+        - gcloud -q preview app deploy app.yaml --promote --version=1
