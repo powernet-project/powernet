@@ -30,6 +30,7 @@ dependencies:
 test:
   override:
     # run local unit tests
+    - echo "test"
 
 deployment:
     staging:
