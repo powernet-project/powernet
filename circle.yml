@@ -1,6 +1,7 @@
 machine:
   python:
-    version: 2.7.9
+    version: 2.7.11
+
   environment:
     GCLOUD_PROJECT: "powernet-portal"
 
@@ -37,4 +38,4 @@ deployment:
         branch: master
         commands:
         # deploy to AppEngine
-        - gcloud -q preview app deploy app.yaml --promote --version=1
+        - gcloud -q app deploy portal/app.yaml --promote --version=1
