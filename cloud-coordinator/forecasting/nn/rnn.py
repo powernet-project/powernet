@@ -11,7 +11,7 @@ __author__ = "Edward Ng"
 __email__ = "edjng@stanford.edu"
 
 class Recurrent:
-  def __init__(self, num_layer=2, num_neuron=300):
+  def __init__(self, num_layer=0, num_neuron=300):
     self.num_layer = num_layer
     self.num_neuron = num_neuron
 
@@ -22,19 +22,24 @@ class Recurrent:
 
   def construct_graph(self):
     self.model = Sequential()
-    self.model.add(LSTM(self.num_neuron, activation='relu', input_dim=self.input_size))
 
-    for _ in xrange(self.num_layer - 1):
-      self.model.add(Dense(self.num_neuron))
+    if self.num_layer == 0:
+      self.model.add(LSTM(self.output_size, activation='relu', input_dim=1))
+    else:
+      self.model.add(LSTM(self.num_neuron, activation='relu', input_dim=1))
 
-    # projection layer
-    self.model.add(Dense(self.output_size))
+      for _ in xrange(self.num_layer - 1):
+        self.model.add(Dense(self.num_neuron))
+
+      # projection layer
+      self.model.add(Dense(self.output_size))
+
 
     self.model.compile(loss='mean_squared_error', optimizer='adam')
 
   def train(self, data):
     x, y = data
-    history = self.model.fit(x, y, validation_split=0.3, nb_epoch=1000, batch_size=100, verbose=0)
+    history = self.model.fit(x, y, validation_split=0.3, nb_epoch=0, batch_size=100, verbose=1)
     self.model.save_weights("./model.ckpt")
     return history
 

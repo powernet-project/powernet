@@ -62,7 +62,7 @@ feedForward = FeedForward()
 feedForward.train((x, y))
 print feedForward.test((x, y))
 
-x=np.reshape(x, (x.shape[0], 1, x.shape[1]))
+x=np.reshape(x, (x.shape[0], x.shape[1], 1))
 y=np.array(y)
 
 recurrent = Recurrent()
