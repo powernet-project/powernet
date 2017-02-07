@@ -11,13 +11,13 @@ import tensorflow as tf
 __author__ = "Edward Ng"
 __email__ = "edjng@stanford.edu"
 
-def generate_batch(data, batch_size = 100):
+def generate_batch(data, batch_size=100):
   x, y = data
   indices = np.random.choice(len(x), batch_size, replace=False)
   return x[indices], y[indices]
 
 class FeedForward:
-  def __init__(self, num_layer = 1, num_neuron = 100):
+  def __init__(self, num_layer=3, num_neuron=300):
     self.num_layer = num_layer
     self.num_neuron = num_neuron
     self.sess = tf.InteractiveSession()
