@@ -54,8 +54,8 @@ class FeedForward:
     self.prediction = y
     self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
 
-    self.mean_absolute_percentage_error = tf.reduce_mean(tf.square(y - self.y_))
-    self.mean_squared_error = tf.reduce_mean(tf.divide(tf.abs(y - self.y_), y))
+    self.mean_absolute_percentage_error = tf.reduce_mean(tf.divide(tf.abs(y - self.y_), y))
+    self.mean_squared_error = tf.reduce_mean(tf.square(y - self.y_))
 
     tf.summary.scalar('mean_absolute_percentage_error', self.mean_absolute_percentage_error)
     tf.summary.scalar('mean_squared_error', self.mean_squared_error)
