@@ -1,5 +1,11 @@
+#!/usr/bin/env python
+"""Provides SqlClient using SqlAlchemy"""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
+__author__ = "Edward Ng"
+__email__ = "edjng@stanford.edu"
 
 username = 'powernet'
 password = 'netpower'

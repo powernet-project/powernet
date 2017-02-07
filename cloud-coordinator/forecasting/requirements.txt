@@ -1,3 +1,4 @@
+keras
 matplotlib==1.5.3
 mysql-python==1.2.3
 numpy==1.12.0

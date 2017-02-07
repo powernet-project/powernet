@@ -1,4 +1,5 @@
-from matplotlib.pyplot import figure, show
+#!/usr/bin/env python
+"""FeedForward network Developed using Tensorflow"""
 
 import math
 import numpy as np
@@ -7,7 +8,8 @@ import random
 import time
 import tensorflow as tf
 
-FLAGS = None
+__author__ = "Edward Ng"
+__email__ = "edjng@stanford.edu"
 
 def generate_batch(data, batch_size = 100):
   x, y = data
@@ -52,17 +54,18 @@ class FeedForward:
     self.prediction = y
     self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
 
-    loss = tf.reduce_mean(tf.divide(tf.abs(y - self.y_), y))
-    tf.summary.scalar('mean_squared_error_%d' % time.time(), tf.reduce_mean(tf.square(y - self.y_)))
-    self.loss = loss
+    self.mean_absolute_percentage_error = tf.reduce_mean(tf.square(y - self.y_))
+    self.mean_squared_error = tf.reduce_mean(tf.divide(tf.abs(y - self.y_), y))
 
-    self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss)
+    tf.summary.scalar('mean_absolute_percentage_error', self.mean_squared_error)
+    tf.summary.scalar('mean_squared_error', self.mean_absolute_percentage_error)
+
+    self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.mean_squared_error)
     self.saver = tf.train.Saver()
 
   def train(self, data):
     merged = tf.summary.merge_all()
-    train_writer = tf.summary.FileWriter('./train')
-    validation_writer = tf.summary.FileWriter('./validation')
+    writer = tf.summary.FileWriter('./train')
 
     tf.global_variables_initializer().run()
     batch_size = 100
@@ -70,27 +73,27 @@ class FeedForward:
       batch_xs_train, batch_ys_train = generate_batch(data, batch_size)
       batch_ys_train.reshape(batch_size, 24)
 
-      train_summary, train = self.sess.run([merged, self.train_step],
+      summary, _ = self.sess.run([merged, self.train_step],
         feed_dict={
-        self.x: batch_xs_train,
-        self.y_: batch_ys_train
+          self.x: batch_xs_train,
+          self.y_: batch_ys_train
         })
-      train_writer.add_summary(train_summary, i)
+      # writer.add_summary(summary, i)
 
       # pick another random set for validation
-      batch_xs_validation, batch_ys_validation = generate_batch(data, batch_size)
+      # batch_xs_validation, batch_ys_validation = generate_batch(data, batch_size)
 
-      validation_summary, validation = self.sess.run([merged, self.loss],
-        feed_dict={
-        self.x: batch_xs_validation,
-        self.y_: batch_ys_validation
-        })
+      # validation_summary, validation = self.sess.run([merged, self.loss],
+      #   feed_dict={
+      #   self.x: batch_xs_validation,
+      #   self.y_: batch_ys_validation
+      #   })
 
-      validation_writer.add_summary(validation_summary, i)
+      # validation_writer.add_summary(validation_summary, i)
 
     save_path = self.saver.save(self.sess, "./model.ckpt")
 
   def test(self, data):
     x, y = data
     self.saver.restore(self.sess, "./model.ckpt")
-    return self.sess.run(self.loss, feed_dict = {self.x: x, self.y_: y})
+    return self.sess.run(self.mean_absolute_percentage_error, feed_dict = {self.x: x, self.y_: y})

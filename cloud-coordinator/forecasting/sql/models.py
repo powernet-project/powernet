@@ -1,5 +1,11 @@
+#!/usr/bin/env python
+"""Provides Entity Structures from SQL magneto.stanford.edu Database"""
+
 from sqlalchemy import BigInteger, Column, Float, Integer, Date, String
 from sqlalchemy.ext.declarative import declarative_base
+
+__author__ = "Edward Ng"
+__email__ = "edjng@stanford.edu"
 
 Base = declarative_base()
 
