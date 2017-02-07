@@ -57,8 +57,8 @@ class FeedForward:
     self.mean_absolute_percentage_error = tf.reduce_mean(tf.square(y - self.y_))
     self.mean_squared_error = tf.reduce_mean(tf.divide(tf.abs(y - self.y_), y))
 
-    tf.summary.scalar('mean_absolute_percentage_error', self.mean_squared_error)
-    tf.summary.scalar('mean_squared_error', self.mean_absolute_percentage_error)
+    tf.summary.scalar('mean_absolute_percentage_error', self.mean_absolute_percentage_error)
+    tf.summary.scalar('mean_squared_error', self.mean_squared_error)
 
     self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.mean_squared_error)
     self.saver = tf.train.Saver()
