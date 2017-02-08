@@ -3,7 +3,7 @@ machine:
     version: 2.7.12
 
   environment:
-    GCLOUD_PROJECT: "pwrnet"
+    GCLOUD_PROJECT: "pwrnet-158117"
 
 dependencies:
   pre:
