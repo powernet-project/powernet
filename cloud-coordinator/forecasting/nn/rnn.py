@@ -15,7 +15,7 @@ class Recurrent:
     self.num_layer = num_layer
     self.num_neuron = num_neuron
 
-    self.input_size=7*24
+    self.input_size=7*49
     self.output_size=24
 
     self.construct_graph()

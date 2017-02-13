@@ -21,7 +21,7 @@ class FeedForward:
     self.num_layer = num_layer
     self.num_neuron = num_neuron
     self.sess = tf.InteractiveSession()
-    self.input_size = 7 * 24 #represents a week's worth of datas
+    self.input_size = 409
     self.output_size = 24
 
     self.construct_graph()
