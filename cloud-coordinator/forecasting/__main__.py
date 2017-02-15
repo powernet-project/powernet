@@ -100,7 +100,7 @@ y = np.array(y)
 
 training, test = generate_set(x, y)
 
-feedForward = FeedForward()
+feedForward = FeedForward(3, 600)
 feedForward.train(training)
 print feedForward.test(test)
 

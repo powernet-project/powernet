@@ -32,7 +32,7 @@ class FeedForward:
     W = tf.get_variable("W", shape=[input_shape[1], num_neuron], initializer=tf.contrib.layers.xavier_initializer())
     b = tf.get_variable("b", shape=[num_neuron], initializer=tf.constant_initializer(0))
     y = tf.matmul(x, W) + b
-    return tf.nn.relu(y)
+    return tf.nn.relu(y, self.keep_prob)
 
   def construct_graph(self):
     self.x = tf.placeholder(tf.float32, [None, self.input_size])
@@ -54,13 +54,13 @@ class FeedForward:
     self.prediction = y
     self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
 
-    self.mean_absolute_percentage_error = tf.reduce_mean(tf.divide(tf.abs(y - self.y_), y))
-    self.mean_squared_error = tf.reduce_mean(tf.square(y - self.y_))
+    self.absolute_percentage_error = tf.divide(tf.abs(y - self.y_), y)
+    self.squared_error = tf.square(y - self.y_)
 
-    tf.summary.scalar('mean_absolute_percentage_error', self.mean_absolute_percentage_error)
-    tf.summary.scalar('mean_squared_error', self.mean_squared_error)
+    tf.summary.scalar('mean_absolute_percentage_error', tf.reduce_mean(self.absolute_percentage_error))
+    tf.summary.scalar('mean_squared_error', tf.reduce_mean(self.squared_error))
 
-    self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.mean_squared_error)
+    self.train_step = tf.train.AdamOptimizer(1e-4).minimize(tf.reduce_mean(self.squared_error))
     self.saver = tf.train.Saver()
 
   def train(self, data):
@@ -96,4 +96,5 @@ class FeedForward:
   def test(self, data):
     x, y = data
     self.saver.restore(self.sess, "./model.ckpt")
-    return self.sess.run(self.mean_absolute_percentage_error, feed_dict = {self.x: x, self.y_: y})
+    absolute_percentage_error = self.sess.run(self.absolute_percentage_error, feed_dict = {self.x: x, self.y_: y})
+    print np.mean(absolute_percentage_error), np.std(absolute_percentage_error)
