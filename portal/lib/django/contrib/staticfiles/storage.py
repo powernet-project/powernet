@@ -24,7 +24,7 @@ from django.utils.six.moves.urllib.parse import (
 
 class StaticFilesStorage(FileSystemStorage):
     """
-    Standard file system storage for static files.
+    Standard file system storage for assets files.
 
     The defaults for ``location`` and ``base_url`` are
     ``STATIC_ROOT`` and ``STATIC_URL``.
@@ -375,7 +375,7 @@ class CachedFilesMixin(HashedFilesMixin):
 
 class CachedStaticFilesStorage(CachedFilesMixin, StaticFilesStorage):
     """
-    A static file system storage backend which also saves
+    A assets file system storage backend which also saves
     hashed copies of the files it saves.
     """
     pass
@@ -383,7 +383,7 @@ class CachedStaticFilesStorage(CachedFilesMixin, StaticFilesStorage):
 
 class ManifestStaticFilesStorage(ManifestFilesMixin, StaticFilesStorage):
     """
-    A static file system storage backend which also saves
+    A assets file system storage backend which also saves
     hashed copies of the files it saves.
     """
     pass

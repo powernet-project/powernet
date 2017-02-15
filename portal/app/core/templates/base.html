@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +13,10 @@
     <style>
         body {
           padding-top: 50px;
+          font-family: arial, Helvetica;
+        }
+        h3 {
+            color: #444;
         }
         .sidebar {
           display: none;
@@ -61,6 +66,26 @@
         .main .page-header {
           margin-top: 0;
         }
+        .navbar{
+            background-color: #2e2d29;
+        }
+        p {
+            font-size: 1.4em;
+        }
+        .placeholder-image {
+            width: 200px;
+            height: 200px;
+            background-color: #eee;
+            display: inline-block;
+        }
+        .image-spacing {
+            margin: 50px 30px;
+            display: inline-block;
+        }
+        .image-placeholder-container {
+            text-align: center;
+            margin: 40px auto;
+        }
     </style>
 </head>
 <body>
@@ -74,7 +99,8 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Powernet</a>
+          <a class="navbar-brand" href="#">Stanford University - Powernet</a>
+
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -82,6 +108,7 @@
             <li><a href="#">Load Forecasting</a></li>
             <li><a href="#">Ramping</a></li>
             <li><a href="#">Regulation</a></li>
+            <li><a href="http://powernet.stanford.edu">Team</a></li>
           </ul>
         </div>
       </div>
@@ -89,17 +116,70 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-          <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Dashboard <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Load Forecasting</a></li>
-            <li><a href="#">Ramping</a></li>
-            <li><a href="#">Regulation</a></li>
-          </ul>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
-          <h3>WIP</h3>
+{#        <div class="col-sm-3 col-md-2 sidebar">#}
+{#          <ul class="nav nav-sidebar">#}
+{#            <li class="active"><a href="#">Dashboard <span class="sr-only">(current)</span></a></li>#}
+{#            <li><a href="#">Load Forecasting</a></li>#}
+{#            <li><a href="#">Ramping</a></li>#}
+{#            <li><a href="#">Regulation</a></li>#}
+{#          </ul>#}
+{#        </div>#}
+{#        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">#}
+{#          <h1 class="page-header">Dashboard</h1>#}
+{#          <div id="fullpage">#}
+{#              <div class="section">Introduction</div>#}
+{#              <div class="section">Current Operations</div>#}
+{#              <div class="section">Powernet Operations</div>#}
+{#          </div>#}
+{#        </div>#}
+        <div class="col-sm-12 main">
+          <div id="fullpage">
+              <div class="section">
+                  <h3>
+                      What is
+                      <img src="{% static 'img/powernet-logo-white-red.png' %}" height="50" width="153" />
+                  </h3>
+                  <hr/>
+                  <p>
+                     Powernet, is a platform for real-time control of net loads relying on
+                     Distributed Energy Resources (DER). Powernet is built on the principle of connecting
+                     information networks to the power network (“Bits to Watts”).
+                     A Home Hub (HH) aggregates resources in a home and connects them to a Cloud Coordinator (CC).
+                     The CC optimizes power set points for each HH in order
+                     to minimize cost while increasing consumer quality of service.
+                  </p>
+                  <div class="image-placeholder-container">
+                      <div class="placeholder-image"></div>
+                      <div class="image-spacing"></div>
+                      <div class="placeholder-image"></div>
+                      <div class="image-spacing"></div>
+                      <div class="placeholder-image"></div>
+                  </div>
+              </div>
+              <div class="section">
+                  <h3>What Problem Are we Solving</h3>
+                  <hr/>
+                  <p>
+                      The power grid is changing rapidly.
+                      Renewables are expected to exceed 50% of load by 2050.
+                      The profile of loads is changing with numerous opportunities for control.
+                      The periphery of the power network is experiencing an increased adoption of behind-the-meter
+                      resources such as distributed solar and in the future storage.
+                  </p>
+                  <p>
+                      Powernet provides the platform to utilize net load control
+                      to provide grid services in a cost effective manner.
+                      It enables homes to simultaneously enjoy the  benefits of dynamic pricing
+                      optimization, and revenues from grid services on the assets they choose to share.
+                      We’ll essentially minimize cost, increase quality of service, preserve
+                      stability and offer services to the grid in an economically sustainable way.
+                  </p>
+              </div>
+              <div class="section">
+                  <h3>How Are We Doing It?</h3>
+                  <hr/>
+              </div>
+          </div>
         </div>
       </div>
     </div>
@@ -112,5 +192,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
+    <!-- Full page lib -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.2/jquery.fullPage.js"></script>
+
+    <!-- Load our custom js TODO: fix relative paths -->
+    <script type="text/javascript" src="{% static 'js/demo-main.js' %}"></script>
 </body>
 </html>

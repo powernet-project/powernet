@@ -13,7 +13,7 @@ from django.utils._os import safe_join
 from django.utils.functional import LazyObject, empty
 from django.utils.module_loading import import_string
 
-# To keep track on which directories the finder has searched the static files.
+# To keep track on which directories the finder has searched the assets files.
 searched_locations = []
 
 
@@ -44,11 +44,11 @@ class BaseFinder(object):
 
 class FileSystemFinder(BaseFinder):
     """
-    A static files finder that uses the ``STATICFILES_DIRS`` setting
+    A assets files finder that uses the ``STATICFILES_DIRS`` setting
     to locate files.
     """
     def __init__(self, app_names=None, *args, **kwargs):
-        # List of locations with static files
+        # List of locations with assets files
         self.locations = []
         # Maps dir paths to an appropriate storage instance
         self.storages = OrderedDict()
@@ -91,7 +91,7 @@ class FileSystemFinder(BaseFinder):
 
     def find_location(self, root, path, prefix=None):
         """
-        Finds a requested static file in a location, returning the found
+        Finds a requested assets file in a location, returning the found
         absolute path (or ``None`` if no match).
         """
         if prefix:
@@ -115,11 +115,11 @@ class FileSystemFinder(BaseFinder):
 
 class AppDirectoriesFinder(BaseFinder):
     """
-    A static files finder that looks in the directory of each app as
+    A assets files finder that looks in the directory of each app as
     specified in the source_dir attribute.
     """
     storage_class = FileSystemStorage
-    source_dir = 'static'
+    source_dir = 'assets'
 
     def __init__(self, app_names=None, *args, **kwargs):
         # The list of apps that are handled
@@ -166,7 +166,7 @@ class AppDirectoriesFinder(BaseFinder):
 
     def find_in_app(self, app, path):
         """
-        Find a requested static file in an app's static locations.
+        Find a requested assets file in an app's assets locations.
         """
         storage = self.storages.get(app)
         if storage:
@@ -179,7 +179,7 @@ class AppDirectoriesFinder(BaseFinder):
 
 class BaseStorageFinder(BaseFinder):
     """
-    A base static files finder to be used to extended
+    A base assets files finder to be used to extended
     with an own storage class.
     """
     storage = None
@@ -224,7 +224,7 @@ class BaseStorageFinder(BaseFinder):
 
 class DefaultStorageFinder(BaseStorageFinder):
     """
-    A static files finder that uses the default storage backend.
+    A assets files finder that uses the default storage backend.
     """
     storage = default_storage
 
@@ -239,7 +239,7 @@ class DefaultStorageFinder(BaseStorageFinder):
 
 def find(path, all=False):
     """
-    Find a static file with the given path using all enabled finders.
+    Find a assets file with the given path using all enabled finders.
 
     If ``all`` is ``False`` (default), return the first matching
     absolute path (or ``None`` if no match). Otherwise return a list.

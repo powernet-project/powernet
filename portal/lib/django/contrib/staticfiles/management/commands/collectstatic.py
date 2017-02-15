@@ -14,10 +14,10 @@ from django.utils.six.moves import input
 
 class Command(BaseCommand):
     """
-    Command that allows to copy or symlink static files from different
+    Command that allows to copy or symlink assets files from different
     locations to the settings.STATIC_ROOT.
     """
-    help = "Collect static files in a single location."
+    help = "Collect assets files in a single location."
     requires_system_checks = False
 
     def __init__(self, *args, **kwargs):
@@ -110,7 +110,7 @@ class Command(BaseCommand):
                         "Found another file with the destination path '%s'. It "
                         "will be ignored since only the first encountered file "
                         "is collected. If this is not what you want, make sure "
-                        "every static file has a unique path." % prefixed_path,
+                        "every assets file has a unique path." % prefixed_path,
                         level=1,
                     )
 
@@ -149,7 +149,7 @@ class Command(BaseCommand):
             )
 
         message.append(
-            'You have requested to collect static files at the destination\n'
+            'You have requested to collect assets files at the destination\n'
             'location as specified in your settings'
         )
 
@@ -171,7 +171,7 @@ class Command(BaseCommand):
         )
 
         if self.interactive and input(''.join(message)) != 'yes':
-            raise CommandError("Collecting static files cancelled.")
+            raise CommandError("Collecting assets files cancelled.")
 
         collected = self.collect()
         modified_count = len(collected['modified'])
@@ -183,7 +183,7 @@ class Command(BaseCommand):
                         "%(destination)s%(unmodified)s%(post_processed)s.\n")
             summary = template % {
                 'modified_count': modified_count,
-                'identifier': 'static file' + ('' if modified_count == 1 else 's'),
+                'identifier': 'assets file' + ('' if modified_count == 1 else 's'),
                 'action': 'symlinked' if self.symlink else 'copied',
                 'destination': (" to '%s'" % destination_path if destination_path else ''),
                 'unmodified': (', %s unmodified' % unmodified_count if collected['unmodified'] else ''),

@@ -282,7 +282,7 @@ msgid "Site Maps"
 msgstr "Mappas de sito"
 
 msgid "Static Files"
-msgstr "Files static"
+msgstr "Files assets"
 
 msgid "Syndication"
 msgstr "Syndication"

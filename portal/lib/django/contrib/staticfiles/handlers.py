@@ -8,7 +8,7 @@ from django.utils.six.moves.urllib.request import url2pathname
 
 class StaticFilesHandler(WSGIHandler):
     """
-    WSGI middleware that intercepts calls to the static files directory, as
+    WSGI middleware that intercepts calls to the assets files directory, as
     defined by the STATIC_URL setting, and serves those files.
     """
     # May be used to differentiate between handler types (e.g. in a

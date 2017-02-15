@@ -15,7 +15,7 @@ from django.views import static
 
 def serve(request, path, insecure=False, **kwargs):
     """
-    Serve static files below a given point in the directory structure or
+    Serve assets files below a given point in the directory structure or
     from locations inferred from the staticfiles finders.
 
     To use, put a URL pattern such as::
@@ -26,7 +26,7 @@ def serve(request, path, insecure=False, **kwargs):
 
     in your URLconf.
 
-    It uses the django.views.static.serve() view to serve the found files.
+    It uses the django.views.assets.serve() view to serve the found files.
     """
     if not settings.DEBUG and not insecure:
         raise Http404

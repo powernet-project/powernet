@@ -1195,7 +1195,7 @@ class FSFilesHandler(WSGIHandler):
 
 class _StaticFilesHandler(FSFilesHandler):
     """
-    Handler for serving static files. A private class that is meant to be used
+    Handler for serving assets files. A private class that is meant to be used
     solely as a convenience by LiveServerThread.
     """
 
@@ -1245,7 +1245,7 @@ class LiveServerThread(threading.Thread):
             for alias, conn in self.connections_override.items():
                 connections[alias] = conn
         try:
-            # Create the handler for serving static and media files
+            # Create the handler for serving assets and media files
             handler = self.static_handler(_MediaFilesHandler(WSGIHandler()))
 
             # Go through the list of possible ports, hoping that we can find

@@ -16,7 +16,7 @@ class StaticFilesNode(StaticNode):
         return static(path)
 
 
-@register.tag('static')
+@register.tag('assets')
 def do_static(parser, token):
     """
     A template tag that returns the URL to a file
@@ -24,13 +24,13 @@ def do_static(parser, token):
 
     Usage::
 
-        {% static path [as varname] %}
+        {% assets path [as varname] %}
 
     Examples::
 
-        {% static "myapp/css/base.css" %}
-        {% static variable_with_path %}
-        {% static "myapp/css/base.css" as admin_base_css %}
-        {% static variable_with_path as varname %}
+        {% assets "myapp/css/base.css" %}
+        {% assets variable_with_path %}
+        {% assets "myapp/css/base.css" as admin_base_css %}
+        {% assets variable_with_path as varname %}
     """
     return StaticFilesNode.handle_token(parser, token)

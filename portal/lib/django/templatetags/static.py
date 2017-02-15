@@ -54,7 +54,7 @@ class PrefixNode(template.Node):
 @register.tag
 def get_static_prefix(parser, token):
     """
-    Populates a template variable with the static prefix,
+    Populates a template variable with the assets prefix,
     ``settings.STATIC_URL``.
 
     Usage::
@@ -131,21 +131,21 @@ class StaticNode(template.Node):
         return cls(varname, path)
 
 
-@register.tag('static')
+@register.tag('assets')
 def do_static(parser, token):
     """
     Joins the given path with the STATIC_URL setting.
 
     Usage::
 
-        {% static path [as varname] %}
+        {% assets path [as varname] %}
 
     Examples::
 
-        {% static "myapp/css/base.css" %}
-        {% static variable_with_path %}
-        {% static "myapp/css/base.css" as admin_base_css %}
-        {% static variable_with_path as varname %}
+        {% assets "myapp/css/base.css" %}
+        {% assets variable_with_path %}
+        {% assets "myapp/css/base.css" as admin_base_css %}
+        {% assets variable_with_path as varname %}
     """
     return StaticNode.handle_token(parser, token)
 

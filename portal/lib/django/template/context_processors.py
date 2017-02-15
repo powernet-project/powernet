@@ -66,7 +66,7 @@ def tz(request):
 
 def static(request):
     """
-    Adds static-related context variables to the context.
+    Adds assets-related context variables to the context.
     """
     return {'STATIC_URL': settings.STATIC_URL}
 

@@ -22,11 +22,11 @@ from django.utils.translation import ugettext as _, ugettext_lazy
 
 def serve(request, path, document_root=None, show_indexes=False):
     """
-    Serve static files below a given point in the directory structure.
+    Serve assets files below a given point in the directory structure.
 
     To use, put a URL pattern such as::
 
-        from django.views.static import serve
+        from django.views.assets import serve
 
         url(r'^(?P<path>.*)$', serve, {'document_root': '/path/to/my/files/'})
 
@@ -34,7 +34,7 @@ def serve(request, path, document_root=None, show_indexes=False):
     also set ``show_indexes`` to ``True`` if you'd like to serve a basic index
     of the directory.  This index view will use the template hardcoded below,
     but if you'd like to override it, you can create a template called
-    ``static/directory_index.html``.
+    ``assets/directory_index.html``.
     """
     path = posixpath.normpath(unquote(path))
     path = path.lstrip('/')
@@ -103,8 +103,8 @@ template_translatable = ugettext_lazy("Index of %(directory)s")
 def directory_index(path, fullpath):
     try:
         t = loader.select_template([
-            'static/directory_index.html',
-            'static/directory_index',
+            'assets/directory_index.html',
+            'assets/directory_index',
         ])
     except TemplateDoesNotExist:
         t = Engine().from_string(DEFAULT_DIRECTORY_INDEX_TEMPLATE)
