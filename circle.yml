@@ -28,6 +28,10 @@ dependencies:
     # Replace <your-project-id>
     - gcloud config set project $GCLOUD_PROJECT
 
+    # make sure we gather our static files
+    - export PYTHONPATH="$PYTHONPATH:portal/:portal/lib/django"
+    - python portal/manage.py collectstatic --no-input
+
 test:
   override:
     # run local unit tests
@@ -39,6 +43,3 @@ deployment:
         commands:
         # deploy to AppEngine
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=debug
-        # make sure we gather our static files
-        - export PYTHONPATH="$PYTHONPATH:./:portal/lib/django"
-        - python portal/manage.py collectstatic --no-input
