@@ -29,6 +29,9 @@ dependencies:
     - gcloud config set project $GCLOUD_PROJECT
 
 test:
+  pre:
+    # make sure we gather our static files
+    - ./manage.py collectstatic --no-input
   override:
     # run local unit tests
     - echo "test"

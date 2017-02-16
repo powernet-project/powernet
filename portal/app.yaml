@@ -5,6 +5,6 @@ threadsafe: yes
 
 handlers:
 - url: /assets
-  static_dir: assets/
+  static_dir: staticfiles/
 - url: .*
   script: app.wsgi.application
