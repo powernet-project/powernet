@@ -40,7 +40,10 @@ deployment:
         # make sure we gather our static files
         # - export PYTHONPATH="$PYTHONPATH:${HOME}/virtualenv/python2.7.12/lib/python2.7/site-packages"
         - ls -la ${HOME}
-        - ls -la portal/lib
+        - ls -la ${HOME}/virtualenvs
+        - ls -la ${HOME}/powernet
+        - ls -la portal/lib/django
+        - export PYTHONPATH="$PYTHONPATH:${HOME}/portal/lib/django"
         - python portal/manage.py collectstatic --no-input
         
         # deploy to AppEngine
