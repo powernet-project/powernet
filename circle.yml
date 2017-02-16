@@ -4,6 +4,7 @@ machine:
 
   environment:
     GCLOUD_PROJECT: "pwrnet-158117"
+    DJANGO_MGMT_PATH: ${HOME}/portal/lib/django
 
 dependencies:
   pre:
@@ -43,7 +44,7 @@ deployment:
         - ls -la ${HOME}/virtualenvs
         - ls -la ${HOME}/powernet
         - ls -la portal/lib/django
-        - export PYTHONPATH="$PYTHONPATH:${HOME}/portal/lib/django"
+        - export PYTHONPATH="$PYTHONPATH:$DJANGO_MGMT_PATH"
         - python portal/manage.py collectstatic --no-input
         
         # deploy to AppEngine
