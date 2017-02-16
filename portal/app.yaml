@@ -3,6 +3,10 @@ runtime: python27
 api_version: 1
 threadsafe: yes
 
+libraries:
+- name: django
+  version: "1.9.4"
+
 handlers:
 - url: /assets
   static_dir: staticfiles/

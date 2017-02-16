@@ -38,8 +38,7 @@ deployment:
         branch: master
         commands:
         # make sure we gather our static files
-        - export PYTHONPATH="$PYTHONPATH:/home/ubuntu/portal/:/home/ubuntu/portal/lib/django"
-        - echo $PYTHONPATH
+        - export PYTHONPATH="$PYTHONPATH:${HOME}/portal/lib/django"
         - python portal/manage.py collectstatic --no-input
         
         # deploy to AppEngine
