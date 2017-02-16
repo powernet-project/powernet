@@ -4,7 +4,8 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /assets
-  static_dir: staticfiles/
+- url: /static
+  static_dir: staticfiles/*
+
 - url: .*
   script: app.wsgi.application
