@@ -29,7 +29,9 @@ dependencies:
     - gcloud config set project $GCLOUD_PROJECT
 
     # make sure we gather our static files
-    - export PYTHONPATH="$PYTHONPATH:portal/:portal/lib/django"
+    - echo $HOME
+    - export PYTHONPATH="$PYTHONPATH:$HOME/portal/:$HOME/portal/lib/django"
+    - echo $PYTHONPATH
     - python portal/manage.py collectstatic --no-input
 
 test:
