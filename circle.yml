@@ -38,8 +38,8 @@ deployment:
         branch: master
         commands:
         # make sure we gather our static files
-        - export PYTHONPATH="$PYTHONPATH:${HOME}/virtualenv/python2.7.12/lib/python2.7/site-packages"
-        - ls -la ${HOME}/virtualenv/python2.7.12/lib/python2.7/site-packages
+        # - export PYTHONPATH="$PYTHONPATH:${HOME}/virtualenv/python2.7.12/lib/python2.7/site-packages"
+        - ls -la ${HOME}/python2.7.12/lib/python2.7/site-packages
         - python portal/manage.py collectstatic --no-input
         
         # deploy to AppEngine
