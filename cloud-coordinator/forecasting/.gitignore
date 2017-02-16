@@ -1,2 +1,4 @@
 checkpoint
-model.ckpt*
+model.*.ckpt*
+model.*
+train/*

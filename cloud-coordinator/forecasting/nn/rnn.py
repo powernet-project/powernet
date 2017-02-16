@@ -15,7 +15,7 @@ class Recurrent:
     self.num_layer = num_layer
     self.num_neuron = num_neuron
 
-    self.input_size=7*49
+    self.input_size=409
     self.output_size=24
 
     self.construct_graph()
@@ -24,9 +24,9 @@ class Recurrent:
     self.model = Sequential()
 
     if self.num_layer == 0:
-      self.model.add(LSTM(self.output_size, activation='relu', input_dim=1))
+      self.model.add(LSTM(self.output_size, input_dim=1))
     else:
-      self.model.add(LSTM(self.num_neuron, activation='relu', input_dim=1))
+      self.model.add(LSTM(self.num_neuron, input_dim=1))
 
       for _ in xrange(self.num_layer - 1):
         self.model.add(Dense(self.num_neuron))
@@ -39,14 +39,14 @@ class Recurrent:
 
   def train(self, data):
     x, y = data
-    history = self.model.fit(x, y, validation_split=0.3, nb_epoch=0, batch_size=100, verbose=1)
-    self.model.save_weights("./model.ckpt")
+    history = self.model.fit(x, y, validation_split=0.1, nb_epoch=0, batch_size=100, verbose=1)
+    self.model.save_weights("./model.lstm.ckpt")
     return history
 
   def test(self, data):
     x, y = data
-    self.model.load_weights("./model.ckpt")
+    self.model.load_weights("./model.lstm.ckpt")
 
     y_ = self.model.predict(x)
 
-    return np.mean(np.ma.masked_invalid(np.abs(y - y_) / y))
+    return np.mean(np.square(y - y_)) / np.mean(y)

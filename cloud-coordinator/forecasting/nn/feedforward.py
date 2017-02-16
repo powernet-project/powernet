@@ -17,11 +17,11 @@ def generate_batch(data, batch_size=100):
   return x[indices], y[indices]
 
 class FeedForward:
-  def __init__(self, num_layer=3, num_neuron=300):
+  def __init__(self, num_layer=3, num_neuron=300, input_size=409):
     self.num_layer = num_layer
     self.num_neuron = num_neuron
     self.sess = tf.InteractiveSession()
-    self.input_size = 409
+    self.input_size = input_size
     self.output_size = 24
 
     self.construct_graph()
@@ -32,10 +32,12 @@ class FeedForward:
     W = tf.get_variable("W", shape=[input_shape[1], num_neuron], initializer=tf.contrib.layers.xavier_initializer())
     b = tf.get_variable("b", shape=[num_neuron], initializer=tf.constant_initializer(0))
     y = tf.matmul(x, W) + b
-    return tf.nn.relu(y, self.keep_prob)
+    return tf.nn.relu(y)
 
   def construct_graph(self):
     self.x = tf.placeholder(tf.float32, [None, self.input_size])
+    self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
+
     h = self.x
     for layer_idx in range(self.num_layer):
       #add intermediate layers
@@ -52,18 +54,19 @@ class FeedForward:
       y = tf.matmul(h, W) + b
 
     self.prediction = y
-    self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
 
-    self.absolute_percentage_error = tf.divide(tf.abs(y - self.y_), y)
-    self.squared_error = tf.square(y - self.y_)
-
-    tf.summary.scalar('mean_absolute_percentage_error', tf.reduce_mean(self.absolute_percentage_error))
+    self.squared_error = tf.square(self.prediction - self.y_)
     tf.summary.scalar('mean_squared_error', tf.reduce_mean(self.squared_error))
 
     self.train_step = tf.train.AdamOptimizer(1e-4).minimize(tf.reduce_mean(self.squared_error))
     self.saver = tf.train.Saver()
 
   def train(self, data):
+    t0 = time.clock()
+    x, y = data
+
+    print '{}: training with data: ({})'.format(type(self).__name__, x.shape)
+
     merged = tf.summary.merge_all()
     writer = tf.summary.FileWriter('./train')
 
@@ -78,23 +81,15 @@ class FeedForward:
           self.x: batch_xs_train,
           self.y_: batch_ys_train
         })
-      # writer.add_summary(summary, i)
+      writer.add_summary(summary, i)
 
-      # pick another random set for validation
-      # batch_xs_validation, batch_ys_validation = generate_batch(data, batch_size)
+    save_path = self.saver.save(self.sess, "./model.ff.ckpt")
 
-      # validation_summary, validation = self.sess.run([merged, self.loss],
-      #   feed_dict={
-      #   self.x: batch_xs_validation,
-      #   self.y_: batch_ys_validation
-      #   })
-
-      # validation_writer.add_summary(validation_summary, i)
-
-    save_path = self.saver.save(self.sess, "./model.ckpt")
+    print '{}: {} seconds took for training'.format(type(self).__name__, time.clock() - t0)
 
   def test(self, data):
     x, y = data
-    self.saver.restore(self.sess, "./model.ckpt")
-    absolute_percentage_error = self.sess.run(self.absolute_percentage_error, feed_dict = {self.x: x, self.y_: y})
-    print np.mean(absolute_percentage_error), np.std(absolute_percentage_error)
+
+    print '{}: testing with data: ({})'.format(type(self).__name__, x.shape)
+    self.saver.restore(self.sess, "./model.ff.ckpt")
+    return self.sess.run([self.squared_error, self.prediction], feed_dict = {self.x: x, self.y_: y})

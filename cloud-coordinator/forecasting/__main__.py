@@ -9,7 +9,11 @@ from nn.rnn import Recurrent
 
 from sqlalchemy import text
 
+import argparse
 import datetime
+import math
+
+import matplotlib.pyplot as plt
 import numpy as np
 
 __author__ = "Edward Ng"
@@ -17,14 +21,16 @@ __email__ = "edjng@stanford.edu"
 
 sqlClient = SqlClient()
 
-def generate_set(x, y, split=0.7):
-  training = int(len(x) * split)
+FLAGS = None
+
+def generate_set(x, y, split=0.9):
+  training = -1 #int(len(x) * split)
 
   x_training = x[:training]
   y_training = y[:training]
 
-  x_test = x[:training]
-  y_test = y[:training]
+  x_test = x[training:]
+  y_test = y[training:]
 
   return (x_training, y_training), (x_test, y_test)
 
@@ -35,7 +41,9 @@ date = list()
 
 earliest_date = None
 
-for idx, resInterval60 in enumerate(sqlClient.session.query(ResInterval60).order_by(ResInterval60.date)):
+for idx, resInterval60 in enumerate(sqlClient.session.query(ResInterval60)
+    .filter(ResInterval60.sp_id==7171561005)
+    .order_by(ResInterval60.date)):
     if idx == 0:
         earliest_date = resInterval60.date
 
@@ -98,15 +106,37 @@ for i in xrange(len(load) - 7):
 x = np.array(x)
 y = np.array(y)
 
+print 'dataset is ({})'.format(x.shape)
+
 training, test = generate_set(x, y)
 
-feedForward = FeedForward(3, 600)
-feedForward.train(training)
-print feedForward.test(test)
+parser = argparse.ArgumentParser(description='Run ML models for load forecasting.')
+parser.add_argument('--model', default='ff', help='Pick a model to use for estimation.')
+parser.add_argument('-t', '--train', action='store_true')
 
-# x=np.reshape(x, (x.shape[0], x.shape[1], 1))
-# y=np.array(y)
+FLAGS, unparsed = parser.parse_known_args()
 
-# recurrent = Recurrent()
-# recurrent.train((x, y))
-# print recurrent.test((x, y))
+print 'running with arguments: ({})'.format(FLAGS)
+
+rmse = None
+prediction = None
+
+if FLAGS.model == 'ff':
+    feedForward = FeedForward(4, 700)
+    if FLAGS.train is not None:
+        feedForward.train(training)
+    squared_error, prediction = feedForward.test(test)
+    rmse = math.sqrt(np.mean(squared_error)) / np.mean(test[1])
+elif FLAGS.model == 'lstm':
+    recurrent = Recurrent()
+    x=np.reshape(x, (x.shape[0], x.shape[1], 1))
+    recurrent.train(training)
+    print recurrent.test(test)
+else:
+    print '{} is an invalid model. Pick from (ff), (lstm), (linear)'.format(FLAGS.model)
+
+if rmse is not None:
+    print 'rmse: ({})'.format(rmse)
+
+if prediction is not None:
+    raise NotImplementedError # plot the damn prediction
