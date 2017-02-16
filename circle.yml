@@ -29,9 +29,6 @@ dependencies:
     - gcloud config set project $GCLOUD_PROJECT
 
 test:
-  pre:
-    # make sure we gather our static files
-    - python portal/manage.py collectstatic --no-input
   override:
     # run local unit tests
     - echo "test"
@@ -42,3 +39,5 @@ deployment:
         commands:
         # deploy to AppEngine
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=debug
+        # make sure we gather our static files
+        - python portal/manage.py collectstatic --no-input
