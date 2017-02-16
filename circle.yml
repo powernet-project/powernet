@@ -31,7 +31,7 @@ dependencies:
 test:
   pre:
     # make sure we gather our static files
-    - python manage.py collectstatic --no-input
+    - python portal/manage.py collectstatic --no-input
   override:
     # run local unit tests
     - echo "test"
