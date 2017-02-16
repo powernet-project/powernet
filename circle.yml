@@ -40,10 +40,7 @@ deployment:
         commands:
         # make sure we gather our static files
         # - export PYTHONPATH="$PYTHONPATH:${HOME}/virtualenv/python2.7.12/lib/python2.7/site-packages"
-        - ls -la ${HOME}
-        - ls -la ${HOME}/virtualenvs
-        - ls -la ${HOME}/powernet
-        - ls -la portal/lib/django
+        - echo $PYTHONPATH
         - export PYTHONPATH="$PYTHONPATH:$DJANGO_MGMT_PATH"
         - python portal/manage.py collectstatic --no-input
         
