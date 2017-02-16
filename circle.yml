@@ -18,8 +18,6 @@ dependencies:
     # vendor our dependencies
     - mkdir -p lib
     - pip install -r portal/requirements.txt -t lib
-    - cd portal
-    - python -c "exec('import django\\ndjango')" 
 
     # Make sure gcloud is up to date
     - gcloud --quiet components update app
@@ -40,7 +38,7 @@ deployment:
         branch: master
         commands:
         # make sure we gather our static files
-        - export PYTHONPATH="$PYTHONPATH:${HOME}/portal/lib/django"
+        - export PYTHONPATH="$PYTHONPATH:${HOME}/virtualenv/python2.7.12/lib/python2.7/site-packages"
         - python portal/manage.py collectstatic --no-input
         
         # deploy to AppEngine
