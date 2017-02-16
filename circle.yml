@@ -18,6 +18,7 @@ dependencies:
     # vendor our dependencies
     - mkdir -p lib
     - pip install -r portal/requirements.txt -t lib
+    - python -c "exec('import django\\n django')" 
 
     # Make sure gcloud is up to date
     - gcloud --quiet components update app
