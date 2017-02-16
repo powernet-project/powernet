@@ -4,7 +4,6 @@ machine:
 
   environment:
     GCLOUD_PROJECT: "pwrnet-158117"
-    DJANGO_MGMT_PATH: ${HOME}/portal/lib/django
 
 dependencies:
   pre:
@@ -28,10 +27,6 @@ dependencies:
 
     # Replace <your-project-id>
     - gcloud config set project $GCLOUD_PROJECT
-
-  post:
-    - export PYTHONPATH="$PYTHONPATH:$DJANGO_MGMT_PATH"
-    - python portal/manage.py collectstatic --no-input
 
 test:
   override:
