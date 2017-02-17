@@ -85,6 +85,15 @@
             text-align: center;
             margin: 40px auto;
         }
+        .house-container {
+
+        }
+        .energy-level-display {
+            margin: 10px auto;
+            height:200px;
+            background-color: red;
+            border-radius: 30px;
+        }
     </style>
 </head>
 <body>
@@ -179,6 +188,39 @@
               <div class="section">
                   <h3>How Are We Doing It?</h3>
                   <hr/>
+
+                  <div class="row">
+                      <div class="col-md-4 house-container">
+                          House One:
+                          <div>
+                              <input type="radio" name="consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="consumption-mode" value="economy"> Economy<br />
+                              <input type="radio" name="consumption-mode" value="connected"> Connected<br/>
+                              <input type="radio" name="consumption-mode" value="disconnected"> Disconnected<br/>
+                          </div>
+                          <div class="energy-level-display"></div>
+                      </div>
+                      <div class="col-md-4 house-container">
+                          House Two:
+                          <div>
+                              <input type="radio" name="consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="consumption-mode" value="economy"> Economy<br />
+                              <input type="radio" name="consumption-mode" value="connected"> Connected<br/>
+                              <input type="radio" name="consumption-mode" value="disconnected"> Disconnected<br/>
+                          </div>
+                          <div class="energy-level-display"></div>
+                      </div>
+                      <div class="col-md-4 house-container">
+                          House Three:
+                          <div>
+                              <input type="radio" name="consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="consumption-mode" value="economy"> Economy<br />
+                              <input type="radio" name="consumption-mode" value="connected"> Connected<br/>
+                              <input type="radio" name="consumption-mode" value="disconnected"> Disconnected<br/>
+                          </div>
+                          <div class="energy-level-display"></div>
+                      </div>
+                  </div>
               </div>
           </div>
         </div>
