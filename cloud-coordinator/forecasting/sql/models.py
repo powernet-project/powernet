@@ -2,7 +2,7 @@
 """Provides Entity Structures from SQL magneto.stanford.edu Database"""
 
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 
 from sqlalchemy import BigInteger, Column, Float, Integer, Date, String, text
 from sqlalchemy.ext.declarative import declarative_base
@@ -50,6 +50,7 @@ class ResInterval60(Base):
     def get_batch(sqlClient, batch_size=30000):
         # metadata around minimum and maximum dates retrieved
         sp_id_prev = -1
+        date_prev = date.min
         earliest_date = date.max
         latest_date = date.min
         result = defaultdict(list)
@@ -73,7 +74,9 @@ class ResInterval60(Base):
             if resInterval60.date.weekday() >= 5:
                 date_info[7] = 1
 
-            if resInterval60.sp_id != sp_id_prev:
+            if resInterval60.sp_id != sp_id_prev or \
+                resInterval60.date - timedelta(days=1) > date_prev:
+
                 if contiguous_block is not None:
                     result[sp_id_prev].append(contiguous_block)
 
@@ -107,6 +110,7 @@ class ResInterval60(Base):
                 ] + date_info)
 
             sp_id_prev = resInterval60.sp_id
+            date_prev = resInterval60.date
 
         result[sp_id_prev].append(contiguous_block) # add last block
 
