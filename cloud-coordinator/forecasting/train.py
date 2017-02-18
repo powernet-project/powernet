@@ -44,7 +44,6 @@ FLAGS, unparsed = parser.parse_known_args()
 print 'running with arguments: ({})'.format(FLAGS)
 
 nrmsd = []
-prediction = None
 kf = KFold(shuffle=True, n_splits=3, random_state=0)
 
 for train, test in kf.split(X):
@@ -70,7 +69,7 @@ for train, test in kf.split(X):
 
     nrmsd.append(math.sqrt(np.mean(squared_error)) / (np.max(Y[test]) - np.min(Y[test])))
 
-    if prediction is not None:
+    if FLAGS.plot == True:
         plt.plot(Y[test][-15:-1].flatten())
         plt.plot(prediction[-15:-1].flatten())
         plt.show()
