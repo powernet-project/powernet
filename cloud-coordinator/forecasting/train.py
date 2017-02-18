@@ -51,7 +51,9 @@ for train, test in kf.split(X):
     model = None
 
     if FLAGS.model == 'ff':
+        tf.logging.set_verbosity(tf.logging.INFO)
         model = FeedForward(num_layer=3, num_neuron=300,input_size=X.shape[1])
+        tf.logging.set_verbosity(tf.logging.WARN)
     elif FLAGS.model == 'linear':
         model = LinearRegression()
     else:
