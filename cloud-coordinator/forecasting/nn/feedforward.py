@@ -58,7 +58,8 @@ class FeedForward:
     self.squared_error = tf.square(self.prediction - self.y_)
     tf.summary.scalar('mean_squared_error', tf.reduce_mean(self.squared_error))
 
-    self.train_step = tf.train.AdamOptimizer(1e-4).minimize(tf.reduce_mean(self.squared_error))
+    self.train_step = tf.train.AdamOptimizer(1e-4) \
+                        .minimize(tf.reduce_mean(self.squared_error))
     self.saver = tf.train.Saver()
 
   def train(self, data):

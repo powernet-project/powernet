@@ -23,26 +23,35 @@ sqlClient = SqlClient()
 
 FLAGS = None
 
-def generate_set(x, y, split=0.9):
-  training = -1 #int(len(x) * split)
+LOOKBACK = 7
 
-  x_training = x[:training]
-  y_training = y[:training]
+def generate_set(x, y, split=0.7):
+    training = int(len(x) * split)
 
-  x_test = x[training:]
-  y_test = y[training:]
+    x_training = x[:training]
+    y_training = y[:training]
 
-  return (x_training, y_training), (x_test, y_test)
+    x_test = x[training:]
+    y_test = y[training:]
+
+    return (x_training, y_training), (x_test, y_test)
+
+def format_weather(data):
+    data=data[:(len(data) / 24) * 24]
+    data_scaler=MinMaxScaler(feature_range=(0, 1))
+    data=data_scaler.fit_transform(data)
+    return data.reshape(-1, 24)
 
 # metadata
 load = list()
-weather = list()
+temperature = list()
+humidity = list()
 date = list()
 
 earliest_date = None
 
 for idx, resInterval60 in enumerate(sqlClient.session.query(ResInterval60)
-    .filter(ResInterval60.sp_id==7171561005)
+    .filter(ResInterval60.sp_id==6238323)
     .order_by(ResInterval60.date)):
     if idx == 0:
         earliest_date = resInterval60.date
@@ -74,21 +83,17 @@ for idx, resInterval60 in enumerate(sqlClient.session.query(ResInterval60)
         resInterval60.q24
         ])
 
-    date.append([
-        resInterval60.date.isoweekday()
-        ])
+    day_of_week = [0] * 7
+    day_of_week[resInterval60.date.weekday()] = 1
+
+    date.append(day_of_week)
 
 for idx, localWeather in enumerate(sqlClient.session.query(LocalWeather) \
     .from_statement(text("SELECT * FROM local_weather WHERE date>=:date ORDER BY date")) \
     .params(date=earliest_date.isoformat()).all()):
 
-    if idx != 0 and idx % 24 != 0:
-        weather_curr.append(localWeather.TemperatureF)
-    else:
-        if idx > 0:
-            weather.append(weather_curr)
-
-        weather_curr = [localWeather.TemperatureF]
+    temperature.append(localWeather.TemperatureF)
+    humidity.append(localWeather.Humidity)
 
 x=list()
 y=list()
@@ -96,12 +101,12 @@ y=list()
 load_scaler=MinMaxScaler(feature_range=(0, 1))
 load=load_scaler.fit_transform(load)
 
-weather_scaler=MinMaxScaler(feature_range=(0, 1))
-weather=weather_scaler.fit_transform(weather)
+temperature = format_weather(temperature)
+humidity = format_weather(humidity)
 
-for i in xrange(len(load) - 7):
-  x.append(np.concatenate([load[i:i + 8].ravel(), weather[i:i+9].ravel(), date[i + 7]]))
-  y.append(load[i + 7])
+for i in xrange(len(load) - LOOKBACK):
+  x.append(np.concatenate([load[i:i + LOOKBACK].ravel(), temperature[i + LOOKBACK].ravel(), humidity[i:i + LOOKBACK].ravel(), date[i + LOOKBACK]]))
+  y.append(load[i + LOOKBACK])
 
 x = np.array(x)
 y = np.array(y)
@@ -118,15 +123,15 @@ FLAGS, unparsed = parser.parse_known_args()
 
 print 'running with arguments: ({})'.format(FLAGS)
 
-rmse = None
+nrmsd = None
 prediction = None
 
 if FLAGS.model == 'ff':
-    feedForward = FeedForward(4, 700)
-    if FLAGS.train is not None:
+    feedForward = FeedForward(num_layer=3, num_neuron=500,input_size=x.shape[1])
+    if FLAGS.train == True:
         feedForward.train(training)
     squared_error, prediction = feedForward.test(test)
-    rmse = math.sqrt(np.mean(squared_error)) / np.mean(test[1])
+    nrmsd = math.sqrt(np.mean(squared_error)) / (np.max(test[1]) - np.min(test[1]))
 elif FLAGS.model == 'lstm':
     recurrent = Recurrent()
     x=np.reshape(x, (x.shape[0], x.shape[1], 1))
@@ -135,8 +140,10 @@ elif FLAGS.model == 'lstm':
 else:
     print '{} is an invalid model. Pick from (ff), (lstm), (linear)'.format(FLAGS.model)
 
-if rmse is not None:
-    print 'rmse: ({})'.format(rmse)
+if nrmsd is not None:
+    print 'nrmsd: ({})'.format(nrmsd)
 
 if prediction is not None:
-    raise NotImplementedError # plot the damn prediction
+    plt.plot(test[1][-8:-1].flatten())
+    plt.plot(prediction[-8:-1].flatten())
+    plt.show()
