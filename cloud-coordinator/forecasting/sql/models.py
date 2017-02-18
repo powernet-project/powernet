@@ -75,7 +75,7 @@ class ResInterval60(Base):
 
             if resInterval60.sp_id != sp_id_prev:
                 if contiguous_block is not None:
-                    result[resInterval60.sp_id].append(contiguous_block)
+                    result[sp_id_prev].append(contiguous_block)
 
                 contiguous_block = []
 

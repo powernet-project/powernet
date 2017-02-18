@@ -1,9 +1,10 @@
 import datetime
+
+from sklearn.model_selection import KFold
 import numpy as np
 
-
 # Generate test and training set
-def generate_sets(x, y, split=0.7):
+def generate_sets(x, y, train_index,):
     training = int(len(x) * split)
 
     x_training = x[:training]
