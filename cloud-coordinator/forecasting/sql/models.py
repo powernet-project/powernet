@@ -78,9 +78,10 @@ class ResInterval60(Base):
                 resInterval60.date - timedelta(days=1) > date_prev:
 
                 if contiguous_block is not None:
+                    contiguous_block.append(resInterval60.date) #sentinel end date
                     result[sp_id_prev].append(contiguous_block)
 
-                contiguous_block = []
+                contiguous_block = [resInterval60.date] #sentinel start date
 
             contiguous_block.append([
                 resInterval60.q1,
@@ -136,7 +137,7 @@ class LocalWeather(Base):
         weather = defaultdict(list)
 
         for localWeather in sqlClient.session.query(LocalWeather) \
-            .from_statement(text("SELECT * FROM local_weather WHERE date>=:earliest_date AND date<=:latest_date ORDER BY date")) \
+            .from_statement(text("SELECT * FROM local_weather WHERE date>=:earliest_date AND date<=:latest_date ORDER BY zip5, date")) \
             .params(earliest_date=earliest_date.isoformat(), latest_date=latest_date.isoformat()) \
             .all():
 
@@ -144,3 +145,5 @@ class LocalWeather(Base):
                     localWeather.TemperatureF,
                     localWeather.Humidity
                 ])
+
+        return weather
