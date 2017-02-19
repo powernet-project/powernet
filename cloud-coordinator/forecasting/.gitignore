@@ -3,3 +3,4 @@ model.*.ckpt*
 model.*
 train/*
 *.pyc
+*.pkl
