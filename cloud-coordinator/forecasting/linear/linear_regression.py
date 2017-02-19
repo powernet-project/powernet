@@ -6,20 +6,17 @@ from sklearn.externals import joblib
 class LinearRegression:
     def __init__(self):
         self.model = linear_model.LinearRegression()
+        self.model_name = "./saved_models/lr.pkl"
 
     def train(self, data):
         X, Y = data
         self.model.fit(X, Y)
 
-        joblib.dump(self.model, 'linear_regression.pkl')
+        joblib.dump(self.model, self.model_name)
 
-    def test(self, data):
+    def predict(self, data):
         X, Y = data
 
-        self.model = joblib.load('linear_regression.pkl')
-
-        prediction = self.model.predict(X)
-        squared_error = (prediction - Y) ** 2
-
-        return squared_error, prediction
+        self.model = joblib.load(self.model_name)
+        return self.model.predict(X)
 

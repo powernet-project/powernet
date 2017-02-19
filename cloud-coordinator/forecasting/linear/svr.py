@@ -17,7 +17,7 @@ class SVR:
             model.fit(X, Y[i])
             joblib.dump(model, 'svr.{}.pkl'.format(i))
 
-    def test(self, data):
+    def predict(self, data):
         X, Y = data
 
         Y = np.split(Y, 24, axis=1)
@@ -30,6 +30,4 @@ class SVR:
 
             predictions.append(prediction)
 
-        predictions = np.array(predictions).transpose()
-
-        return (predictions - Y) ** 2, predictions
+        return np.array(predictions).transpose()
