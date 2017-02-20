@@ -88,11 +88,20 @@
         .house-container {
 
         }
-        .energy-level-display {
+        .energy-level-display-one,
+        .energy-level-display-two,
+        .energy-level-display-three {
             margin: 10px auto;
-            height:200px;
+            width: 200px;
+            height: 200px;
             background-color: red;
-            border-radius: 30px;
+            border-radius: 100px;
+        }
+        .comfort {
+            opacity: 1;
+        }
+        .economy {
+            opacity: .5;
         }
     </style>
 </head>
@@ -116,7 +125,7 @@
             <li><a href="#">Load Forecasting</a></li>
             <li><a href="#">Ramping</a></li>
             <li><a href="#">Regulation</a></li>
-            <li><a href="http://powernet.stanford.edu">Team</a></li>
+            <li><a href="http://powernet.stanford.edu" target="_blank">Team</a></li>
           </ul>
         </div>
       </div>
@@ -193,32 +202,32 @@
                       <div class="col-md-4 house-container">
                           House One:
                           <div>
-                              <input type="radio" name="consumption-mode" value="comfort"> Comfort<br />
-                              <input type="radio" name="consumption-mode" value="economy"> Economy<br />
-                              <input type="radio" name="consumption-mode" value="connected"> Connected<br/>
-                              <input type="radio" name="consumption-mode" value="disconnected"> Disconnected<br/>
+                              <input type="radio" name="one-consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="one-consumption-mode" value="economy"> Economy<br />
+                              <input type="radio" name="one-consumption-mode-conn" value="connected"> Connected<br/>
+                              <input type="radio" name="one-consumption-mode-conn" value="disconnected"> Disconnected<br/>
                           </div>
-                          <div class="energy-level-display"></div>
+                          <div class="energy-level-display-one"></div>
                       </div>
                       <div class="col-md-4 house-container">
                           House Two:
                           <div>
-                              <input type="radio" name="consumption-mode" value="comfort"> Comfort<br />
-                              <input type="radio" name="consumption-mode" value="economy"> Economy<br />
-                              <input type="radio" name="consumption-mode" value="connected"> Connected<br/>
-                              <input type="radio" name="consumption-mode" value="disconnected"> Disconnected<br/>
+                              <input type="radio" name="two-consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="two-consumption-mode" value="economy"> Economy<br />
+                              <input type="radio" name="two-consumption-mode-conn" value="connected"> Connected<br/>
+                              <input type="radio" name="two-consumption-mode-conn" value="disconnected"> Disconnected<br/>
                           </div>
-                          <div class="energy-level-display"></div>
+                          <div class="energy-level-display-two"></div>
                       </div>
                       <div class="col-md-4 house-container">
                           House Three:
                           <div>
-                              <input type="radio" name="consumption-mode" value="comfort"> Comfort<br />
-                              <input type="radio" name="consumption-mode" value="economy"> Economy<br />
-                              <input type="radio" name="consumption-mode" value="connected"> Connected<br/>
-                              <input type="radio" name="consumption-mode" value="disconnected"> Disconnected<br/>
+                              <input type="radio" name="three-consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="three-consumption-mode" value="economy"> Economy<br />
+                              <input type="radio" name="three-consumption-mode-conn" value="connected"> Connected<br/>
+                              <input type="radio" name="three-consumption-mode-conn" value="disconnected"> Disconnected<br/>
                           </div>
-                          <div class="energy-level-display"></div>
+                          <div class="energy-level-display-three"></div>
                       </div>
                   </div>
               </div>
@@ -243,11 +252,97 @@
         var demo = demo || {};
 
         $(document).ready(function(ns) {
-            var onLoad = function() {
-                // init fullpage
-                $('#fullpage').fullpage();
+            var houseOne, houseTwo, houseThree,
+                onLoad = function() {
+                    // init fullpage
+                    $('#fullpage').fullpage();
+                    ns.setupRadioListeners();
+                    houseOne = $('.energy-level-display-one');
+                    houseTwo = $('.energy-level-display-two');
+                    houseThree = $('.energy-level-display-three');
+                };
 
+            ns.setupRadioListeners = function() {
+                $('input:radio').on('click', function(e) {
+                    if(e.currentTarget.name === "one-consumption-mode") {
+                        var valConnOne = $('input[name=one-consumption-mode-conn]:checked').val();
+                        if (valConnOne === 'connected') {
+                            houseOne.removeClass('comfort');
+                            houseOne.removeClass('economy');
+                            if(e.currentTarget.value === 'comfort') {
+                                houseOne.addClass('comfort');
+                            } else {
+                                houseOne.addClass('economy');
+                            }
+                        }
+                    } else if(e.currentTarget.name === "one-consumption-mode-conn") {
+                        if(e.currentTarget.value === 'connected') {
+                            var valModeOne = $('input[name=one-consumption-mode]:checked').val();
+                            if(valModeOne === 'comfort') {
+                                houseOne.addClass('comfort');
+                            } else {
+                                houseOne.addClass('economy');
+                            }
+                        } else {
+                            houseOne.removeClass('comfort');
+                            houseOne.removeClass('economy');
+                        }
+                    }
+
+                    if(e.currentTarget.name === "two-consumption-mode") {
+                        var valConnTwo = $('input[name=two-consumption-mode-conn]:checked').val();
+                        if (valConnTwo === 'connected') {
+                            houseTwo.removeClass('comfort');
+                            houseTwo.removeClass('economy');
+                            if (e.currentTarget.value === 'comfort') {
+                                houseTwo.addClass('comfort');
+                            } else {
+                                houseTwo.addClass('economy');
+                            }
+                        }
+                    } else if(e.currentTarget.name === "two-consumption-mode-conn") {
+                        if(e.currentTarget.value === 'connected') {
+                            var valModeTwo = $('input[name=two-consumption-mode]:checked').val();
+                            if(valModeTwo === 'comfort') {
+                                houseTwo.addClass('comfort');
+                            } else {
+                                houseTwo.addClass('economy');
+                            }
+                        } else {
+                            houseTwo.removeClass('comfort');
+                            houseTwo.removeClass('economy');
+                        }
+                    }
+
+                    if(e.currentTarget.name === "three-consumption-mode") {
+                        var valConnThree = $('input[name=three-consumption-mode-conn]:checked').val();
+                        if (valConnThree === 'connected') {
+                            houseThree.removeClass('comfort');
+                            houseThree.removeClass('economy');
+                            if (e.currentTarget.value === 'comfort') {
+                                houseThree.addClass('comfort');
+                            } else {
+                                houseThree.addClass('economy');
+                            }
+                        }
+                    } else if(e.currentTarget.name === "three-consumption-mode-conn") {
+                        if(e.currentTarget.value === 'connected') {
+                            var valModeThree = $('input[name=three-consumption-mode]:checked').val();
+                            if(valModeThree === 'comfort') {
+                                houseThree.addClass('comfort');
+                            } else {
+                                houseThree.addClass('economy');
+                            }
+                        } else {
+                            houseThree.removeClass('comfort');
+                            houseThree.removeClass('economy');
+                        }
+                    }
+                    console.log(e.currentTarget.name); //points to the property name of the 'clicked' target.
+                    console.log(e.currentTarget.value); //points to the property value of the 'clicked' target.
+                });
             };
+
             onLoad();
         }(demo));
     </script>
