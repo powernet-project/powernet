@@ -57,11 +57,11 @@ class FeedForward:
 
             self.prediction = y
 
-            self.squared_error = tf.square(self.prediction - self.y_)
-            tf.summary.scalar('mean_squared_error', tf.reduce_mean(self.squared_error))
+            self.squared_error = tf.reduce_mean(tf.square(self.prediction - self.y_))
+            tf.summary.scalar('mean_squared_error', self.squared_error)
 
             self.train_step = tf.train.AdamOptimizer(1e-4) \
-                .minimize(tf.reduce_mean(self.squared_error))
+                .minimize(self.squared_error)
             self.saver = tf.train.Saver()
 
     def train(self, data):
@@ -75,18 +75,21 @@ class FeedForward:
 
         tf.global_variables_initializer().run()
 
-        batch_size = 100
-        for i in range(4000):
+        batch_size = 10000
+
+        for i in range(2000):
             batch_xs_train, batch_ys_train = generate_batch(data, batch_size)
             batch_ys_train.reshape(batch_size, 24)
 
-            summary, _ = self.sess.run([merged, self.train_step],
+            summary, error, _ = self.sess.run([merged, self.squared_error, self.train_step],
                 feed_dict={
                 self.x: batch_xs_train,
                 self.y_: batch_ys_train
                 })
             writer.add_summary(summary, i)
 
+            if i % 50 == 0:
+                print 'iteration ({}): ({}) squared error'.format(i, error)
 
         save_path = self.saver.save(self.sess, self.model_name)
         print '{}: {} seconds took for training'.format(type(self).__name__, time.clock() - t0)
