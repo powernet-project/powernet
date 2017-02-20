@@ -92,13 +92,14 @@
         .energy-level-display-two,
         .energy-level-display-three {
             margin: 10px auto;
-            width: 200px;
-            height: 200px;
+            width: 100px;
+            height: 100px;
             background-color: red;
-            border-radius: 100px;
+            opacity: .9;
+            border-radius: 50px;
         }
         .comfort {
-            opacity: 1;
+            opacity: .9;
         }
         .economy {
             opacity: .5;
@@ -196,37 +197,56 @@
               </div>
               <div class="section">
                   <h3>How Are We Doing It?</h3>
+                  <h4>A simple simulation</h4>
                   <hr/>
 
                   <div class="row">
+                      <div class="col-md-12"><h4>GRID</h4></div>
+                  </div>
+                  <div class="row">
+                      <div class="col-md-4">
+                          <input type="radio" name="grid-input" value="none" checked> No Input
+                      </div>
+                      <div class="col-md-4">
+                          <input type="radio" name="grid-input" value="ramping"> Ramping
+                      </div>
+                      <div class="col-md-4">
+                          <input type="radio" name="grid-input" value="regulation"> Regulation
+                      </div>
+                  </div>
+                  <br><br>
+                  <div class="row">
                       <div class="col-md-4 house-container">
-                          House One:
+                          <div><h4>House One:</h4></div>
                           <div>
-                              <input type="radio" name="one-consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="one-consumption-mode" value="comfort" checked> Comfort<br />
                               <input type="radio" name="one-consumption-mode" value="economy"> Economy<br />
                               <input type="radio" name="one-consumption-mode-conn" value="connected"> Connected<br/>
-                              <input type="radio" name="one-consumption-mode-conn" value="disconnected"> Disconnected<br/>
+                              <input type="radio" name="one-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
                           </div>
+                          <div><h4>Money Saved:&nbsp;<span class="money-house-one"></span></h4></div>
                           <div class="energy-level-display-one"></div>
                       </div>
                       <div class="col-md-4 house-container">
-                          House Two:
+                          <div><h4>House Two:</h4></div>
                           <div>
-                              <input type="radio" name="two-consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="two-consumption-mode" value="comfort" checked> Comfort<br />
                               <input type="radio" name="two-consumption-mode" value="economy"> Economy<br />
                               <input type="radio" name="two-consumption-mode-conn" value="connected"> Connected<br/>
-                              <input type="radio" name="two-consumption-mode-conn" value="disconnected"> Disconnected<br/>
+                              <input type="radio" name="two-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
                           </div>
+                          <div><h4>Money Saved:&nbsp;<span class="money-house-two"></span></h4></div>
                           <div class="energy-level-display-two"></div>
                       </div>
                       <div class="col-md-4 house-container">
-                          House Three:
+                          <div><h4>House Three:</h4></div>
                           <div>
-                              <input type="radio" name="three-consumption-mode" value="comfort"> Comfort<br />
+                              <input type="radio" name="three-consumption-mode" value="comfort" checked> Comfort<br />
                               <input type="radio" name="three-consumption-mode" value="economy"> Economy<br />
                               <input type="radio" name="three-consumption-mode-conn" value="connected"> Connected<br/>
-                              <input type="radio" name="three-consumption-mode-conn" value="disconnected"> Disconnected<br/>
+                              <input type="radio" name="three-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
                           </div>
+                          <div><h4>Money Saved:&nbsp;<span class="money-house-three"></span></h4></div>
                           <div class="energy-level-display-three"></div>
                       </div>
                   </div>
@@ -264,78 +284,134 @@
 
             ns.setupRadioListeners = function() {
                 $('input:radio').on('click', function(e) {
+                    var valConnOne = $('input[name=one-consumption-mode-conn]:checked').val(),
+                        valConnTwo = $('input[name=two-consumption-mode-conn]:checked').val(),
+                        valConnThree = $('input[name=three-consumption-mode-conn]:checked').val(),
+                        moneyHouseOne = $('.money-house-one'),
+                        moneyHouseTwo = $('.money-house-two'),
+                        moneyHouseThree = $('.money-house-three'),
+                        valModeOne = $('input[name=one-consumption-mode]:checked').val(),
+                        valModeTwo = $('input[name=two-consumption-mode]:checked').val(),
+                        valModeThree = $('input[name=three-consumption-mode]:checked').val(),
+                        valGrid = $('input[name=grid-input]:checked').val();
+
                     if(e.currentTarget.name === "one-consumption-mode") {
-                        var valConnOne = $('input[name=one-consumption-mode-conn]:checked').val();
                         if (valConnOne === 'connected') {
                             houseOne.removeClass('comfort');
                             houseOne.removeClass('economy');
                             if(e.currentTarget.value === 'comfort') {
                                 houseOne.addClass('comfort');
-                            } else {
+                                moneyHouseOne.text(valGrid !== 'none' ? '$$$' : '$');
+                            } else if(e.currentTarget.value === 'economy') {
                                 houseOne.addClass('economy');
+                                moneyHouseOne.text(valGrid !== 'none' ? '$$$$' : '$$');
                             }
                         }
                     } else if(e.currentTarget.name === "one-consumption-mode-conn") {
                         if(e.currentTarget.value === 'connected') {
-                            var valModeOne = $('input[name=one-consumption-mode]:checked').val();
                             if(valModeOne === 'comfort') {
                                 houseOne.addClass('comfort');
+                                moneyHouseOne.text(valGrid !== 'none' ? '$$$' : '$');
                             } else {
                                 houseOne.addClass('economy');
+                                moneyHouseOne.text(valGrid !== 'none' ? '$$$$' : '$$');
                             }
                         } else {
                             houseOne.removeClass('comfort');
                             houseOne.removeClass('economy');
+                            moneyHouseOne.text('');
                         }
                     }
 
                     if(e.currentTarget.name === "two-consumption-mode") {
-                        var valConnTwo = $('input[name=two-consumption-mode-conn]:checked').val();
                         if (valConnTwo === 'connected') {
                             houseTwo.removeClass('comfort');
                             houseTwo.removeClass('economy');
                             if (e.currentTarget.value === 'comfort') {
                                 houseTwo.addClass('comfort');
-                            } else {
+                                moneyHouseTwo.text(valGrid !== 'none' ? '$$$' : '$');
+                            } else if(e.currentTarget.value === 'economy') {
                                 houseTwo.addClass('economy');
+                                moneyHouseTwo.text(valGrid !== 'none' ? '$$$$' : '$$');
                             }
                         }
                     } else if(e.currentTarget.name === "two-consumption-mode-conn") {
                         if(e.currentTarget.value === 'connected') {
-                            var valModeTwo = $('input[name=two-consumption-mode]:checked').val();
                             if(valModeTwo === 'comfort') {
                                 houseTwo.addClass('comfort');
+                                moneyHouseTwo.text(valGrid !== 'none' ? '$$$' : '$');
                             } else {
                                 houseTwo.addClass('economy');
+                                moneyHouseTwo.text(valGrid !== 'none' ? '$$$$' : '$$');
                             }
                         } else {
                             houseTwo.removeClass('comfort');
                             houseTwo.removeClass('economy');
+                            moneyHouseTwo.text('');
                         }
                     }
 
                     if(e.currentTarget.name === "three-consumption-mode") {
-                        var valConnThree = $('input[name=three-consumption-mode-conn]:checked').val();
                         if (valConnThree === 'connected') {
                             houseThree.removeClass('comfort');
                             houseThree.removeClass('economy');
                             if (e.currentTarget.value === 'comfort') {
                                 houseThree.addClass('comfort');
-                            } else {
+                                moneyHouseThree.text(valGrid !== 'none' ? '$$$' : '$');
+                            } else if(e.currentTarget.value === 'economy') {
                                 houseThree.addClass('economy');
+                                moneyHouseThree.text(valGrid !== 'none' ? '$$$$' : '$$');
                             }
                         }
                     } else if(e.currentTarget.name === "three-consumption-mode-conn") {
                         if(e.currentTarget.value === 'connected') {
-                            var valModeThree = $('input[name=three-consumption-mode]:checked').val();
                             if(valModeThree === 'comfort') {
                                 houseThree.addClass('comfort');
+                                moneyHouseThree.text(valGrid !== 'none' ? '$$$' : '$');
                             } else {
                                 houseThree.addClass('economy');
+                                moneyHouseThree.text(valGrid !== 'none' ? '$$$$' : '$$');
                             }
                         } else {
                             houseThree.removeClass('comfort');
                             houseThree.removeClass('economy');
+                            moneyHouseThree.text('');
+                        }
+                    }
+
+                    if(e.currentTarget.name === 'grid-input') {
+                        if(e.currentTarget.value === 'none') {
+                            houseOne.removeClass('grid-response');
+                            moneyHouseOne.text(valConnOne === 'disconnected' ? '' : valModeOne === 'economy' ? '$$' : valModeOne === 'comfort' ? '$' : '');
+                            houseTwo.removeClass('grid-response');
+                            moneyHouseTwo.text(valConnTwo === 'disconnected' ? '' : valModeTwo === 'economy' ? '$$' : valModeTwo === 'comfort' ? '$' : '');
+                            houseThree.removeClass('grid-response');
+                            moneyHouseThree.text(valConnThree === 'disconnected' ? '' : valModeThree === 'economy' ? '$$' : valModeThree === 'comfort' ? '$' : '');
+                        } else {
+                            if(valConnOne === 'connected') {
+                                houseOne.addClass('grid-response');
+                                if(valModeOne === 'comfort') {
+                                    moneyHouseOne.text('$$$');
+                                } else if(valModeOne === 'economy') {
+                                    moneyHouseOne.text('$$$$');
+                                }
+                            }
+                            if(valConnTwo === 'connected') {
+                                houseTwo.addClass('grid-response');
+                                if(valModeTwo === 'comfort') {
+                                    moneyHouseTwo.text('$$$');
+                                } else if(valModeTwo === 'economy') {
+                                    moneyHouseTwo.text('$$$$');
+                                }
+                            }
+                            if(valConnThree === 'connected') {
+                                houseThree.addClass('grid-response');
+                                if(valModeThree === 'comfort') {
+                                    moneyHouseThree.text('$$$');
+                                } else if(valModeThree === 'economy') {
+                                    moneyHouseThree.text('$$$$');
+                                }
+                            }
                         }
                     }
                     console.log(e.currentTarget.name); //points to the property name of the 'clicked' target.
