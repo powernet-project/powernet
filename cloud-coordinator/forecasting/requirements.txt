@@ -1,3 +1,5 @@
+django==1.10.4
+djangoajax==2.3.7
 keras
 matplotlib==1.5.3
 mysql-python==1.2.3

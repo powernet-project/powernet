@@ -1,0 +1,106 @@
+{% load staticfiles %}
+
+<link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-datepicker3.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/weather-icons-wind.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/weather-icons.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">
+        Powernet Load Forecasting
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+    <div class="col-sm-3">
+        <div class="panel panel-default model-list">
+            <div class="panel-heading">
+                Models
+            </div>
+            <ul class="list-group sp-list">
+                {% for sp in sp_list %}
+                    <li class="list-group-item sp-list-item" data-id={{sp.sp_id}}>
+                        {{ sp.sp_id }}
+                    </li>
+                {% endfor %}
+            <ul>
+        </div>
+    </div>
+    <div class="col-sm-9">
+        <div class="panel panel-default model-view">
+            <div class="panel-heading">
+                <span class="sp-id">-</span>
+            </div>
+            <div class="panel-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <label for="datepicker">Forecast date:</label>
+                                    <input type="text" class="form-control" id="datepicker">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="chart">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="weather">
+                                <div class="icon">
+                                    <i class="wi wi-day-sunny"></i>
+                                </div>
+                                <div class="statistics">
+                                    temperature: <span class="temperature">68</span> °F
+                                    humidity: <span class="humidity">12</span> mph
+                                </div>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Normalized Root Mean Squared Deviation</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Linear Regression</td>
+                                    <td class='nmrsd-lr'>-</td>
+                                </tr>
+                                <tr>
+                                    <td>FF NN</td>
+                                    <td class='nmrsd-ffnn'>-</td>
+                                </tr>
+                                <tr>
+                                    <td>SVR</td>
+                                    <td class='nmrsd-svr'>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="{% static 'js/jquery-3.1.1.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/highcharts.src.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-datepicker.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/application.js' %}"></script>

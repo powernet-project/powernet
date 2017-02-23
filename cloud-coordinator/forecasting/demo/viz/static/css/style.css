@@ -1,0 +1,33 @@
+/*
+Template Name: DASHGUM FREE - Bootstrap 3.2 Admin Theme
+Template Version: 1.0
+Author: Carlos Alvarez
+Website: http://blacktie.co
+Premium: http://www.gridgum.com
+*/
+
+body {
+  padding-top: 70px;
+}
+
+.weather i {
+  font-size: 8em;
+}
+
+.weather .icon {
+  padding-bottom:15px;
+}
+
+.weather .statistics {
+  font-size: 1.1em;
+}
+
+.sp-list .sp-list-item {
+  cursor: pointer;
+}
+
+.sp-list .sp-list-item:hover {
+  background-color: #337ab7;
+  color: white;
+  font-weight: bold;
+}

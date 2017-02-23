@@ -1,0 +1,18 @@
+{% load staticfiles %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-theme.css' %}" />
+
+<script src="{% static 'js/jquery-3.1.1.js' %}"></script>
+<script src="{% static 'js/bootstrap.js' %}"></script>
+
+
+{% if service_point_list %}
+    <ul>
+    {% for service_point in service_point_list %}
+        <li><a href="/service_point/{{ service_point.id }}/">{{ service_point.id }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No service points are available.</p>
+{% endif %}
