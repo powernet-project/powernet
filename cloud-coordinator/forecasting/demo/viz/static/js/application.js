@@ -6,11 +6,19 @@ $(document).ready(function() {
 
   function generateChart(data) {
     const load = _.map(data.load, function(datum, i){
-      return [data.dates[i], datum]
+      return [data.dates[i], +datum.toFixed(2)]
     });
 
     const lr = _.map(data.lr, function(datum, i){
-      return [data.dates[i], datum]
+      return [data.dates[i], +datum.toFixed(2)]
+    });
+
+    const svr = _.map(data.svr, function(datum, i){
+      return [data.dates[i], +datum.toFixed(2)]
+    });
+
+    const ffnn = _.map(data.ffnn, function(datum, i){
+      return [data.dates[i], +datum.toFixed(2)]
     });
 
     $('.chart').highcharts({
@@ -50,6 +58,24 @@ $(document).ready(function() {
             lineWidth: 2,
             lineColor: Highcharts.getOptions().colors[1]
         }
+      }, {
+        name: 'Forecast (SVR)',
+        data: svr || [],
+        zIndex: 1,
+        marker: {
+            fillColor: 'white',
+            lineWidth: 2,
+            lineColor: Highcharts.getOptions().colors[2]
+        }
+      }, {
+        name: 'Forecast (FFNN)',
+        data: ffnn || [],
+        zIndex: 1,
+        marker: {
+            fillColor: 'white',
+            lineWidth: 2,
+            lineColor: Highcharts.getOptions().colors[3]
+        }
       }],
       credits: {
         enabled: false
@@ -76,7 +102,9 @@ $(document).ready(function() {
 
           $('.temperature').text(content.weather.temperature);
           $('.humidity').text(content.weather.humidity);
-          $('.nmrsd-lr').text(content.nrsmd.lr);
+          $('.nmrsd-lr').text(content.nrsmd.lr.toFixed(2));
+          $('.nmrsd-svr').text(content.nrsmd.svr.toFixed(2));
+          $('.nmrsd-ffnn').text(content.nrsmd.ffnn.toFixed(2));
         }
     });
   });

@@ -124,7 +124,8 @@ def show(request, sp_id):
     data = (model_input, np.reshape(np.array([0] * 24), (1, 24)))
 
     linear_regression = LinearRegression().predict(data)
-    # ffnn = FeedForward().predict(data)
+    svr = SVR().predict(data)
+    ffnn = FeedForward(num_layer=4, num_neuron=300,input_size=model_input.shape[1]).predict(data)
     dates = [forecast_datetime]
 
     for i in xrange(23):
@@ -140,13 +141,17 @@ def show(request, sp_id):
             'humidity': temperature_min
         },
         'nrsmd': {
-            'lr': np.sqrt(np.mean(np.square(np.subtract(load, linear_regression[0])))) / (np.max(load) - np.min(load))
+            'lr': np.sqrt(np.mean(np.square(np.subtract(load, linear_regression[0])))) / (np.max(load) - np.min(load)),
+            'svr': np.sqrt(np.mean(np.square(np.subtract(load, svr[0])))) / (np.max(load) - np.min(load)),
+            'ffnn': np.sqrt(np.mean(np.square(np.subtract(load, ffnn[0])))) / (np.max(load) - np.min(load)),
         },
         'chart': {
             'data': {
                 'dates': dates,
                 'load': load,
-                'lr': linear_regression[0]
+                'lr': linear_regression[0],
+                'svr': svr[0],
+                'ffnn': ffnn[0].tolist()
             }
         }
     }

@@ -48,7 +48,7 @@ class SVR:
         for i, model in enumerate(self.models):
             print 'svr: fitting ({})'.format(i)
             model.fit(X, Y[i])
-            joblib.dump(model, './svr.{}.pkl'.format(i))
+            joblib.dump(model, './viz/ml/svr.{}.pkl'.format(i))
 
     def predict(self, data):
         X, Y = data
@@ -56,7 +56,7 @@ class SVR:
         Y = np.split(Y, 24, axis=1)
         predictions=[]
 
-        self.models = [joblib.load('./svr.{}.pkl'.format(i)) for i in xrange(24)]
+        self.models = [joblib.load('./viz/ml/svr.{}.pkl'.format(i)) for i in xrange(24)]
 
         for model in self.models:
             prediction = model.predict(X)
