@@ -109,6 +109,7 @@ $(document).ready(function() {
           $('.nmrsd-lr').text(content.nrsmd.lr.toFixed(2));
           $('.nmrsd-svr').text(content.nrsmd.svr.toFixed(2));
           $('.nmrsd-ffnn').text(content.nrsmd.ffnn.toFixed(2));
+
           $('.model-view').removeClass('loading-mask');
         },
         fail: function(resp){
