@@ -69,7 +69,7 @@
             background-color: #2e2d29;
         }
         p {
-            font-size: 1.4em;
+            font-size: 1.2em;
         }
         .placeholder-image {
             width: 200px;
@@ -104,6 +104,9 @@
         .economy {
             opacity: .5;
         }
+        .pwr-image {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -122,11 +125,11 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Load Forecasting</a></li>
-            <li><a href="#">Ramping</a></li>
-            <li><a href="#">Regulation</a></li>
-            <li><a href="http://powernet.stanford.edu" target="_blank">Team</a></li>
+{#            <li><a href="/">Dashboard</a></li>#}
+{#            <li><a href="/forecasting.html">Load Forecasting</a></li>#}
+{#            <li><a href="/ramping.html">Ramping</a></li>#}
+{#            <li><a href="/regulation.html">Regulation</a></li>#}
+            <li><a href="http://powernet.stanford.edu/our-team" target="_blank">Team</a></li>
           </ul>
         </div>
       </div>
@@ -168,32 +171,33 @@
                      The CC optimizes power set points for each HH in order
                      to minimize cost while increasing consumer quality of service.
                   </p>
-                  <div class="image-placeholder-container">
-                      <div class="placeholder-image"></div>
-                      <div class="image-spacing"></div>
-                      <div class="placeholder-image"></div>
-                      <div class="image-spacing"></div>
-                      <div class="placeholder-image"></div>
+
+                  <br />
+                  <h4><strong>What Problem Are we Solving:</strong></h4>
+                  <br />
+                  <div class="row">
+                      <div class="col-md-6">
+                          <p>
+                              The power grid is changing rapidly.
+                              Renewables are expected to exceed 50% of load by 2050.
+                              The profile of loads is changing with numerous opportunities for control.
+                              The periphery of the power network is experiencing an increased adoption of behind-the-meter
+                              resources such as distributed solar and in the future storage.
+                          </p>
+                          <p>
+                              Powernet provides the platform to utilize net load control
+                              to provide grid services in a cost effective manner.
+                              It enables homes to simultaneously enjoy the  benefits of dynamic pricing
+                              optimization, and revenues from grid services on the assets they choose to share.
+                              We’ll essentially minimize cost, increase quality of service, preserve
+                              stability and offer services to the grid in an economically sustainable way.
+                          </p>
+                      </div>
+                      <div class="col-md-6 pwr-image">
+{#                          <img src="https://www.dropbox.com/s/vo9lkmlx9885k9n/Powernet%20network%20image%20without%20words%20grainy%201200x800.jpg?raw=1" width="400" height="267"/>#}
+                      </div>
                   </div>
-              </div>
-              <div class="section">
-                  <h3>What Problem Are we Solving</h3>
-                  <hr/>
-                  <p>
-                      The power grid is changing rapidly.
-                      Renewables are expected to exceed 50% of load by 2050.
-                      The profile of loads is changing with numerous opportunities for control.
-                      The periphery of the power network is experiencing an increased adoption of behind-the-meter
-                      resources such as distributed solar and in the future storage.
-                  </p>
-                  <p>
-                      Powernet provides the platform to utilize net load control
-                      to provide grid services in a cost effective manner.
-                      It enables homes to simultaneously enjoy the  benefits of dynamic pricing
-                      optimization, and revenues from grid services on the assets they choose to share.
-                      We’ll essentially minimize cost, increase quality of service, preserve
-                      stability and offer services to the grid in an economically sustainable way.
-                  </p>
+
               </div>
               <div class="section">
                   <h3>How Are We Doing It?</h3>
@@ -208,10 +212,10 @@
                           <input type="radio" name="grid-input" value="none" checked> No Input
                       </div>
                       <div class="col-md-4">
-                          <input type="radio" name="grid-input" value="ramping"> Ramping
+                          <input type="radio" name="grid-input" value="ramping"> Input (e.g. Ramping/Regulation)
                       </div>
                       <div class="col-md-4">
-                          <input type="radio" name="grid-input" value="regulation"> Regulation
+{#                          <input type="radio" name="grid-input" value="regulation"> Regulation#}
                       </div>
                   </div>
                   <br><br>
@@ -225,7 +229,15 @@
                               <input type="radio" name="one-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
                           </div>
                           <div><h4>Money Saved:&nbsp;<span class="money-house-one"></span></h4></div>
-                          <div class="energy-level-display-one"></div>
+                          <div class="row">
+                              <div class="col-md-4">
+                                  <img src="https://img.clipartfox.com/c3a966f5c59d415e334c82390e5fe920_free-vector-home-clip-art-home-clipart_600-568.png" width="50" height="50" />
+                              </div>
+                              <div class="col-md-8">
+                                  <div class="energy-level-display-one"></div>
+                              </div>
+                          </div>
+
                       </div>
                       <div class="col-md-4 house-container">
                           <div><h4>House Two:</h4></div>
@@ -248,6 +260,11 @@
                           </div>
                           <div><h4>Money Saved:&nbsp;<span class="money-house-three"></span></h4></div>
                           <div class="energy-level-display-three"></div>
+                      </div>
+                  </div>
+                  <div class="row grid-response-container">
+                      <div class="col-md-12">
+                          <h4>GRID'S Aggregate Response</h4>
                       </div>
                   </div>
               </div>
