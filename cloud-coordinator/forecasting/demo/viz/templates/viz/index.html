@@ -40,12 +40,10 @@
             <div class="panel-body">
                 <div class="container-fluid">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-inline">
-                                <div class="form-group">
-                                    <label for="datepicker">Forecast date:</label>
-                                    <input type="text" class="form-control" id="datepicker">
-                                </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon" id="sizing-addon2"><i class="glyphicon glyphicon-calendar"></i></span>
+                                <input type="text" id="datepicker" class="form-control" aria-describedby="sizing-addon2">
                             </div>
                         </div>
                     </div>
@@ -60,8 +58,8 @@
                                     <i class="wi wi-day-sunny"></i>
                                 </div>
                                 <div class="statistics">
-                                    temperature: <span class="temperature">68</span> °F
-                                    humidity: <span class="humidity">12</span> mph
+                                    temperature: <span class="temperature">-</span> °F
+                                    humidity: <span class="humidity">-</span> %
                                 </div>
                             </div>
                             <div>
@@ -85,10 +83,6 @@
                                     <td>FF NN</td>
                                     <td class='nmrsd-ffnn'>-</td>
                                 </tr>
-                                <tr>
-                                    <td>SVR</td>
-                                    <td class='nmrsd-svr'>-</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -103,4 +97,5 @@
 <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/bootstrap-datepicker.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/underscore.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/application.js' %}"></script>

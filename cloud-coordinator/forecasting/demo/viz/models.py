@@ -40,7 +40,5 @@ class LocalWeather(models.Model):
     Pressure = models.FloatField()
     WindSpeed = models.FloatField()
     Humidity = models.FloatField()
-    Clouds = models.CharField(max_length=10)
     HourlyPrecip = models.FloatField()
-    SolarRadiation = models.FloatField()
-    date = models.DateField()
+    date = models.DateTimeField()
