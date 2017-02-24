@@ -18,80 +18,95 @@
 </nav>
 
 <div class="container">
-    <div class="col-sm-3">
-        <div class="panel panel-default model-list">
-            <div class="panel-heading">
-                Models
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="panel panel-default model-list">
+                <div class="panel-heading">
+                    Models
+                </div>
+                <ul class="list-group sp-list">
+                    {% for sp in sp_list %}
+                        <li class="list-group-item sp-list-item" data-id={{sp.sp_id}}>
+                            {{ sp.sp_id }}
+                        </li>
+                    {% endfor %}
+                <ul>
             </div>
-            <ul class="list-group sp-list">
-                {% for sp in sp_list %}
-                    <li class="list-group-item sp-list-item" data-id={{sp.sp_id}}>
-                        {{ sp.sp_id }}
-                    </li>
-                {% endfor %}
-            <ul>
         </div>
-    </div>
-    <div class="col-sm-9">
-        <div class="panel panel-default model-view">
-            <div class="panel-heading">
-                <span class="sp-id">-</span>
-            </div>
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="input-group">
-                                <span class="input-group-addon" id="sizing-addon2"><i class="glyphicon glyphicon-calendar"></i></span>
-                                <input type="text" id="datepicker" class="form-control" aria-describedby="sizing-addon2">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-9">
-                            <div class="chart">
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="weather">
-                                <div class="icon">
-                                    <i class="wi wi-day-sunny"></i>
-                                </div>
-                                <div class="statistics">
-                                    temperature: <span class="temperature">-</span> °F
-                                    humidity: <span class="humidity">-</span> %
+        <div class="col-sm-9">
+            <div class="panel panel-default model-view">
+                <div class="panel-heading">
+                    <span class="sp-id">-</span>
+                </div>
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon" id="sizing-addon2"><i class="glyphicon glyphicon-calendar"></i></span>
+                                    <input type="text" id="datepicker" class="form-control" aria-describedby="sizing-addon2">
                                 </div>
                             </div>
-                            <div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="chart">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="weather">
+                                    <div class="icon">
+                                        <i class="wi wi-day-sunny"></i>
+                                    </div>
+                                    <div class="statistics">
+                                        temperature: <span class="temperature">-</span> °F
+                                        humidity: <span class="humidity">-</span> %
+                                    </div>
+                                </div>
+                                <div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th>Model</th>
-                                    <th>Normalized Root Mean Squared Deviation</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Linear Regression</td>
-                                    <td class='nmrsd-lr'>-</td>
-                                </tr>
-                                <tr>
-                                    <td>Feed-forward Neural Network</td>
-                                    <td class='nmrsd-ffnn'>-</td>
-                                </tr>
-                                <tr>
-                                    <td>Epsilon-Support Vector Regression</td>
-                                    <td class='nmrsd-svr'>-</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <div class="row">
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th>Model</th>
+                                        <th>Normalized Root Mean Squared Deviation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Linear Regression</td>
+                                        <td><span class='nmrsd-lr'>-</span>%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Feed-Forward Neural Network</td>
+                                        <td><span class='nmrsd-ffnn'>-</span>%</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Epsilon-Support Vector Regression</td>
+                                        <td><span class='nmrsd-svr'>-</span>%</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <a data-toggle="collapse" data-target="#collapseOne" href="#collapseOne">
+                      Visualization
+                    </a>
+                </div>
+                <div id="collapseOne" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <img src="{% static 'img/graph.png' %}"></img>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
