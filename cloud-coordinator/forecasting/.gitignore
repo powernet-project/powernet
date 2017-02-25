@@ -4,4 +4,3 @@ model.*.ckpt*
 saved_models/*
 summary/*
 *.pyc
-*.pkl
