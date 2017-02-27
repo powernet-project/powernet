@@ -85,9 +85,7 @@
             text-align: center;
             margin: 40px auto;
         }
-        .house-container {
-
-        }
+        .house-container { }
         .energy-level-display-one,
         .energy-level-display-two,
         .energy-level-display-three {
@@ -106,6 +104,9 @@
         }
         .pwr-image {
             text-align: center;
+        }
+        .grid-response-intensity {
+
         }
     </style>
 </head>
@@ -204,67 +205,116 @@
                   <h4>A simple simulation</h4>
                   <hr/>
 
-                  <div class="row">
-                      <div class="col-md-12"><h4>GRID</h4></div>
-                  </div>
-                  <div class="row">
+                  <div class="row panel panel-default panel-body">
+                      <div class="col-md-2"><h5>GRID</h5></div>
                       <div class="col-md-4">
                           <input type="radio" name="grid-input" value="none" checked> No Input
                       </div>
                       <div class="col-md-4">
                           <input type="radio" name="grid-input" value="ramping"> Input (e.g. Ramping/Regulation)
                       </div>
-                      <div class="col-md-4">
+                      <div class="col-md-2">
 {#                          <input type="radio" name="grid-input" value="regulation"> Regulation#}
                       </div>
                   </div>
-                  <br><br>
+
+                  <br>
+
+                  <div class="row panel panel-default panel-body">
+                      <div class="col-md-4"><h5>Cloud Coordinator</h5></div>
+                      <div id="cloud-component" class="col-md-8">
+                          IDLE
+                      </div>
+                  </div>
+
+                  <br>
+
                   <div class="row">
-                      <div class="col-md-4 house-container">
-                          <div><h4>House One:</h4></div>
-                          <div>
-                              <input type="radio" name="one-consumption-mode" value="comfort" checked> Comfort<br />
-                              <input type="radio" name="one-consumption-mode" value="economy"> Economy<br />
-                              <input type="radio" name="one-consumption-mode-conn" value="connected"> Connected<br/>
-                              <input type="radio" name="one-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
-                          </div>
-                          <div><h4>Money Saved:&nbsp;<span class="money-house-one"></span></h4></div>
-                          <div class="row">
+
+                      <div class="panel panel-default col-md-4 house-container">
+                          <div class="panel-body">
+                              <div><h5>House One:</h5></div>
+                              <div class="row">
+                                  <div class="col-md-6">
+                                      <input type="radio" name="one-consumption-mode" value="comfort" checked> Comfort<br />
+                                      <input type="radio" name="one-consumption-mode" value="economy"> Economy<br />
+                                  </div>
+                                  <div class="col-md-6">
+                                      <input type="radio" name="one-consumption-mode-conn" value="connected"> Connected<br/>
+                                      <input type="radio" name="one-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
+                                  </div>
+                              </div>
+                              <div><h5>Money Saved:&nbsp;<span class="money-house-one"></span></h5></div>
+                              <div class="row">
                               <div class="col-md-4">
-                                  <img style="display:none;" src="https://img.clipartfox.com/c3a966f5c59d415e334c82390e5fe920_free-vector-home-clip-art-home-clipart_600-568.png" width="50" height="50" />
+                                  <img style="margin-top:20%;" src="https://img.clipartfox.com/c3a966f5c59d415e334c82390e5fe920_free-vector-home-clip-art-home-clipart_600-568.png" width="50" height="50" />
                               </div>
                               <div class="col-md-8">
                                   <div class="energy-level-display-one"></div>
                               </div>
                           </div>
+                          </div>
+                      </div>
 
-                      </div>
-                      <div class="col-md-4 house-container">
-                          <div><h4>House Two:</h4></div>
-                          <div>
-                              <input type="radio" name="two-consumption-mode" value="comfort" checked> Comfort<br />
-                              <input type="radio" name="two-consumption-mode" value="economy"> Economy<br />
-                              <input type="radio" name="two-consumption-mode-conn" value="connected"> Connected<br/>
-                              <input type="radio" name="two-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
+                      <div class="panel panel-default col-md-4 house-container">
+                          <div class="panel-body">
+                              <div><h5>House Two:</h5></div>
+                              <div class="row">
+                                  <div class="col-md-6">
+                                      <input type="radio" name="two-consumption-mode" value="comfort" checked> Comfort<br />
+                                  <input type="radio" name="two-consumption-mode" value="economy"> Economy<br />
+                                  </div>
+                                  <div class="col-md-6">
+                                      <input type="radio" name="two-consumption-mode-conn" value="connected"> Connected<br/>
+                                  <input type="radio" name="two-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
+                                  </div>
+                              </div>
+                              <div><h5>Money Saved:&nbsp;<span class="money-house-two"></span></h5></div>
+                              <div class="row">
+                                <div class="col-md-4">
+                                    <img style="margin-top:20%;" src="https://img.clipartfox.com/c3a966f5c59d415e334c82390e5fe920_free-vector-home-clip-art-home-clipart_600-568.png" width="50" height="50" />
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="energy-level-display-two"></div>
+                                </div>
                           </div>
-                          <div><h4>Money Saved:&nbsp;<span class="money-house-two"></span></h4></div>
-                          <div class="energy-level-display-two"></div>
-                      </div>
-                      <div class="col-md-4 house-container">
-                          <div><h4>House Three:</h4></div>
-                          <div>
-                              <input type="radio" name="three-consumption-mode" value="comfort" checked> Comfort<br />
-                              <input type="radio" name="three-consumption-mode" value="economy"> Economy<br />
-                              <input type="radio" name="three-consumption-mode-conn" value="connected"> Connected<br/>
-                              <input type="radio" name="three-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
                           </div>
-                          <div><h4>Money Saved:&nbsp;<span class="money-house-three"></span></h4></div>
-                          <div class="energy-level-display-three"></div>
+                      </div>
+
+                      <div class="panel panel-default col-md-4 house-container">
+                          <div class="panel-body">
+                              <div><h5>House Three:</h5></div>
+                              <div class="row">
+                                  <div class="col-md-6">
+                                      <input type="radio" name="three-consumption-mode" value="comfort" checked> Comfort<br />
+                                  <input type="radio" name="three-consumption-mode" value="economy"> Economy<br />
+                                  </div>
+                                  <div class="col-md-6">
+                                      <input type="radio" name="three-consumption-mode-conn" value="connected"> Connected<br/>
+                                  <input type="radio" name="three-consumption-mode-conn" value="disconnected" checked> Disconnected<br/>
+                                  </div>
+                              </div>
+                              <div><h5>Money Saved:&nbsp;<span class="money-house-three"></span></h5></div>
+                              <div class="row">
+                                <div class="col-md-4">
+                                    <img style="margin-top:20%;" src="https://img.clipartfox.com/c3a966f5c59d415e334c82390e5fe920_free-vector-home-clip-art-home-clipart_600-568.png" width="50" height="50" />
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="energy-level-display-three"></div>
+                                </div>
+                          </div>
+                          </div>
                       </div>
                   </div>
-                  <div class="row grid-response-container">
-                      <div class="col-md-12">
-                          <h4>Aggregate Response (to the GRID)</h4>
+
+                  <br/>
+
+                  <div class="row grid-response-container panel panel-default panel-body">
+                      <div class="col-md-3">
+                          <h5>Aggregate Response (to the GRID)</h5>
+                      </div>
+                      <div class="col-md-9 grid-response-intensity">
+                          <br />
                       </div>
                   </div>
               </div>
@@ -277,6 +327,7 @@
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
@@ -301,6 +352,8 @@
 
             ns.setupRadioListeners = function() {
                 $('input:radio').on('click', function(e) {
+                    $('.grid-response-intensity').animate({backgroundColor: 'white'}, 500);
+
                     var valConnOne = $('input[name=one-consumption-mode-conn]:checked').val(),
                         valConnTwo = $('input[name=two-consumption-mode-conn]:checked').val(),
                         valConnThree = $('input[name=three-consumption-mode-conn]:checked').val(),
@@ -431,6 +484,17 @@
                             }
                         }
                     }
+
+                    if(valConnOne === 'connected' || valConnTwo === 'connected' || valConnThree === 'connected') {
+                        $('#cloud-component').text('TRANSFERRING COMMUNICATIONS.');
+                    } else {
+                        $('#cloud-component').text('IDLE');
+                    }
+
+                    if (valGrid !== 'none') {
+                        $('.grid-response-intensity').animate({backgroundColor: 'red'}, 5000);
+                    }
+
                     console.log(e.currentTarget.name); //points to the property name of the 'clicked' target.
                     console.log(e.currentTarget.value); //points to the property value of the 'clicked' target.
                 });
