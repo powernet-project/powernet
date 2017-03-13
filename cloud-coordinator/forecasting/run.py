@@ -28,7 +28,7 @@ sqlClient = SqlClient()
 FLAGS = None
 LOOKBACK = 7 #days
 
-load, earliest_date, latest_date = ResInterval60.get_batch(sqlClient, batch_size=200000)
+load, earliest_date, latest_date = ResInterval60.get_batch(sqlClient, batch_size=50000)
 weather = LocalWeather.get_weather(sqlClient, earliest_date, latest_date)
 
 X, Y = generate_data(LOOKBACK, load, weather)

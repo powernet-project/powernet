@@ -2,15 +2,21 @@
 """Provides Entity Structures from SQL magneto.stanford.edu Database"""
 
 from collections import defaultdict
-from datetime import date, timedelta
+import datetime
 
 from sqlalchemy import BigInteger, Column, Float, Integer, Date, String, text
 from sqlalchemy.ext.declarative import declarative_base
+
+import operator
+import pdb
 
 __author__ = "Edward Ng"
 __email__ = "edjng@stanford.edu"
 
 Base = declarative_base()
+multiadd = lambda a,b: map(operator.add, a,b)
+
+AGGREGATE_SIZE = 20
 
 class ResInterval60(Base):
     __tablename__ = 'res_interval_60'
@@ -50,70 +56,113 @@ class ResInterval60(Base):
     def get_batch(sqlClient, batch_size=30000):
         # metadata around minimum and maximum dates retrieved
         sp_id_prev = -1
-        date_prev = date.min
-        earliest_date = date.max
-        latest_date = date.min
-        result = defaultdict(list)
+        counter = 1
+        result = []
 
-        contiguous_block = None
+        earliest_date = datetime.date.max
+        latest_date = datetime.date.min
+        aggregate_load_dict = dict()
 
         for i, resInterval60 in enumerate(sqlClient.session.query(ResInterval60) \
             .order_by(ResInterval60.sp_id, ResInterval60.date) \
             .limit(batch_size).all()):
+
             if earliest_date > resInterval60.date:
                 earliest_date = resInterval60.date
 
             if latest_date < resInterval60.date:
                 latest_date = resInterval60.date
 
-            # date metadata
-            date_info = [0] * 8
-            date_info[resInterval60.date.weekday()] = 1
+            if resInterval60.sp_id != sp_id_prev and sp_id_prev != -1:
+                if counter == AGGREGATE_SIZE:
+                    date_prev = datetime.date.min
+                    aggregate_load_list = [(k,v) for k, v in aggregate_load_dict.items()]
+                    aggregate_load_list.sort()
+                    contiguous_block = None
 
-            # weekend
-            if resInterval60.date.weekday() >= 5:
-                date_info[7] = 1
+                    for date, load in aggregate_load_list:
+                        if date - datetime.timedelta(days=1) > date_prev or aggregate_load_list[-1][0] == date:
+                            if contiguous_block is not None:
+                                contiguous_block.append(date) #sentinel end date
+                                result.append(contiguous_block)
 
-            if resInterval60.sp_id != sp_id_prev or \
-                resInterval60.date - timedelta(days=1) > date_prev:
+                            contiguous_block = [date] #sentinel start date
 
-                if contiguous_block is not None:
-                    contiguous_block.append(resInterval60.date) #sentinel end date
-                    result[sp_id_prev].append(contiguous_block)
+                        if contiguous_block is None:
+                            contiguous_block = [date]
 
-                contiguous_block = [resInterval60.date] #sentinel start date
+                        # date metadata
+                        date_info = [0] * 8
+                        date_info[date.weekday()] = 1
 
-            contiguous_block.append([
-                resInterval60.q1,
-                resInterval60.q2,
-                resInterval60.q3,
-                resInterval60.q4,
-                resInterval60.q5,
-                resInterval60.q6,
-                resInterval60.q7,
-                resInterval60.q8,
-                resInterval60.q9,
-                resInterval60.q10,
-                resInterval60.q11,
-                resInterval60.q12,
-                resInterval60.q13,
-                resInterval60.q14,
-                resInterval60.q15,
-                resInterval60.q16,
-                resInterval60.q17,
-                resInterval60.q18,
-                resInterval60.q19,
-                resInterval60.q20,
-                resInterval60.q21,
-                resInterval60.q22,
-                resInterval60.q23,
-                resInterval60.q24
-                ] + date_info)
+                        # weekend
+                        if date.weekday() >= 5:
+                            date_info[7] = 1
+
+                        contiguous_block.append(load + date_info)
+                        date_prev = date
+
+                    aggregate_load_dict = dict()
+                    counter = 1
+                else:
+                    counter = counter + 1
+
+            if resInterval60.date in aggregate_load_dict:
+                aggregate_load_dict[resInterval60.date] = multiadd(aggregate_load_dict[resInterval60.date], [
+                    resInterval60.q1,
+                    resInterval60.q2,
+                    resInterval60.q3,
+                    resInterval60.q4,
+                    resInterval60.q5,
+                    resInterval60.q6,
+                    resInterval60.q7,
+                    resInterval60.q8,
+                    resInterval60.q9,
+                    resInterval60.q10,
+                    resInterval60.q11,
+                    resInterval60.q12,
+                    resInterval60.q13,
+                    resInterval60.q14,
+                    resInterval60.q15,
+                    resInterval60.q16,
+                    resInterval60.q17,
+                    resInterval60.q18,
+                    resInterval60.q19,
+                    resInterval60.q20,
+                    resInterval60.q21,
+                    resInterval60.q22,
+                    resInterval60.q23,
+                    resInterval60.q24
+                    ])
+            else:
+                aggregate_load_dict[resInterval60.date] = [
+                    resInterval60.q1,
+                    resInterval60.q2,
+                    resInterval60.q3,
+                    resInterval60.q4,
+                    resInterval60.q5,
+                    resInterval60.q6,
+                    resInterval60.q7,
+                    resInterval60.q8,
+                    resInterval60.q9,
+                    resInterval60.q10,
+                    resInterval60.q11,
+                    resInterval60.q12,
+                    resInterval60.q13,
+                    resInterval60.q14,
+                    resInterval60.q15,
+                    resInterval60.q16,
+                    resInterval60.q17,
+                    resInterval60.q18,
+                    resInterval60.q19,
+                    resInterval60.q20,
+                    resInterval60.q21,
+                    resInterval60.q22,
+                    resInterval60.q23,
+                    resInterval60.q24
+                    ]
 
             sp_id_prev = resInterval60.sp_id
-            date_prev = resInterval60.date
-
-        result[sp_id_prev].append(contiguous_block) # add last block
 
         return result, earliest_date, latest_date
 

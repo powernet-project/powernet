@@ -17,32 +17,31 @@ def generate_sets(x, y, train_index,):
     return (x_training, y_training), (x_test, y_test)
 
 # Generate input and output data
-def generate_data(lookback_days, load_dict, weather_dict):
+def generate_data(lookback_days, load, weather_dict):
     x = list()
     y = list()
 
-    for sp_id, sp_load in load_dict.iteritems():
-        for i, contiguous_block in enumerate(sp_load):
-            #filter out contiguous_blocks without enough data (lookback_days + 1 + 2 (sentinel dates))
-            if len(contiguous_block) > lookback_days + 1 + 2:
-                start_date = contiguous_block[0]
-                # we don't really need this, but for symmetry
-                end_date = contiguous_block[-1]
+    for sp_load in load:
+        #filter out contiguous_blocks without enough data (lookback_days + 1 + 2 (sentinel dates))
+        if len(sp_load) > lookback_days + 1 + 2:
+            start_date = sp_load[0]
+            # we don't really need this, but for symmetry
+            end_date = sp_load[-1]
 
-                for j in xrange(1, len(contiguous_block) - lookback_days - 2):
-                    weather_forecast = weather_dict[(start_date + timedelta(days=lookback_days + j - 1)).strftime('%Y-%m-%d')]
+            for j in xrange(1, len(sp_load) - lookback_days - 2):
+                weather_forecast = weather_dict[(start_date + timedelta(days=lookback_days + j - 1)).strftime('%Y-%m-%d')]
 
-                    temperature = weather_forecast[0::2]
-                    humidity = weather_forecast[1::2]
+                temperature = weather_forecast[0::2]
+                humidity = weather_forecast[1::2]
 
-                    weather_forecast_stats = [
-                        np.max(temperature),
-                        np.min(temperature),
-                        np.max(humidity),
-                        np.min(humidity)]
+                weather_forecast_stats = [
+                    np.max(temperature),
+                    np.min(temperature),
+                    np.max(humidity),
+                    np.min(humidity)]
 
-                    x.append(sum(contiguous_block[j: j + lookback_days], []) + weather_forecast_stats)
-                    y.append(contiguous_block[j + lookback_days][0:24])
+                x.append(sum(sp_load[j: j + lookback_days], []) + weather_forecast_stats)
+                y.append(sp_load[j + lookback_days][0:24])
 
     return np.array(x), np.array(y)
 
