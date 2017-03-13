@@ -21,7 +21,7 @@ class GRU:
         self.sess = tf.InteractiveSession()
         self.depth = depth
 
-        self.batch_size = 100
+        self.batch_size = 1000
         self.output_size = 24
         self.max_time = 24
         self.unit_size = 2
@@ -42,15 +42,14 @@ class GRU:
         self.x = tf.placeholder(tf.float32, [None, self.max_time, self.depth])
         self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
 
-        cell = tf.contrib.rnn.GRUCell(2, self.input_size)
-        state = tf.Variable(cell.zero_states(self.unit_size, tf.float32), trainable=False)
+        cell = tf.contrib.rnn.GRUCell(2, self.depth)
 
-        rnn_outputs, rnn_states = tf.nn.dynamic_rnn(cell, self.x, initial_state=initial_state)
+        rnn_outputs, rnn_states = tf.nn.dynamic_rnn(cell, self.x, dtype=tf.float32)
+        h = tf.reshape(rnn_outputs, [tf.shape(rnn_outputs)[0], -1])
 
         #add projection layer
         with tf.variable_scope("proj_layer"):
-            hidden_shape = rnn_outputs.get_shape()
-            W = tf.get_variable("W", shape=[hidden_shape[1], self.output_size],
+            W = tf.get_variable("W", shape=[24 * 2, self.output_size],
                 initializer=tf.contrib.layers.xavier_initializer())
 
             b = tf.get_variable("b", shape=[self.output_size], initializer=tf.constant_initializer(0))
@@ -76,7 +75,7 @@ class GRU:
 
         tf.global_variables_initializer().run()
 
-        for i in range(2000):
+        for i in range(10000):
             batch_xs_train, batch_ys_train = generate_batch(data, self.batch_size)
             batch_ys_train.reshape(self.batch_size, 24)
 

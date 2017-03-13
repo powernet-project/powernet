@@ -17,7 +17,7 @@ def generate_sets(x, y, train_index,):
     return (x_training, y_training), (x_test, y_test)
 
 # Generate input and output data
-def generate_data(lookback_days, load_dict, weather_dict):
+def generate_data(lookback_days, load_dict, weather_dict, recurrent=False):
     x = list()
     y = list()
 
@@ -41,7 +41,13 @@ def generate_data(lookback_days, load_dict, weather_dict):
                         np.max(humidity),
                         np.min(humidity)]
 
-                    x.append(sum(contiguous_block[j: j + lookback_days], []) + weather_forecast_stats)
+                    datum = sum(contiguous_block[j: j + lookback_days], []) + weather_forecast_stats
+
+                    if recurrent==False:
+                        x.append(datum)
+                    elif recurrent==True:
+                        x.append([datum + [i] for i in xrange(24)]) # create recurrent data set
+
                     y.append(contiguous_block[j + lookback_days][0:24])
 
     return np.array(x), np.array(y)
