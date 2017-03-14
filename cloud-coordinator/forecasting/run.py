@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import math
+import time
 
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
@@ -69,7 +70,9 @@ for train, test in kf.split(X):
     if FLAGS.train == True:
         model.train((X[train], Y[train]))
 
+    t0 = time.clock()
     prediction = model.predict((X[test], Y[test]))
+    print '{}: {} seconds took for prediction'.format(FLAGS.model, time.clock() - t0)
 
     if FLAGS.model == 'ff' or FLAGS.model == 'gru':
         model.sess.close()
