@@ -1,7 +1,7 @@
 from google.cloud import pubsub
 import urllib2
 import json
-
+      
 class HomeHub(object):
     # Credentials
     # PUBSUB user key:
