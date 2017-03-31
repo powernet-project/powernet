@@ -1,7 +1,8 @@
 from google.cloud import pubsub
 import urllib2
 import json
-      
+# This is the start
+
 class HomeHub(object):
     # Credentials
     # PUBSUB user key:
@@ -64,7 +65,3 @@ class HomeHub(object):
     def inverter(self):
         # Need to define
         pass
-
-
-
-
