@@ -11,7 +11,7 @@ class HomeHub(object):
     # Verification token for pubsub
     VERIFICATION_KEY = 'ver_key'
     # Weather API Key
-    WEATHER_KEY = 'w_key'
+    WEATHER_KEY = '8271751596ae59e4'
     CITY = 'Menlo_Park'
     STATE = 'CA'
     URL = 'http://api.wunderground.com/api/'+WEATHER_KEY+'/geolookup/conditions/q/'+STATE+'/'+CITY+'.json'
@@ -36,20 +36,26 @@ class HomeHub(object):
         return self.ps.topic(topic_name)
 
     def hh_weather(self):
-        topic = self.hh_topic('Weather')
+        # topic = self.hh_topic('Weather')
 
         # Accessing weather undeground API
         f = urllib2.urlopen(self.URL)
         json_string = f.read()
         parsed_json = json.loads(json_string)
         temp_f = parsed_json['current_observation']['temp_f']
-        humidity = parsed_json['current_observation']['relative_humudity']
+        humidity = parsed_json['current_observation']['relative_humidity']
         weather = parsed_json['current_observation']['weather']
         precipitation = parsed_json['current_observation']['precip_today_in']
-        obs_time = parsed_json['current_observation']['observation_time_rfc822']
+        obs_time = str(parsed_json['current_observation']['observation_time_rfc822'])
+        # Parsing time: Day-Mo-Yr-Time
+        obs_time = obs_time.split(" ")
+        obs_time = obs_time[1:-1]
+        obs_time = unicode("-".join(obs_time),'utf-8')
 
         value = [temp_f,humidity,weather,precipitation,obs_time]
-        self.hh_publish(value, topic)
+        print 'Weather info: '
+        print value
+        # self.hh_publish(value, topic)
 
     def sensors(self):
         # Need to define
@@ -66,3 +72,8 @@ class HomeHub(object):
     def inverter(self):
         # Need to define
         pass
+
+
+if __name__ == "__main__":
+    hh = HomeHub()
+    hh.hh_weather()
