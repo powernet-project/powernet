@@ -108,7 +108,8 @@ class ResInterval60(Base):
                 resInterval60.q22,
                 resInterval60.q23,
                 resInterval60.q24
-                ] + date_info)
+                ])
+                # ] + date_info)
 
             sp_id_prev = resInterval60.sp_id
             date_prev = resInterval60.date

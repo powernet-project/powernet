@@ -17,7 +17,7 @@ def generate_sets(x, y, train_index,):
     return (x_training, y_training), (x_test, y_test)
 
 # Generate input and output data
-def generate_data(lookback_days, load_dict, weather_dict, recurrent=False):
+def generate_data(lookback_days, load_dict, weather_dict):
     x = list()
     y = list()
 
@@ -43,11 +43,7 @@ def generate_data(lookback_days, load_dict, weather_dict, recurrent=False):
 
                     datum = sum(contiguous_block[j: j + lookback_days], []) + weather_forecast_stats
 
-                    if recurrent==False:
-                        x.append(datum)
-                    elif recurrent==True:
-                        x.append([datum + [i] for i in xrange(24)]) # create recurrent data set
-
+                    x.append(datum)
                     y.append(contiguous_block[j + lookback_days][0:24])
 
     return np.array(x), np.array(y)
@@ -55,5 +51,3 @@ def generate_data(lookback_days, load_dict, weather_dict, recurrent=False):
 def get_error(Y, Y_predict):
     rmsd = np.sqrt(np.mean(np.square(np.subtract(Y, Y_predict)), axis=0))
     return rmsd / (np.max(Y, axis=0) - np.min(Y, axis=0))
-
-

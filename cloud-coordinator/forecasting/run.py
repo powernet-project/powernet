@@ -45,9 +45,7 @@ weather = LocalWeather.get_weather(sqlClient, earliest_date, latest_date)
 
 kf = KFold(shuffle=True, n_splits=2, random_state=0)
 
-recurrent = FLAGS.model =='gru'
-
-X, Y = generate_data(LOOKBACK, load, weather, recurrent=recurrent)
+X, Y = generate_data(LOOKBACK, load, weather)
 
 print 'total dataset size X:{},Y:{}'.format(X.shape, Y.shape)
 
@@ -61,7 +59,7 @@ for train, test in kf.split(X):
     elif FLAGS.model == 'linear':
         model = LinearRegression()
     elif FLAGS.model == 'gru':
-        model = GRU(depth=X.shape[2])
+        model = GRU()
     elif FLAGS.model == 'svr':
         model = SVR()
     else:
