@@ -1,0 +1,20 @@
+{
+  "name": "pub-sub-service",
+  "description": "Node.js GCP GAE PUBSUB Messaging service for comms between HHs and CC",
+  "version": "0.0.1",
+  "private": true,
+  "license": "",
+  "author": "Stanford University - Powernet - Jonathan Goncalves",
+  "engines": {
+    "node": ">=4.3.2"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "@google-cloud/pubsub": "0.8.0",
+    "body-parser": "1.16.0",
+    "express": "4.14.1",
+    "pug": "2.0.0-beta6"
+  }
+}

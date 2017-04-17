@@ -1,0 +1,16 @@
+# [START yaml]
+service: pub-sub-service
+runtime: nodejs
+env: flex
+api_version: 1
+
+automatic_scaling:
+  min_idle_instances: 2
+
+# [START env]
+env_variables:
+  PUBSUB_TOPIC: <topic-here>
+  PUBSUB_VERIFICATION_TOKEN: <token-here>
+
+# [END env]
+# [END yaml]
