@@ -39,3 +39,4 @@ deployment:
         commands:
         # deploy to AppEngine
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=debug
+        - gcloud -q app deploy pubsub-service/app.yaml --promote --version=1 --log-http --verbosity=debug
