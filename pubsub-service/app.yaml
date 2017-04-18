@@ -6,8 +6,8 @@ api_version: 1
 
 # [START env]
 env_variables:
-  PUBSUB_TOPIC: <topic-here>
-  PUBSUB_VERIFICATION_TOKEN: <token-here>
+  PUBSUB_TOPIC: home-hub-message
+  PUBSUB_VERIFICATION_TOKEN: AIzaSyCCqfwTxxlFbYMNja4THIj7UmIIxRNUgL0
 
 # [END env]
 # [END yaml]
