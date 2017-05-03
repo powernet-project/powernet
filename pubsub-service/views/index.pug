@@ -3,15 +3,9 @@ html(lang='en')
   head
     title PubSub
     meta(charset='utf-8')
-  body
-    p Messages received by this instance:
-    ul
-      each val in messages
-        li= val
+  body    
     p
-      small.
-        Note: because your application is likely running multiple instances,
-        each instance will have a different list of messages.
+      a(href='messages') Pull For Subscription Messages
 
     //- [START form]
     form(method='post')
