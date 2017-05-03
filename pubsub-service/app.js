@@ -21,7 +21,7 @@ const messages = []; // List of all messages received by this instance
 // but will need to be manually set when running locally.
 const PUBSUB_VERIFICATION_TOKEN = process.env.PUBSUB_VERIFICATION_TOKEN;
 const topic = pubsub.topic(process.env.PUBSUB_TOPIC);
-const subscription = pubsub.subscription(process.env.PUBSUB_SUBSCRIPTION);
+const subscription = topic.subscription(process.env.PUBSUB_SUBSCRIPTION);
 
 // assign the view engine we're going to use
 app.set('view engine', 'pug');
@@ -48,15 +48,17 @@ app.post('/', formBodyParser, (req, res, next) => {
 
 // pull sub message setup
 app.get('/messages', (req, res) => {
+	console.log(subscription);
 	messages.push("Hellloooo, I'm alive")
 
-	subscription.pull().then((results) => {
+	subscription.pull({returnImmediately: false}).then((results) => {
 		const data = results[0];
 		data.forEach((message) => {
 			messages.push(`* %d %j %j`, message.id, message.data, message.attributes);
-		});
-	});
-
+		});	
+		console.log(data);
+		return subscription.ack(messages.map((message) => message.ackId));
+	});	
 	res.render('messages', { messages: messages });
 });
 
