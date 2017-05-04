@@ -21,7 +21,7 @@ const messages = []; // List of all messages received by this instance
 // but will need to be manually set when running locally.
 const PUBSUB_VERIFICATION_TOKEN = process.env.PUBSUB_VERIFICATION_TOKEN;
 const topic = pubsub.topic(process.env.PUBSUB_TOPIC);
-const subscription = topic.subscription(process.env.PUBSUB_SUBSCRIPTION);
+const subscription = pubsub.subscription(process.env.PUBSUB_SUBSCRIPTION);
 
 // assign the view engine we're going to use
 app.set('view engine', 'pug');
@@ -48,7 +48,6 @@ app.post('/', formBodyParser, (req, res, next) => {
 
 // pull sub message setup
 app.get('/messages', (req, res) => {
-	console.log(subscription);
 	messages.push("Hellloooo, I'm alive")
 
 	subscription.pull({returnImmediately: false}).then((results) => {
@@ -59,23 +58,24 @@ app.get('/messages', (req, res) => {
 		console.log(data);
 		return subscription.ack(messages.map((message) => message.ackId));
 	});	
+
 	res.render('messages', { messages: messages });
 });
 
 // push sub message setup
-// app.post('/pubsub/push', jsonBodyParser, (req, res) => {
+app.post('/pubsub/push', jsonBodyParser, (req, res) => {
 //   if (req.query.token !== PUBSUB_VERIFICATION_TOKEN) {
 //     res.status(400).send();
 //     return;
 //   }
 
-//   // The message is a unicode string encoded in base64.
-//   const message = new Buffer(req.body.message.data, 'base64').toString('utf-8');
+  // The message is a unicode string encoded in base64.
+  const message = new Buffer(req.body.message.data, 'base64').toString('utf-8');
 
-//   messages.push(message);
+  messages.push(message);
 
-//   res.status(200).send();
-// });
+  res.status(200).send();
+});
 
 
 // Start the server
