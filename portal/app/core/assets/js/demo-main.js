@@ -1,10 +1,8 @@
-var demo = demo || {};
+var pwrnet = pwrnet || {};
 
 $(document).ready(function(ns) {
     var onLoad = function() {
-        // init fullpage
-        $('#fullpage').fullpage();
-
+        alert(123);
     };
     onLoad();
-}(demo));
+}(pwrnet));
