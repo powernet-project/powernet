@@ -2,4 +2,12 @@ from django.shortcuts import render
 
 
 def index(request):
-    return render(request, 'base.html')
+    return render(request, 'partials/main.html')
+
+
+def weather(request):
+    return render(request, 'partials/weather.html')
+
+
+def electricity(request):
+    return render(request, 'partials/electricity.html')

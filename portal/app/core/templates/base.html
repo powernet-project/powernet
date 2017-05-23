@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    {% load static %}
     <meta charset="UTF-8">
     <title>Powernet</title>
 
@@ -27,33 +26,32 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="/">Dashboard</a></li>
-            <li><a href="/forecasting.html">Load Forecasting</a></li>
-            <li><a href="/ramping.html">Ramping</a></li>
-            <li><a href="/regulation.html">Regulation</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/weather/">Weather</a></li>
+            <li><a href="/electricity/">Electricity</a></li>
             <li><a href="http://powernet.stanford.edu/our-team" target="_blank">Team</a></li>
           </ul>
         </div>
       </div>
     </nav>
 
+
     <div class="container-fluid">
-      <div class="row">
-        <div class="col-sm-12 main">
-
-        </div>
-      </div>
+        {% block main-content %}{% endblock %}
     </div>
-
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js" integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E=" crossorigin="anonymous"></script>
+    <script src="http://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
+            integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
+            crossorigin="anonymous"></script>
+
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
             crossorigin="anonymous"></script>
-    <script src="{% static "js/demo-main.js" %}"></script>
+
+    {% block page-scripts %}{% endblock %}
 </body>
 </html>
