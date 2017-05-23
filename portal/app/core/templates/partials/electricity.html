@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block main-content %}
+
+    <br><br>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Electricity API</h3>
+            <h4>Data pulled from ComEd - Current Hour Average kWh</h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="electricity-response"></div>
+    </div>
+
+{% endblock main-content %}
+
+{% block page-scripts %}
+    <script src="{% static "js/electricity.js" %}"></script>
+{% endblock page-scripts %}
+

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block main-content %}
+
+    <br><br>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Weather API</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            Enter zipcode: <input id="get-weather-inpt" type="text" placeholder="94065" value="94065" readonly/>
+            <button id="get-weather">Get Forecast!</button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12" id="weather-response"></div>
+    </div>
+
+{% endblock main-content %}
+
+{% block page-scripts %}
+    <script src="{% static "js/weather.js" %}"></script>
+{% endblock page-scripts %}
+
