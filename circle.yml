@@ -28,6 +28,10 @@ dependencies:
     # Replace <your-project-id>
     - gcloud config set project $GCLOUD_PROJECT
 
+  post:
+    - ls -l /usr/local/lib/python2.7/site-packages
+    - python -c "import django; print(django.get_version())"
+
 test:
   override:
     # run local unit tests
@@ -38,7 +42,7 @@ deployment:
         branch: master
         commands:
         - export PYTHONPATH=/usr/local/lib/python2.7/site-packages
-        
+
         # Collecstatic
         - python portal/manage.py collectstatic --no-input
         
