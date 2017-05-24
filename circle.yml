@@ -4,14 +4,9 @@ machine:
 
   environment:
     GCLOUD_PROJECT: "pwrnet-158117"
-    DJANGO_MGMT_PATH: ${HOME}/portal/lib/django
 
 dependencies:
   pre:
-    # collecstatic
-    - export PYTHONPATH="$PYTHONPATH:$DJANGO_MGMT_PATH"
-    - python portal/manage.py collectstatic --no-input
-    
     # Download App Engine SDK
     # This is not necessary to deploy, its only necessary  to run local tests importing the App Engine SDK
     - curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
@@ -32,6 +27,10 @@ dependencies:
 
     # Replace <your-project-id>
     - gcloud config set project $GCLOUD_PROJECT
+
+  post:
+    # Collecstatic
+    - python portal/manage.py collectstatic --no-input
 
 test:
   override:
