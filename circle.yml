@@ -16,8 +16,8 @@ dependencies:
     - echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
 
     # vendor our dependencies
-    - mkdir -p lib
-    - pip install -r portal/requirements.txt -t lib
+    #- mkdir -p lib
+    #- pip install -r portal/requirements.txt -t lib
 
     # Make sure gcloud is up to date
     - gcloud --quiet components update app
@@ -29,7 +29,7 @@ dependencies:
     - gcloud config set project $GCLOUD_PROJECT
 
   post:
-    - ls -l /usr/local/lib/python2.7/site-packages
+    #- ls -l /usr/local/lib/python2.7/site-packages
     - python -c "import django; print(django.get_version())"
 
 test:
