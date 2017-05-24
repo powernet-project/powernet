@@ -37,6 +37,8 @@ deployment:
     staging:
         branch: master
         commands:
+        - export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+        
         # Collecstatic
         - python portal/manage.py collectstatic --no-input
         
