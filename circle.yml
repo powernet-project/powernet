@@ -40,3 +40,6 @@ deployment:
         # deploy to AppEngine
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=debug
         - gcloud -q app deploy pubsub-service/app.yaml --promote --version=1 --log-http --verbosity=debug
+        - gsutil defacl set public-read gs://powernet-app-assets
+        - python manage.py collectstatic
+        - gsutil -m rsync -r ./staticfiles gs://powernet-app-assets/

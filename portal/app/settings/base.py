@@ -22,7 +22,7 @@ INTERNAL_IPS = ('192.168.134.1', '127.0.0.1', '0.0.0.0')
 SECRET_KEY = 's$#@4*=sz+tvjhcufeijpch-&9&gseo1hn1(vbv+0=8_l+8+_p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True        # FIXME: pull from envar
+DEBUG = os.environ.get('DEBUG', True)        # FIXME: pull from envar
 ALLOWED_HOSTS = []  # FIXME: update to appropriate domain
 ROOT_URLCONF = 'app.urls'
 WSGI_APPLICATION = 'app.wsgi.application'
@@ -56,7 +56,7 @@ USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-STATIC_URL = '/static/'
+STATIC_URL = '/static/' if DEBUG else 'https://storage.googleapis.com/powernet-app-assets/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'core/assets'),)
 STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.FileSystemFinder',

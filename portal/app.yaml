@@ -9,3 +9,6 @@ handlers:
 
 - url: .*
   script: app.wsgi.application
+
+env_variables:
+  DEBUG: False
