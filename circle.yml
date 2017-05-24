@@ -7,6 +7,9 @@ machine:
 
 dependencies:
   pre:
+    # Collecstatic
+    - ./manage.py collectstatic
+
     # Download App Engine SDK
     # This is not necessary to deploy, its only necessary  to run local tests importing the App Engine SDK
     - curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
@@ -41,5 +44,4 @@ deployment:
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=debug
         - gcloud -q app deploy pubsub-service/app.yaml --promote --version=1 --log-http --verbosity=debug
         - gsutil defacl set public-read gs://powernet-app-assets
-        - python manage.py collectstatic
         - gsutil -m rsync -r ./staticfiles gs://powernet-app-assets/
