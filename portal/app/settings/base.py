@@ -59,8 +59,7 @@ USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
-#STATIC_URL = '/static/' if DEBUG else 'https://storage.googleapis.com/powernet-app-assets/'
-STATIC_URL = 'https://storage.googleapis.com/powernet-app-assets/'
+STATIC_URL = '/static/' if DEBUG else 'https://storage.googleapis.com/powernet-app-assets/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'core/assets'),)
 STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.FileSystemFinder',
