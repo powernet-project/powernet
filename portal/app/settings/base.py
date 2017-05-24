@@ -22,7 +22,7 @@ INTERNAL_IPS = ('192.168.134.1', '127.0.0.1', '0.0.0.0')
 SECRET_KEY = 's$#@4*=sz+tvjhcufeijpch-&9&gseo1hn1(vbv+0=8_l+8+_p'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', True)        # FIXME: pull from envar
+DEBUG = os.environ.get('DEBUG', False)        # FIXME: pull from envar
 ALLOWED_HOSTS = []  # FIXME: update to appropriate domain
 ROOT_URLCONF = 'app.urls'
 WSGI_APPLICATION = 'app.wsgi.application'
