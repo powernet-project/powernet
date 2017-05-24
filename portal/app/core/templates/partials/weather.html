@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 
-{% load static %}
-
 {% block main-content %}
 
     <br><br>
@@ -25,6 +23,7 @@
 {% endblock main-content %}
 
 {% block page-scripts %}
+    {% load static %}
     <script src="{% static "js/weather.js" %}"></script>
 {% endblock page-scripts %}
 
