@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load staticfiles %}
+
 {% block main-content %}
 
     <br><br>
@@ -17,7 +19,6 @@
 {% endblock main-content %}
 
 {% block page-scripts %}
-    {% load static %}
     <script src="{% static "js/electricity.js" %}"></script>
 {% endblock page-scripts %}
 
