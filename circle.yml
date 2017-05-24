@@ -30,7 +30,7 @@ dependencies:
 
   post:
     #- ls -l /usr/local/lib/python2.7/site-packages
-    - python -c "import django; print(django.get_version())"
+    #- python -c "import django; print(django.get_version())"
 
 test:
   override:
@@ -41,7 +41,7 @@ deployment:
     staging:
         branch: master
         commands:
-        - export PYTHONPATH=/usr/local/lib/python2.7/site-packages
+        - export PYTHONPATH=~/powernet/portal/lib/
 
         # Collecstatic
         - python portal/manage.py collectstatic --no-input
