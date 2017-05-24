@@ -38,8 +38,6 @@ deployment:
     staging:
         branch: master
         commands:
-        - export PYTHONPATH=~/powernet/portal/lib/
-
         # Collecstatic
         - python portal/manage.py collectstatic --no-input
         
@@ -47,4 +45,4 @@ deployment:
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=debug
         - gcloud -q app deploy pubsub-service/app.yaml --promote --version=1 --log-http --verbosity=debug
         - gsutil defacl set public-read gs://powernet-app-assets
-        - gsutil -m rsync -r ./staticfiles gs://powernet-app-assets/
+        - gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
