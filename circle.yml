@@ -8,7 +8,7 @@ machine:
 dependencies:
   pre:
     # Collecstatic
-    - ./manage.py collectstatic
+    - ./portal/manage.py collectstatic
 
     # Download App Engine SDK
     # This is not necessary to deploy, its only necessary  to run local tests importing the App Engine SDK
