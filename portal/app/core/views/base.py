@@ -12,8 +12,13 @@ def weather(request):
 
 
 def electricity(request):
-    r = requests.get('https://hourlypricing.comed.com/api?type=currenthouraverage&format=json')
+    try:
+        r = requests.get('https://hourlypricing.comed.com/api?type=currenthouraverage&format=json')
+        price = json.dumps(r.json()[0]['price'])
+    except requests.exceptions.ChunkedEncodingError as e:
+        price = 'Could not retrieve price from the ComedAPI'
+        print e
 
     return render(request, 'partials/electricity.html', {
-        'utility_price': json.dumps(r.json()[0]['price'])
+        'utility_price': price
     })

@@ -1,6 +1,6 @@
 Metadata-Version: 2.0
 Name: requests
-Version: 2.13.0
+Version: 2.14.2
 Summary: Python HTTP for Humans.
 Home-page: http://python-requests.org
 Author: Kenneth Reitz
@@ -27,6 +27,8 @@ Requires-Dist: idna (>=2.0.0); extra == 'security'
 Requires-Dist: pyOpenSSL (>=0.14); extra == 'security'
 Provides-Extra: socks
 Requires-Dist: PySocks (!=1.5.7,>=1.5.6); extra == 'socks'
+Provides-Extra: socks
+Requires-Dist: win-inet-pton; sys_platform == "win32" and (python_version == "2.7" or python_version == "2.6") and extra == 'socks'
 
 Requests: HTTP for Humans
 =========================
@@ -35,9 +37,6 @@ Requests: HTTP for Humans
     :target: https://pypi.python.org/pypi/requests
 
 .. image:: https://img.shields.io/pypi/l/requests.svg
-    :target: https://pypi.python.org/pypi/requests
-
-.. image:: https://img.shields.io/pypi/wheel/requests.svg
     :target: https://pypi.python.org/pypi/requests
 
 .. image:: https://img.shields.io/pypi/pyversions/requests.svg
@@ -50,7 +49,10 @@ Requests: HTTP for Humans
     :target: https://codecov.io/github/kennethreitz/requests
     :alt: codecov.io
 
-.. image:: https://img.shields.io/badge/SayThanks.io-☼-1EAEDB.svg
+.. image:: https://img.shields.io/github/contributors/kennethreitz/requests.svg
+    :target: https://github.com/kennethreitz/requests/graphs/contributors
+
+.. image:: https://img.shields.io/badge/Say%20Thanks-!-1EAEDB.svg
     :target: https://saythanks.io/to/kennethreitz
 
 
@@ -58,7 +60,7 @@ Requests: HTTP for Humans
 Requests is the only *Non-GMO* HTTP library for Python, safe for human
 consumption.
 
-**Warning:** Recreational use of other HTTP libraries may result in dangerous side-effects,
+**Warning:** Recreational use of the Python standard library for HTTP may result in dangerous side-effects,
 including: security vulnerabilities, verbose code, reinventing the wheel,
 constantly reading documentation, depression, headaches, or even death.
 
@@ -80,7 +82,7 @@ Behold, the power of Requests:
 
 See `the similar code, sans Requests <https://gist.github.com/973705>`_.
 
-.. image:: http://docs.python-requests.org/en/master/_static/requests-sidebar.png
+.. image:: https://raw.githubusercontent.com/kennethreitz/requests/master/docs/_static/requests-logo-small.png
     :target: http://docs.python-requests.org/
 
 
@@ -91,7 +93,7 @@ are 100% automatic, powered by `urllib3 <https://github.com/shazow/urllib3>`_,
 which is embedded within Requests.
 
 Besides, all the cool kids are doing it. Requests is one of the most
-downloaded Python packages of all time, pulling in over 7,000,000 downloads
+downloaded Python packages of all time, pulling in over 11,000,000 downloads
 every month. You don't want to be left out!
 
 Feature Support
@@ -153,6 +155,68 @@ How to Contribute
 
 Release History
 ---------------
+
+2.14.2 (2017-05-10)
++++++++++++++++++++
+
+**Bugfixes**
+
+- Changed a less-than to an equal-to and an or in the dependency markers to
+  widen compatibility with older setuptools releases.
+
+2.14.1 (2017-05-09)
++++++++++++++++++++
+
+**Bugfixes**
+
+- Changed the dependency markers to widen compatibility with older pip
+  releases.
+
+2.14.0 (2017-05-09)
++++++++++++++++++++
+
+**Improvements**
+
+- It is now possible to pass ``no_proxy`` as a key to the ``proxies``
+  dictionary to provide handling similar to the ``NO_PROXY`` environment
+  variable.
+- When users provide invalid paths to certificate bundle files or directories
+  Requests now raises ``IOError``, rather than failing at the time of the HTTPS
+  request with a fairly inscrutable certificate validation error.
+- The behavior of ``SessionRedirectMixin`` was slightly altered.
+  ``resolve_redirects`` will now detect a redirect by calling
+  ``get_redirect_target(response)`` instead of directly
+  querying ``Response.is_redirect`` and ``Response.headers['location']``.
+  Advanced users will be able to process malformed redirects more easily.
+- Changed the internal calculation of elapsed request time to have higher
+  resolution on Windows.
+- Added ``win_inet_pton`` as conditional dependency for the ``[socks]`` extra
+  on Windows with Python 2.7.
+- Changed the proxy bypass implementation on Windows: the proxy bypass
+  check doesn't use forward and reverse DNS requests anymore
+- URLs with schemes that begin with ``http`` but are not ``http`` or ``https``
+  no longer have their host parts forced to lowercase.
+
+**Bugfixes**
+
+- Much improved handling of non-ASCII ``Location`` header values in redirects.
+  Fewer ``UnicodeDecodeError``s are encountered on Python 2, and Python 3 now
+  correctly understands that Latin-1 is unlikely to be the correct encoding.
+- If an attempt to ``seek`` file to find out its length fails, we now
+  appropriately handle that by aborting our content-length calculations.
+- Restricted ``HTTPDigestAuth`` to only respond to auth challenges made on 4XX
+  responses, rather than to all auth challenges.
+- Fixed some code that was firing ``DeprecationWarning`` on Python 3.6.
+- The dismayed person emoticon (``/o\\``) no longer has a big head. I'm sure
+  this is what you were all worrying about most.
+
+
+**Miscellaneous**
+
+- Updated bundled urllib3 to v1.21.1.
+- Updated bundled chardet to v3.0.2.
+- Updated bundled idna to v2.5.
+- Updated bundled certifi to 2017.4.17.
 
 2.13.0 (2017-01-24)
 +++++++++++++++++++
