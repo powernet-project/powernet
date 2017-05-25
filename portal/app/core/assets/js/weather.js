@@ -17,7 +17,7 @@ $(document).ready(function(ns) {
         var url = "http://api.openweathermap.org/data/2.5/weather?zip=" + zipCode +
                   ",us&APPID=6faafe3de999509b86b118803ee2ca8f";
         $.get(url, function(data) {
-            $("#weather-response").html(JSON.stringify(data));
+            $("#weather-response").html(JSON.stringify(data, null, '\t'));
         });
     };
 

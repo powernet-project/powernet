@@ -13,13 +13,20 @@
 
     <div class="row">
         <div class="col-sm-12">
-            Enter zipcode: <input id="get-weather-inpt" type="text" placeholder="94065" value="94065" readonly/>
+            Enter zipcode: <input id="get-weather-inpt" type="text" placeholder="94065" value="94065"/>
             <button id="get-weather">Get Forecast!</button>
         </div>
     </div>
-
     <div class="row">
-        <div class="col-sm-12" id="weather-response"></div>
+        <div class="col-sm-5">
+            <br/>
+            <pre id="weather-response"></pre>
+        </div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-5">
+            <br/>
+            <pre id="converted-weather-response"></pre>
+        </div>
     </div>
 
 {% endblock main-content %}

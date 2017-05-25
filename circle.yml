@@ -39,10 +39,10 @@ deployment:
         branch: master
         commands:
         # Collecstatic
-        #- python portal/manage.py collectstatic --no-input
+        - python portal/manage.py collectstatic --no-input
         
         # deploy to AppEngine
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=info
-        #- gcloud -q app deploy pubsub-service/app.yaml --promote --version=1 --log-http --verbosity=info
-        #- gsutil defacl set public-read gs://powernet-app-assets
-        #- gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
+        - gcloud -q app deploy pubsub-service/app.yaml --promote --version=1 --log-http --verbosity=info
+        - gsutil defacl set public-read gs://powernet-app-assets
+        - gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/

@@ -1,3 +1,5 @@
+import json
+import requests
 from django.shortcuts import render
 
 
@@ -10,4 +12,8 @@ def weather(request):
 
 
 def electricity(request):
-    return render(request, 'partials/electricity.html')
+    r = requests.get('https://hourlypricing.comed.com/api?type=currenthouraverage&format=json')
+
+    return render(request, 'partials/electricity.html', {
+        'utility_price': json.dumps(r.json()[0]['price'])
+    })

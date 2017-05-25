@@ -13,9 +13,12 @@
     </div>
 
     <div class="row">
-        <div class="col-sm-12" id="electricity-response"></div>
+        <div class="col-sm-12">
+            <pre  id="converted-electricity-price"></pre>
+        </div>
     </div>
 
+    <input id="electricity-price" type="hidden" value={{ utility_price }}>
 {% endblock main-content %}
 
 {% block page-scripts %}
