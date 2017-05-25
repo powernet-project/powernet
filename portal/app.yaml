@@ -17,4 +17,4 @@ libraries:
   version: 2.7.11
 
 env_variables:
-  DEBUG: "False"
+  DEBUG: "True"
