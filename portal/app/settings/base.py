@@ -27,6 +27,7 @@ ALLOWED_HOSTS = [
     '.pwrnet-158117.appspot.com'
     'localhost',  # just so we can run debug false locally if needed
     '127.0.0.1',
+    '*'
 ]
 ROOT_URLCONF = 'app.urls'
 WSGI_APPLICATION = 'app.wsgi.application'
