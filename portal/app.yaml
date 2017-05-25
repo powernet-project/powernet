@@ -10,5 +10,9 @@ handlers:
 - url: .*
   script: app.wsgi.application
 
+libraries:
+- name: django
+  version: "1.9"
+
 env_variables:
   DEBUG: False
