@@ -15,4 +15,4 @@ libraries:
   version: "1.9"
 
 env_variables:
-  DEBUG: False
+  DEBUG: "False"
