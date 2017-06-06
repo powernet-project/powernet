@@ -3,7 +3,9 @@
 ## If you don't want to use virtualenv you can skip to step 3
 
 ### 1 - Install virtualenv
-``` sudo pip install virtualenv ```
+```
+sudo pip install virtualenv 
+```
 
 ### 2 - Init the venv
 ``` 
@@ -13,7 +15,9 @@ source 'foldername'/bin/activate
 ```
 
 ### 3 - Install the requirements
-``` pip install -r requirements.txt ```
+``` 
+pip install -r requirements.txt 
+```
 
 ### 3.1 - You may need to install the dependencies individually if there are conflicts
 
@@ -47,4 +51,6 @@ cp mosek.lic ~/mosek/
 ```
 
 ### 4 - Finally, run the project
-``` python LoadData.py```
+``` 
+python LoadData.py
+```
