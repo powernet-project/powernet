@@ -1,0 +1,12 @@
+# OS and IDE files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# virtual envs
+venv_*/
