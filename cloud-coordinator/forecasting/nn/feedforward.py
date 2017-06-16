@@ -77,7 +77,7 @@ class FeedForward:
 
         batch_size = 100
 
-        for i in range(10000):
+        for i in range(1000):
             batch_xs_train, batch_ys_train = generate_batch(data, batch_size)
             batch_ys_train.reshape(batch_size, 24)
 

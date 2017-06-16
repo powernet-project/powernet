@@ -6,7 +6,7 @@ from sklearn.externals import joblib
 class LinearRegression:
     def __init__(self):
         self.model = linear_model.LinearRegression()
-        self.model_name = "./lr.pkl"
+        self.model_name = "./saved_models/lr.pkl"
 
     def train(self, data):
         X, Y = data
