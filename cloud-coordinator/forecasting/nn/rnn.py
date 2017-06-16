@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""FeedForward network Developed using Tensorflow"""
+"""Decoder-Encoder network Developed using Tensorflow"""
 
 import math
 import numpy as np
