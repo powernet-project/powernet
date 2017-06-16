@@ -4,6 +4,8 @@
 import argparse
 import datetime
 import math
+import sys
+import time
 
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
@@ -13,7 +15,7 @@ import tensorflow as tf
 from linear.linear_regression import LinearRegression
 from linear.svr import SVR
 from nn.feedforward import FeedForward
-from nn.rnn import Recurrent
+from nn.rnn import GRU
 from sql.models import ResInterval60, LocalWeather
 from sql.sqlclient import SqlClient
 
@@ -28,13 +30,6 @@ sqlClient = SqlClient()
 FLAGS = None
 LOOKBACK = 7 #days
 
-load, earliest_date, latest_date = ResInterval60.get_batch(sqlClient, batch_size=200000)
-weather = LocalWeather.get_weather(sqlClient, earliest_date, latest_date)
-
-X, Y = generate_data(LOOKBACK, load, weather)
-
-print 'total dataset size X:{},Y:{}'.format(X.shape, Y.shape)
-
 parser = argparse.ArgumentParser(description='Run ML models for load forecasting.')
 parser.add_argument('--model', default='ff', help='Pick a model to use for estimation.')
 parser.add_argument('-t', '--train', action='store_true', help='Explicitly train.')
@@ -45,7 +40,15 @@ FLAGS, unparsed = parser.parse_known_args()
 print 'running with arguments: ({})'.format(FLAGS)
 
 errors = []
+
+load, earliest_date, latest_date = ResInterval60.get_batch(sqlClient, batch_size=20000)
+weather = LocalWeather.get_weather(sqlClient, earliest_date, latest_date)
+
 kf = KFold(shuffle=True, n_splits=2, random_state=0)
+
+X, Y = generate_data(LOOKBACK, load, weather)
+
+print 'total dataset size X:{},Y:{}'.format(X.shape, Y.shape)
 
 for train, test in kf.split(X):
     model = None
@@ -56,17 +59,22 @@ for train, test in kf.split(X):
         tf.logging.set_verbosity(tf.logging.WARN)
     elif FLAGS.model == 'linear':
         model = LinearRegression()
+    elif FLAGS.model == 'gru':
+        model = GRU()
     elif FLAGS.model == 'svr':
         model = SVR()
     else:
-        print '{} is an invalid model. Pick from (ff),(linear),(svr).'.format(FLAGS.model)
+        print '{} is an invalid model. Pick from (ff),(linear),(svr),(gru).'.format(FLAGS.model)
+        sys.exit()
 
     if FLAGS.train == True:
         model.train((X[train], Y[train]))
 
+    t0 = time.clock()
     prediction = model.predict((X[test], Y[test]))
+    print '{}: {} seconds took for prediction'.format(FLAGS.model, time.clock() - t0)
 
-    if FLAGS.model == 'ff':
+    if FLAGS.model in set(['ff', 'gru']):
         model.sess.close()
         tf.reset_default_graph()
 

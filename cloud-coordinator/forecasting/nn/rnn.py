@@ -1,52 +1,133 @@
 #!/usr/bin/env python
-"""LSTM Neural Network using Kera"""
+"""Decoder-Encoder network Developed using Tensorflow"""
 
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.layers.recurrent import LSTM
-
+import math
 import numpy as np
+import os
+import random
+import time
+import tensorflow as tf
+import pdb
 
 __author__ = "Edward Ng"
 __email__ = "edjng@stanford.edu"
 
-class Recurrent:
-  def __init__(self, num_layer=0, num_neuron=300):
-    self.num_layer = num_layer
-    self.num_neuron = num_neuron
+def generate_batch(data, batch_size=100):
+    X, Y = data
+    indices = np.random.choice(len(X), batch_size, replace=False)
+    return X[indices], Y[indices]
 
-    self.input_size=409
-    self.output_size=24
+class GRU:
+    def __init__(self):
+        self.sess = tf.InteractiveSession()
 
-    self.construct_graph()
+        self.batch_size = 1000
+        self.output_size = 24
+        self.max_time = 24 * 7
 
-  def construct_graph(self):
-    self.model = Sequential()
+        self.num_layer = 3
+        self.num_neuron = 50
 
-    if self.num_layer == 0:
-      self.model.add(LSTM(self.output_size, input_dim=1))
-    else:
-      self.model.add(LSTM(self.num_neuron, input_dim=1))
+        self.model_name = "./saved_models/gru.ckpt"
+        self.construct_graph()
 
-      for _ in xrange(self.num_layer - 1):
-        self.model.add(Dense(self.num_neuron))
+    def layer(self, X, num_neuron):
+        input_shape = X.get_shape()
 
-      # projection layer
-      self.model.add(Dense(self.output_size))
+        #layer takes input X, with num_neuron many neurons. Relu is used for activation.
+        W = tf.get_variable("W", shape=[input_shape[1], num_neuron], initializer=tf.contrib.layers.xavier_initializer())
+        b = tf.get_variable("b", shape=[num_neuron], initializer=tf.constant_initializer(0))
+        Y = tf.matmul(X, W) + b
+        return tf.nn.relu(Y)
 
+    def construct_graph(self):
+        self.hourly_data = tf.placeholder(tf.float32, [None, self.max_time, 1])
+        self.weather = tf.placeholder(tf.float32, [None, 4])
+        self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
 
-    self.model.compile(loss='mean_squared_error', optimizer='adam')
+        with tf.variable_scope("encoder"):
+            encoder_cell = tf.contrib.rnn.GRUCell(24)
+            _, encoder_final_state = tf.nn.dynamic_rnn(
+                encoder_cell,
+                self.hourly_data,
+                dtype=tf.float32)
 
-  def train(self, data):
-    x, y = data
-    history = self.model.fit(x, y, validation_split=0.1, nb_epoch=0, batch_size=100, verbose=1)
-    self.model.save_weights("./model.lstm.ckpt")
-    return history
+        U = tf.reshape(encoder_final_state, (-1, 24, 1))
 
-  def test(self, data):
-    x, y = data
-    self.model.load_weights("./model.lstm.ckpt")
+        with tf.variable_scope("decoder"):
+            decoder_cell = tf.contrib.rnn.GRUCell(1)
+            decoder_output, _ = tf.nn.dynamic_rnn(decoder_cell, U, dtype=tf.float32)
 
-    y_ = self.model.predict(x)
+        decoder_output = tf.squeeze(decoder_output, squeeze_dims=[2])
+        h = tf.concat([decoder_output, self.weather], 1)
 
-    return np.mean(np.square(y - y_)) / np.mean(y)
+        for layer_idx in range(self.num_layer):
+        #add intermediate layers
+            with tf.variable_scope("layer{}".format(layer_idx)):
+                h = self.layer(h, self.num_neuron)
+
+        #add projection layer
+        with tf.variable_scope("proj_layer"):
+            hidden_shape = h.get_shape()
+            W = tf.get_variable("W", shape=[hidden_shape[1], self.output_size],
+                initializer=tf.contrib.layers.xavier_initializer())
+
+            b = tf.get_variable("b",
+                shape=[self.output_size],
+                initializer=tf.constant_initializer(0))
+
+            y = tf.matmul(h, W) + b
+
+            self.prediction = y
+
+            self.loss = tf.reduce_mean(tf.square(self.prediction - self.y_))
+            tf.summary.scalar('mean_squared_error', self.loss)
+
+        with tf.variable_scope("train_step"):
+            optimizer = tf.train.AdamOptimizer(1e-4)
+            grads_and_vars = optimizer.compute_gradients(self.loss)
+            gradients = [grads_and_var[0] for grads_and_var in grads_and_vars]
+
+            gradients, _ = tf.clip_by_global_norm(gradients, 10)
+            grads_and_vars = [(gradient, grads_and_vars[i][1]) for i, gradient in enumerate(gradients)]
+
+            self.grad_norm = tf.global_norm(gradients)
+            self.train_step = optimizer.apply_gradients(grads_and_vars)
+
+        self.saver = tf.train.Saver()
+
+    def train(self, data):
+        t0 = time.clock()
+        x, y = data
+
+        print '{}: training with data: ({})'.format(type(self).__name__, x.shape)
+
+        merged = tf.summary.merge_all()
+        writer = tf.summary.FileWriter('./summary', graph=tf.get_default_graph())
+
+        tf.global_variables_initializer().run()
+
+        for i in range(10000):
+            batch_xs_train, batch_ys_train = generate_batch(data, self.batch_size)
+            batch_ys_train.reshape(self.batch_size, 24)
+
+            summary, error, _ = self.sess.run([merged, self.loss, self.train_step],
+                feed_dict={
+                self.hourly_data: np.expand_dims(batch_xs_train[:, 0:24 * 7], 2),
+                self.weather: batch_xs_train[:, 24*7:],
+                self.y_: batch_ys_train
+                })
+            writer.add_summary(summary, i)
+
+            if i % 50 == 0:
+                print 'iteration ({}): ({}) squared error'.format(i, error)
+
+        save_path = self.saver.save(self.sess, self.model_name)
+        print '{}: {} seconds took for training'.format(type(self).__name__, time.clock() - t0)
+
+    def predict(self, data):
+        x, y = data
+
+        print '{}: testing with data: ({})'.format(type(self).__name__, x.shape)
+        self.saver.restore(self.sess, self.model_name)
+        return self.sess.run(self.prediction, feed_dict = {self.x: x, self.y_: y})

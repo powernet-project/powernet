@@ -41,7 +41,9 @@ def generate_data(lookback_days, load_dict, weather_dict):
                         np.max(humidity),
                         np.min(humidity)]
 
-                    x.append(sum(contiguous_block[j: j + lookback_days], []) + weather_forecast_stats)
+                    datum = sum(contiguous_block[j: j + lookback_days], []) + weather_forecast_stats
+
+                    x.append(datum)
                     y.append(contiguous_block[j + lookback_days][0:24])
 
     return np.array(x), np.array(y)
@@ -49,5 +51,3 @@ def generate_data(lookback_days, load_dict, weather_dict):
 def get_error(Y, Y_predict):
     rmsd = np.sqrt(np.mean(np.square(np.subtract(Y, Y_predict)), axis=0))
     return rmsd / (np.max(Y, axis=0) - np.min(Y, axis=0))
-
-

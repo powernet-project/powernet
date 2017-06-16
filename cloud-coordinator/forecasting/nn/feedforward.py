@@ -71,13 +71,13 @@ class FeedForward:
         print '{}: training with data: ({})'.format(type(self).__name__, x.shape)
 
         merged = tf.summary.merge_all()
-        writer = tf.summary.FileWriter('./summary')
+        writer = tf.summary.FileWriter('./summary', graph=tf.get_default_graph())
 
         tf.global_variables_initializer().run()
 
-        batch_size = 10000
+        batch_size = 100
 
-        for i in range(2000):
+        for i in range(1000):
             batch_xs_train, batch_ys_train = generate_batch(data, batch_size)
             batch_ys_train.reshape(batch_size, 24)
 
