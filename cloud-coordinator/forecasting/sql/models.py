@@ -3,6 +3,7 @@
 
 from collections import defaultdict
 from datetime import date, timedelta
+import holidays
 
 from sqlalchemy import BigInteger, Column, Float, Integer, Date, String, text
 from sqlalchemy.ext.declarative import declarative_base
@@ -48,6 +49,7 @@ class ResInterval60(Base):
 
     @staticmethod
     def get_batch(sqlClient, batch_size=30000):
+        us_ca_holidays = holidays.US(state='CA')
         # metadata around minimum and maximum dates retrieved
         sp_id_prev = -1
         date_prev = date.min
@@ -70,8 +72,8 @@ class ResInterval60(Base):
             date_info = [0] * 8
             date_info[resInterval60.date.weekday()] = 1
 
-            # weekend
-            if resInterval60.date.weekday() >= 5:
+            # weekend or holiday
+            if resInterval60.date.weekday() >= 5 or resInterval60.date in us_ca_holidays:
                 date_info[7] = 1
 
             if resInterval60.sp_id != sp_id_prev or \

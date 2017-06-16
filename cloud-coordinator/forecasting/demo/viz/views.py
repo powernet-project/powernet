@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.http import HttpResponse
 from django_ajax.decorators import ajax
+import holidays
 import numpy as np
 
 from .models import ResInterval60, LocalWeather
@@ -28,12 +29,14 @@ def show(request, sp_id):
     forecast_date = res_intervals[len(res_intervals) - 1].date + timedelta(days=1)
     forecast_datetime = pytz.utc.localize(datetime.combine(forecast_date, datetime.min.time()))
 
+    us_ca_holidays = holidays.US(state='CA')
+
     for res_interval in res_intervals:
         date_info = [0] * 8
         date_info[res_interval.date.weekday()] = 1
 
-        # weekend
-        if res_interval.date.weekday() >= 5:
+        # weekend or holiday
+        if res_interval.date.weekday() >= 5 or res_interval.date in us_ca_holidays:
             date_info[7] = 1
 
         model_input.extend([
