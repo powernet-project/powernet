@@ -46,23 +46,19 @@ class GRU:
         self.y_ = tf.placeholder(tf.float32, [None, self.output_size])
 
         with tf.variable_scope("encoder"):
-            encoder_fwd_cell = tf.contrib.rnn.GRUCell(24)
-            encoder_bwd_cell = tf.contrib.rnn.GRUCell(24)
-            _, encoder_final_state = tf.nn.bidirectional_dynamic_rnn(
-                encoder_fwd_cell,
-                encoder_bwd_cell,
+            encoder_cell = tf.contrib.rnn.GRUCell(24)
+            _, encoder_final_state = tf.nn.dynamic_rnn(
+                encoder_cell,
                 self.hourly_data,
-                sequence_length=[24 * 7] * self.hourly_data.get_shape()[1],
                 dtype=tf.float32)
 
-        U = tf.reshape(tf.concat(encoder_final_state, 1), (-1, 24, 2))
+        U = tf.reshape(encoder_final_state, (-1, 24, 1))
 
         with tf.variable_scope("decoder"):
             decoder_cell = tf.contrib.rnn.GRUCell(1)
             decoder_output, _ = tf.nn.dynamic_rnn(decoder_cell, U, dtype=tf.float32)
 
         decoder_output = tf.squeeze(decoder_output, squeeze_dims=[2])
-        print(decoder_output.get_shape())
         h = tf.concat([decoder_output, self.weather], 1)
 
         for layer_idx in range(self.num_layer):

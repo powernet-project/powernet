@@ -4,6 +4,7 @@
 import argparse
 import datetime
 import math
+import sys
 import time
 
 from sklearn.preprocessing import MinMaxScaler
@@ -64,6 +65,7 @@ for train, test in kf.split(X):
         model = SVR()
     else:
         print '{} is an invalid model. Pick from (ff),(linear),(svr),(gru).'.format(FLAGS.model)
+        sys.exit()
 
     if FLAGS.train == True:
         model.train((X[train], Y[train]))
@@ -72,7 +74,7 @@ for train, test in kf.split(X):
     prediction = model.predict((X[test], Y[test]))
     print '{}: {} seconds took for prediction'.format(FLAGS.model, time.clock() - t0)
 
-    if FLAGS.model == 'ff' or FLAGS.model == 'gru':
+    if FLAGS.model in set(['ff', 'gru']):
         model.sess.close()
         tf.reset_default_graph()
 
