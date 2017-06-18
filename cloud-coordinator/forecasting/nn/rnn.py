@@ -130,4 +130,8 @@ class GRU:
 
         print '{}: testing with data: ({})'.format(type(self).__name__, x.shape)
         self.saver.restore(self.sess, self.model_name)
-        return self.sess.run(self.prediction, feed_dict = {self.x: x, self.y_: y})
+        return self.sess.run(self.prediction, feed_dict={
+            self.hourly_data: np.expand_dims(x[:, 0:24 * 7], 2),
+            self.weather: x[:, 24*7:],
+            self.y_: y
+        })
