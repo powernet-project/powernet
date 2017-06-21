@@ -16,7 +16,7 @@ from linear.linear_regression import LinearRegression
 from linear.svr import SVR
 from nn.feedforward import FeedForward
 from nn.rnn import GRU
-from sql.models import ResInterval60, LocalWeather
+from sql.models import ResInterval60, ResInterval15, LocalWeather
 from sql.sqlclient import SqlClient
 
 from util import generate_data, get_error
@@ -34,6 +34,7 @@ parser = argparse.ArgumentParser(description='Run ML models for load forecasting
 parser.add_argument('--model', default='ff', help='Pick a model to use for estimation.')
 parser.add_argument('-t', '--train', action='store_true', help='Explicitly train.')
 parser.add_argument('-p', '--plot', action='store_true', help='Explicitly plot.')
+parser.add_argument('--max_examples', default='20000', help='Number of examples to train on')
 
 FLAGS, unparsed = parser.parse_known_args()
 
@@ -41,7 +42,7 @@ print 'running with arguments: ({})'.format(FLAGS)
 
 errors = []
 
-load, earliest_date, latest_date = ResInterval60.get_batch(sqlClient, batch_size=20000)
+load, earliest_date, latest_date = ResInterval60.get_batch(sqlClient, batch_size=FLAGS.max_examples)
 weather = LocalWeather.get_weather(sqlClient, earliest_date, latest_date)
 
 kf = KFold(shuffle=True, n_splits=2, random_state=0)
@@ -55,7 +56,7 @@ for train, test in kf.split(X):
 
     if FLAGS.model == 'ff':
         tf.logging.set_verbosity(tf.logging.INFO)
-        model = FeedForward(num_layer=4, num_neuron=300,input_size=X.shape[1])
+        model = FeedForward(num_layer=5, num_neuron=600,input_size=X.shape[1])
         tf.logging.set_verbosity(tf.logging.WARN)
     elif FLAGS.model == 'linear':
         model = LinearRegression()

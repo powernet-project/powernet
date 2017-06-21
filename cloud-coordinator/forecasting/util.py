@@ -17,7 +17,7 @@ def generate_sets(x, y, train_index,):
     return (x_training, y_training), (x_test, y_test)
 
 # Generate input and output data
-def generate_data(lookback_days, load_dict, weather_dict):
+def generate_data(lookback_days, load_dict, weather_dict, intervals=24):
     x = list()
     y = list()
 
@@ -44,7 +44,7 @@ def generate_data(lookback_days, load_dict, weather_dict):
                     datum = sum(contiguous_block[j: j + lookback_days], []) + weather_forecast_stats
 
                     x.append(datum)
-                    y.append(contiguous_block[j + lookback_days][0:24])
+                    y.append(contiguous_block[j + lookback_days][0:intervals])
 
     return np.array(x), np.array(y)
 
