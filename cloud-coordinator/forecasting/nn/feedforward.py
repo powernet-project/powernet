@@ -29,12 +29,9 @@ class FeedForward:
 
     def layer(self, X, num_neuron):
         input_shape = X.get_shape()
-
-        #layer takes input X, with num_neuron many neurons. Relu is used for activation.
-        W = tf.get_variable("W", shape=[input_shape[1], num_neuron], initializer=tf.contrib.layers.xavier_initializer())
-        b = tf.get_variable("b", shape=[num_neuron], initializer=tf.constant_initializer(0))
-        Y = tf.matmul(X, W) + b
-        return tf.nn.relu(Y)
+        return tf.layers.dense(X, num_neuron,
+            activation=tf.nn.relu,
+            kernel_initializer=tf.contrib.layers.xavier_initializer())
 
     def construct_graph(self):
         self.x = tf.placeholder(tf.float32, [None, self.input_size])
@@ -48,23 +45,27 @@ class FeedForward:
 
         #add projection layer
         with tf.variable_scope("proj_layer"):
-            hidden_shape = h.get_shape()
-            W = tf.get_variable("W", shape=[hidden_shape[1], self.output_size],
-                initializer=tf.contrib.layers.xavier_initializer())
+            self.prediction = tf.layers.dense(h, self.output_size,
+                kernel_initializer=tf.contrib.layers.xavier_initializer())
 
-            b = tf.get_variable("b", shape=[self.output_size], initializer=tf.constant_initializer(0))
-            y = tf.matmul(h, W) + b
-
-            self.prediction = y
-
+        with tf.variable_scope("optimization"):
             self.squared_error = tf.reduce_mean(tf.square(self.prediction - self.y_))
             tf.summary.scalar('mean_squared_error', self.squared_error)
 
-            self.train_step = tf.train.AdamOptimizer(1e-4) \
-                .minimize(self.squared_error)
+            global_step = tf.Variable(0, trainable=False)
+            starter_learning_rate = 1e-3
+            learning_rate = tf.train.exponential_decay(
+                starter_learning_rate,
+                global_step,
+                100000,
+                0.98,
+                staircase=True)
+
+            self.train_step = tf.train.AdamOptimizer(learning_rate) \
+                .minimize(self.squared_error, global_step=global_step)
             self.saver = tf.train.Saver()
 
-    def train(self, data):
+    def train(self, data, batch_size=100, epochs=4):
         t0 = time.clock()
         x, y = data
 
@@ -74,8 +75,6 @@ class FeedForward:
         writer = tf.summary.FileWriter('./summary', graph=tf.get_default_graph())
 
         tf.global_variables_initializer().run()
-
-        batch_size = 100
 
         for i in range(1000):
             batch_xs_train, batch_ys_train = generate_batch(data, batch_size)

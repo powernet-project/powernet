@@ -20,7 +20,6 @@ from sql.models import ResInterval60, ResInterval15, LocalWeather
 from sql.sqlclient import SqlClient
 
 from util import generate_data, get_error
-from sklearn.model_selection import KFold
 
 __author__ = "Edward Ng"
 __email__ = "edjng@stanford.edu"
@@ -45,61 +44,73 @@ errors = []
 load, earliest_date, latest_date = ResInterval60.get_batch(sqlClient, batch_size=FLAGS.max_examples)
 weather = LocalWeather.get_weather(sqlClient, earliest_date, latest_date)
 
-kf = KFold(shuffle=True, n_splits=2, random_state=0)
-
 X, Y = generate_data(LOOKBACK, load, weather)
+
+np.random.seed(1234) # Fix random draw
+idx = np.random.choice(np.arange(len(X)), len(X), replace=False)
+
+X = X[idx]
+Y = Y[idx]
+
+train_idx = int(len(X) * 0.7)
+test_idx = int(len(X) * 0.9)
+
+X_train = X[:train_idx]
+Y_train = Y[:train_idx]
+
+X_test = X[test_idx:]
+Y_test = Y[test_idx:]
 
 print 'total dataset size X:{},Y:{}'.format(X.shape, Y.shape)
 
-for train, test in kf.split(X):
-    model = None
+model = None
 
-    if FLAGS.model == 'ff':
-        tf.logging.set_verbosity(tf.logging.INFO)
-        model = FeedForward(num_layer=5, num_neuron=600,input_size=X.shape[1])
-        tf.logging.set_verbosity(tf.logging.WARN)
-    elif FLAGS.model == 'linear':
-        model = LinearRegression()
-    elif FLAGS.model == 'gru':
-        model = GRU()
-    elif FLAGS.model == 'svr':
-        model = SVR()
-    else:
-        print '{} is an invalid model. Pick from (ff),(linear),(svr),(gru).'.format(FLAGS.model)
-        sys.exit()
+if FLAGS.model == 'ff':
+    tf.logging.set_verbosity(tf.logging.INFO)
+    model = FeedForward(num_layer=5, num_neuron=600,input_size=X_train.shape[1])
+    tf.logging.set_verbosity(tf.logging.WARN)
+elif FLAGS.model == 'linear':
+    model = LinearRegression()
+elif FLAGS.model == 'gru':
+    model = GRU()
+elif FLAGS.model == 'svr':
+    model = SVR()
+else:
+    print '{} is an invalid model. Pick from (ff),(linear),(svr),(gru).'.format(FLAGS.model)
+    sys.exit()
 
-    if FLAGS.train == True:
-        model.train((X[train], Y[train]))
+if FLAGS.train == True:
+    model.train((X_train, Y_train))
 
-    t0 = time.clock()
-    prediction = model.predict((X[test], Y[test]))
-    print '{}: {} seconds took for prediction'.format(FLAGS.model, time.clock() - t0)
+t0 = time.clock()
+prediction = model.predict((X_test, Y_test))
+print '{}: {} seconds took for prediction'.format(FLAGS.model, time.clock() - t0)
 
-    if FLAGS.model in set(['ff', 'gru']):
-        model.sess.close()
-        tf.reset_default_graph()
+if FLAGS.model in set(['ff', 'gru']):
+    model.sess.close()
+    tf.reset_default_graph()
 
-    error = get_error(Y[test], prediction)
-    print """=================
+error = get_error(Y_test, prediction)
+print """=================
 nrsmd per hour: {}
 nrsmd mean: {}""".format(error, np.mean(error))
 
-    errors.append(error)
+# errors.append(error)
 
-    if FLAGS.plot == True:
-        plt.plot(Y[test][-15:-1].flatten())
-        plt.plot(prediction[-15:-1].flatten())
-        plt.show()
+if FLAGS.plot == True:
+    plt.plot(Y[test][-15:-1].flatten())
+    plt.plot(prediction[-15:-1].flatten())
+    plt.show()
 
     # elif FLAGS.model == 'lstm':
     #     recurrent = Recurrent()
     #     x=np.reshape(x, (x.shape[0], x.shape[1], 1))
     #     recurrent.train(training)
     #     print recurrent.test(test)
-errors = np.array(errors)
+# errors = np.array(errors)
 
-print """=======
-SUMMARY
-=======
-nrmsd per hour: {}
-nsrmd mean: {}""".format(np.mean(errors, axis=0), np.mean(errors))
+# print """=======
+# SUMMARY
+# =======
+# nrmsd per hour: {}
+# nsrmd mean: {}""".format(np.mean(errors, axis=0), np.mean(errors))
