@@ -89,10 +89,10 @@ class FeedForward:
 
                 summary, error, _ = self.sess.run([merged, self.squared_error, self.train_step],
                     feed_dict={
-                    self.x: batch_xs_train,
-                    self.y_: batch_ys_train
+                        self.x: batch_xs_train,
+                        self.y_: batch_ys_train
                     })
-                writer.add_summary(summary, i)
+                writer.add_summary(summary, j)
 
                 if j % 50 == 0:
                     print 'iteration ({}): ({}) squared error'.format(j, error)
