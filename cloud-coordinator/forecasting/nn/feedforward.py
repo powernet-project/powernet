@@ -65,30 +65,37 @@ class FeedForward:
                 .minimize(self.squared_error, global_step=global_step)
             self.saver = tf.train.Saver()
 
-    def train(self, data, batch_size=100, epochs=4):
+    def train(self, data, batch_size=100, num_epochs=4):
         t0 = time.clock()
-        x, y = data
+        X, y = data
 
-        print '{}: training with data: ({})'.format(type(self).__name__, x.shape)
+        print '{}: training with data: ({})'.format(type(self).__name__, X.shape)
 
         merged = tf.summary.merge_all()
         writer = tf.summary.FileWriter('./summary', graph=tf.get_default_graph())
 
         tf.global_variables_initializer().run()
 
-        for i in range(1000):
-            batch_xs_train, batch_ys_train = generate_batch(data, batch_size)
-            batch_ys_train.reshape(batch_size, 24)
+        for i in range(num_epochs):
+            print 'starting epoch ({})'.format(i)
+            idx = np.random.choice(np.arange(len(X)), len(X), replace=False)
 
-            summary, error, _ = self.sess.run([merged, self.squared_error, self.train_step],
-                feed_dict={
-                self.x: batch_xs_train,
-                self.y_: batch_ys_train
-                })
-            writer.add_summary(summary, i)
+            X = X[idx]
+            y = y[idx]
 
-            if i % 50 == 0:
-                print 'iteration ({}): ({}) squared error'.format(i, error)
+            for j in range(len(X) / batch_size):
+                batch_xs_train, batch_ys_train = X[j * batch_size:(j+1) * batch_size], y[j * batch_size:(j+1) * batch_size]
+                batch_ys_train.reshape(batch_size, 24)
+
+                summary, error, _ = self.sess.run([merged, self.squared_error, self.train_step],
+                    feed_dict={
+                    self.x: batch_xs_train,
+                    self.y_: batch_ys_train
+                    })
+                writer.add_summary(summary, i)
+
+                if j % 50 == 0:
+                    print 'iteration ({}): ({}) squared error'.format(j, error)
 
         save_path = self.saver.save(self.sess, self.model_name)
         print '{}: {} seconds took for training'.format(type(self).__name__, time.clock() - t0)
