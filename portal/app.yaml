@@ -12,7 +12,7 @@ handlers:
 
 libraries:
 - name: django
-  version: "1.9"
+  version: "1.11"
 - name: ssl
   version: 2.7.11
 
