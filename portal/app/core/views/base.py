@@ -4,7 +4,12 @@ from django.shortcuts import render
 
 
 def index(request):
-    return render(request, 'partials/main.html')
+    from app.models import UtilityEnergyPrice
+    from app.api.v1.endpoint.utility_energy_price import UtilityEnergyPriceSerializer
+    prices = UtilityEnergyPrice.objects.all()[:1]
+    return render(request, 'partials/main.html', {
+        'price': UtilityEnergyPriceSerializer(prices)
+    })
 
 
 def weather(request):

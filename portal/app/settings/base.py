@@ -22,6 +22,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # Application definition
 INSTALLED_APPS = [
+    'app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,8 +76,26 @@ TEMPLATES = [
 
 # Database
 DATABASES = {
-    'default': {}
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'pwrnet-dev-store',
+        'USER': 'postgres',
+        'PASSWORD': '1qaz@WSX3e',
+        'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store'
+    }
 }
+# DATABASES = {
+#     'default': {
+#         # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
+#         # 'ENGINE': 'django.db.backends.mysql' instead of the following.
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'powernet',
+#         'USER': 'postgres',
+#         'PASSWORD': '1qaz@WSX3e',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
