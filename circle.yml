@@ -40,7 +40,6 @@ deployment:
         commands:
         # Collecstatic
         - python portal/manage.py collectstatic --no-input
-        - python portal/manage.py migrate
         
         # deploy to AppEngine
         - gcloud -q app deploy portal/app.yaml --promote --version=1 --log-http --verbosity=info

@@ -75,6 +75,7 @@ TEMPLATES = [
 ]
 
 # Database
+# PROD
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -84,15 +85,27 @@ DATABASES = {
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store'
     }
 }
+
+# DEV
 # DATABASES = {
 #     'default': {
-#         # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
-#         # 'ENGINE': 'django.db.backends.mysql' instead of the following.
 #         'ENGINE': 'django.db.backends.postgresql_psycopg2',
 #         'NAME': 'powernet',
 #         'USER': 'postgres',
 #         'PASSWORD': '1qaz@WSX3e',
 #         'HOST': 'localhost',
+#         'PORT': '5432'
+#     }
+# }
+
+# PROD via local tunnel
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'USER': 'jongon',
+#         'PASSWORD': '1qaz@WSX3e',
+#         'HOST': '35.184.255.34',
 #         'PORT': '5432'
 #     }
 # }
