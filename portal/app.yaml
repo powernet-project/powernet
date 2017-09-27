@@ -1,6 +1,7 @@
 runtime: python27
 api_version: 1
 threadsafe: yes
+entrypoint: gunicorn -b :$PORT app.wsgi
 
 handlers:
 - url: /static
