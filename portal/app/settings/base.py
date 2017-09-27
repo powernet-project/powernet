@@ -22,6 +22,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # Application definition
 INSTALLED_APPS = [
+    'app',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,15 +76,15 @@ TEMPLATES = [
 
 # Database
 # PROD
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'pwrnet-dev-store',
-        'USER': 'postgres',
-        'PASSWORD': '1qaz@WSX3e',
-        'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'pwrnet-dev-store',
+#         'USER': 'postgres',
+#         'PASSWORD': '1qaz@WSX3e',
+#         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store'
+#     }
+# }
 
 # DEV
 # DATABASES = {
