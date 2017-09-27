@@ -1,6 +1,5 @@
-Django==1.11
+Django==1.11.5
 djangorestframework==3.6.4
 requests==2.14.2
-sleekxmpp==1.3.2
 psycopg2==2.7.1
 gunicorn==19.7.1
