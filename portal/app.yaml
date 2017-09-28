@@ -18,4 +18,4 @@ beta_settings:
   cloud_sql_instances: pwrnet-158117:us-central1:pwrnet-dev-store
 
 env_variables:
-  DEBUG: "False"
+  DEBUG: "True"
