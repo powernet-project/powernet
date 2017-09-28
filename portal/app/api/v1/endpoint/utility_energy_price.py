@@ -5,6 +5,7 @@ from rest_framework import (viewsets, serializers)
 class UtilityEnergyPriceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UtilityEnergyPrice
+        fields = '__all__'
 
 
 class UtilityEnergyPriceViewSet(viewsets.ModelViewSet):
