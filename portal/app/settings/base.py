@@ -82,7 +82,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'pwrnet-dev-store',
-        'USER': 'postgres',
+        'USER': 'jongon',
         'PASSWORD': '1qaz@WSX3e',
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
         'PORT': '5432'
