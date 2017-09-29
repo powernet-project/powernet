@@ -78,16 +78,16 @@ TEMPLATES = [
 
 # Database
 # PROD
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'pwrnet-dev-store',
-#         'USER': 'postgres',
-#         'PASSWORD': '1qaz@WSX3e',
-#         'HOST': 'pwrnet-158117:us-central1:pwrnet-dev-store',
-#         'PORT': '5432'
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'pwrnet-dev-store',
+        'USER': 'postgres',
+        'PASSWORD': '1qaz@WSX3e',
+        'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
+        'PORT': '5432'
+    }
+}
 
 # DEV
 # DATABASES = {
@@ -102,16 +102,16 @@ TEMPLATES = [
 # }
 
 # PROD via local tunnel
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'jongon',
-        'PASSWORD': '1qaz@WSX3e',
-        'HOST': '35.184.255.34',
-        'PORT': '5432'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'USER': 'jongon',
+#         'PASSWORD': '1qaz@WSX3e',
+#         'HOST': '35.184.255.34',
+#         'PORT': '5432'
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
