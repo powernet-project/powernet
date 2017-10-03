@@ -9,5 +9,5 @@ class UtilityEnergyPriceSerializer(serializers.ModelSerializer):
 
 
 class UtilityEnergyPriceViewSet(viewsets.ModelViewSet):
-    serializer_class = UtilityEnergyPrice
+    serializer_class = UtilityEnergyPriceSerializer
     queryset = UtilityEnergyPrice.objects.all()
