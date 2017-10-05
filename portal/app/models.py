@@ -1,6 +1,6 @@
 from django.db import models
-from enumfields import Enum  # Uses Ethan Furman's "enum34" backport
 from enumfields import EnumField
+from enumfields import Enum  # Uses Ethan Furman's "enum34" backport
 from django.contrib.postgres.fields import JSONField
 
 
@@ -31,6 +31,7 @@ class DeviceType(Enum):
     CLOTHES_DRYER = 'CLOTHES_DRYER'
     CLOTHES_WASHER = 'CLOTHES_WASHER'
     AIR_CONDITIONER = 'AIR_CONDITIONER'
+    STOVE_OVEN_EXHAUST = 'STOVE_OVEN_EXHAUST'
 
 
 class Device(models.Model):
@@ -39,8 +40,8 @@ class Device(models.Model):
         db_table = 'device'
 
     name = models.CharField(max_length=200)
-    type = EnumField(DeviceType)
-    status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN)
+    type = EnumField(DeviceType, max_length=40)
+    status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN, max_length=40)
 
 
 class DeviceState(models.Model):
