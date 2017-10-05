@@ -81,7 +81,7 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'pwrnet-dev-store',
+        'NAME': 'postgres',
         'USER': 'jongon',
         'PASSWORD': '1qaz@WSX3e',
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
