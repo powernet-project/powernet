@@ -2,17 +2,17 @@ runtime: python
 env: flex
 entrypoint: gunicorn -b :$PORT app.wsgi
 
-#handlers:
-#- url: /static
-#  static_dir: staticfiles/*
-#- url: .*
-#  script: app.wsgi.application
-#
-#libraries:
-#- name: django
-#  version: "1.11"
-#- name: ssl
-#  version: 2.7.11
+handlers:
+- url: /static
+  static_dir: staticfiles/*
+- url: .*
+  script: app.wsgi.application
+
+libraries:
+- name: django
+  version: "1.11"
+- name: ssl
+  version: 2.7.11
 
 beta_settings:
   cloud_sql_instances: pwrnet-158117:us-central1:pwrnet-dev-store
