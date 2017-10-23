@@ -10,4 +10,4 @@ class ApplianceJsonDataSerializer(serializers.ModelSerializer):
 
 class ApplianceJsonDataViewSet(viewsets.ModelViewSet):
     serializer_class = ApplianceJsonDataSerializer
-    queryset = ApplianceJsonData.objects.all()
+    queryset = ApplianceJsonData.objects.all().order_by('-id')
