@@ -283,12 +283,10 @@ e[1]),.001<c&&g.arcTo(d,b,d-c,b,l-b),e=[b,b],c=k-b,0>c&&(c=0),e[0]+=c,g.lineTo(e
        */
       function handleAdInitialized(event) {}
 
-      window.addEventListener('DOMContentLoaded',
-        handleDomContentLoaded, false);
-      window.addEventListener('WebComponentsReady',
-        handleWebComponentsReady, false);
-      window.addEventListener('adinitialized',
-        handleAdInitialized, false);
+      window.addEventListener('DOMContentLoaded', handleDomContentLoaded, false);
+      window.addEventListener('WebComponentsReady', handleWebComponentsReady, false);
+      window.addEventListener('adinitialized', handleAdInitialized, false);
+
     })();
   </script>
 

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html><head><meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJl9f821fbfc189441c7531e8aaf8888a53"/>
+<html><head>
+    <meta name="GCD" content="YTk3ODQ3ZWZhN2I4NzZmMzBkNTEwYjJl9f821fbfc189441c7531e8aaf8888a53"/>
   <meta charset="utf-8">
   <meta name="generator" content="Google Web Designer 1.9.0.0619">
   <meta name="template" content="Interstitial 3.0.0">
@@ -121,6 +122,12 @@ m=g}h&&f&&(g=l[0],b.bezierCurveTo(m[2][0],m[2][1],g[0][0],g[0][1],g[1][0],g[1][1
       <gwd-metric-event source="gwd-taparea_dishwasher" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
       <gwd-metric-event source="gwd-taparea_4" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
     </gwd-metric-configuration>
+
+      <div>
+          <button id="stove-range-on">ON</button>
+          <button id="stove-range-off">OFF</button>
+      </div>
+
     <div is="gwd-pagedeck" class="gwd-page-container" id="pagedeck">
       <div is="gwd-page" id="page1" class="gwd-page-wrapper gwd-page-size gwd-lightbox gwd-div-1aoo" data-gwd-width="100%" data-gwd-height="100%">
         <div class="gwd-page-content gwd-page-size gwd-div-1mw1">
@@ -230,8 +237,8 @@ m=g}h&&f&&(g=l[0],b.bezierCurveTo(m[2][0],m[2][1],g[0][0],g[0][1],g[1][0],g[1][1
           <canvas is="gwd-bezierpath" width="94" height="318" class="gwd-canvas-132j gwd-gen-1hxvgwdanimation gwd-canvas-ijg3" id="state_oven" anchors="[[[48.75,7.29,0],[48.68,7.5,0],[48.68,7.5,0]],[[8.67,29.49,0],[8.67,29.49,0],[8.67,29.49,0]],[[7.5,230.97,0],[7.5,230.97,0],[7.5,230.97,0]],[[44.74,252.4,0],[44.74,252.4,0],[44.74,252.4,0]],[[43.07,297.06,0],[43.07,297.06,0],[43.07,297.06,0]],[[38.88,299.29,0],[38.88,299.29,0],[38.88,299.29,0]],[[38.61,302.65,0],[38.61,302.65,0],[38.61,302.65,0]],[[48.9,310.96,0],[48.9,310.96,0],[48.9,310.96,0]],[[86.68,288.45,0],[86.68,288.45,0],[86.68,288.45,0]],[[85.68,30.5,0],[85.68,30.5,0],[85.68,30.5,0]]]" closed="" stroke-width="15" stroke-color="null" fill-color="[1,0.8627450980392157,0,1]" geom-type="5"></canvas>
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Smart_House_Appliances-07.svg" id="appliance_oven" class="gwd-img-1nwv gwd-gen-5qn9gwdanimation">
           <p class="gwd-p-18ma gwd-p-2emu gwd-gen-qzhbgwdanimation gwd-p-qds1">$17,00<br>
-            -<br>
-            -<br>
+              - <br>
+              - <br>
             -<br>
             -<br>
             <br>
@@ -269,6 +276,10 @@ m=g}h&&f&&(g=l[0],b.bezierCurveTo(m[2][0],m[2][1],g[0][0],g[0][1],g[1][0],g[1][1
       </div>
     </div>
   </gwd-doubleclick>
+  <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous"></script>
   <script type="text/javascript" id="gwd-init-code">
     (function() {
       var gwdAd = document.getElementById('gwd-ad');
@@ -278,7 +289,31 @@ m=g}h&&f&&(g=l[0],b.bezierCurveTo(m[2][0],m[2][1],g[0][0],g[0][1],g[1][0],g[1][1
        * fired when the document has been completely loaded and parsed.
        */
       function handleDomContentLoaded(event) {
+        console.warn("DOM CONTENT LOADED, attempting to get child els");
+        var stoveRangeOn = $('#stove-range-on');
+        var stoveRangeOff = $('#stove-range-off');
 
+        stoveRangeOn.on("click", function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/api/v1/device/12/',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'PUT',
+                data: JSON.stringify({status: 'ON', name: 'Stove_Oven_Exhaust_1', type: 'STOVE_OVEN_EXHAUST'})
+            });
+        });
+
+        stoveRangeOff.on("click", function(event) {
+            event.preventDefault();
+            $.ajax({
+                url: '/api/v1/device/12/',
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'PUT',
+                data: JSON.stringify({status: 'OFF', name: 'Stove_Oven_Exhaust_1', type: 'STOVE_OVEN_EXHAUST'})
+            });
+        });
       }
 
       /**
