@@ -158,6 +158,12 @@ if __name__ == '__main__':
 
 	import matplotlib.pyplot as plt
 	print 'Arbitrage Profit per Node: ', ARBeach
+	print 'Net Power All: ', netPowerAll
+	print 'Solar All: ', solarAll
+	print 'Q All: ', Qall
+	print 'U All: ', Uall
+	print 'Voltage All: ', voltageAll
+
 	plt.figure(0)
 	plt.plot(netPowerAll.T)
 	plt.title('Net Power for Each Node')
