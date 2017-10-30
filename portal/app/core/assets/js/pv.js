@@ -28,7 +28,6 @@ $(document).ready(function(ns) {
             crossDomain: true,
             dataType: 'jsonp',
             success: function(data) {
-                alert("Success");
                 $('#storage-status-home-one').html(JSON.stringify(data, null, '\t'));
             },
             error: function() { alert('Failed!'); }
