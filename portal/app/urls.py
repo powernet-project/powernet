@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^$', base.index, name='Powernet Home'),
     url(r'^admin/', admin.site.urls),
     url(r'^weather/', base.weather, name='Weather Information'),
+    url(r'^pv/', base.pv, name='Enphase PV status'),
     url(r'^electricity/', base.electricity, name='ComEd Energy Price Information'),
     url(r'^home/one/', base.home_one, name='Home One'),
     url(r'^home/two/', base.home_two, name='Home Two'),

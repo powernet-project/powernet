@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load static from staticfiles %}
+
+{% block main-content %}
+
+    <br><br>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Local PV Status</h3>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3"></div>
+        <div class="col-sm-6">
+            <br/>
+            <pre id="pv-status-home-one"></pre>
+        </div>
+        <div class="col-sm-3"></div>
+    </div>
+
+{% endblock main-content %}
+
+{% block page-scripts %}
+    <script src="{% static "js/pv.js" %}"></script>
+{% endblock page-scripts %}
+

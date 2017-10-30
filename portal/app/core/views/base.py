@@ -25,3 +25,7 @@ def home_two(request):
 
 def opf(request):
     return render(request, 'visualization/Demo2/index.html')
+
+
+def pv(request):
+    return render(request, 'partials/pv.html')
