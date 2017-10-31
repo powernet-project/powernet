@@ -32,10 +32,6 @@ $(document).ready(function(ns) {
             },
             error: function() { alert('Failed!'); }
         });
-
-        $.get(storageUrl + queryParams + apiKeyStorageOne, function(data) {
-
-        });
     };
 
     onLoad();
