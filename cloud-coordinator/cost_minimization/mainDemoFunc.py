@@ -16,13 +16,14 @@
 import numpy as np
 from scipy.io import loadmat
 from DemoMod import *
+import json
 
 
 def mainDemo(solarAlphas, storageAlphas, control):
 	np.random.seed(0) # Do not randomize anything
 
 	# Set Constant Parameters
-	transLimitDay = 0 # day that the transformer limit takes place
+	transLimitDay = 1 # day that the transformer limit takes place
 	transLimit = 9 # kW limit on transformer
 	transLimitTime = np.arange(6,11) # times of the day it takes place
 	GCstepsTotal = 2 # Total number of simulation days
@@ -157,12 +158,21 @@ if __name__ == '__main__':
 	ARBeach, netPowerAll, solarAll, Uall, Qall, voltageAll = mainDemo(solarAlphas, storageAlphas, control)
 
 	import matplotlib.pyplot as plt
-	print 'Arbitrage Profit per Node: ', ARBeach
-	print 'Net Power All: ', netPowerAll
-	print 'Solar All: ', solarAll
-	print 'Q All: ', Qall
-	print 'U All: ', Uall
-	print 'Voltage All: ', voltageAll
+	# print 'Arbitrage Profit per Node: ', ARBeach
+	# print 'Arbitrage transposed: ', ARBeach.T
+	# print 'Arbitrage to list: ', ARBeach.tolist()
+	# print 'Arbitrage to list after being transposed: ', ARBeach.T.tolist()
+	# print 'Arbitrage serialized: ', json.dumps(ARBeach.tolist())
+	# print 'Arbitrage transposed serialized: ', json.dumps(ARBeach.T.tolist())
+	
+	# print 'Net Power All: ', netPowerAll.T
+	
+	# print 'Solar All: ', solarAll.T
+	# print 'Q All: ', Qall.T
+	# print 'U All: ', Uall.T
+	# print 'Voltage All: ', voltageAll.T
+
+	#print json.dumps(voltageAll.T.tolist())
 
 	plt.figure(0)
 	plt.plot(netPowerAll.T)
