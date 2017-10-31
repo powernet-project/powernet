@@ -29,3 +29,7 @@ def opf(request):
 
 def pv(request):
     return render(request, 'partials/pv.html')
+
+
+def charts(request):
+    return render(request, 'partials/chart_plots.html')
