@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load static from staticfiles %}
+
+{% block main-content %}
+
+    <br><br>
+    <div class="row">
+        <div class="col-sm-12">
+            <h3>Chart plots from Cost Minimization Algorithm</h3>
+        </div>
+    </div>
+
+    <div class="row">
+
+    </div>
+
+{% endblock main-content %}
+
+{% block page-scripts %}
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="{% static "js/algorithm-plotting.js" %}"></script>
+{% endblock page-scripts %}
+
