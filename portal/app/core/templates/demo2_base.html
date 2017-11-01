@@ -122,5 +122,8 @@ c.s=function(){var a=this.getAttribute("exit-id"),b=this.getAttribute("product-i
 </head>
 <body>
     {% block main-content %}{% endblock %}
+    {% load static from staticfiles %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static "js/demo2.js" %}"></script>
 </body>
 </html>

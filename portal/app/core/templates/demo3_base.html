@@ -129,5 +129,8 @@ e[1]),.001<c&&g.arcTo(d,b,d-c,b,l-b),e=[b,b],c=k-b,0>c&&(c=0),e[0]+=c,g.lineTo(e
 </head>
 <body>
     {% block main-content %}{% endblock %}
+    {% load static from staticfiles %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{% static "js/demo3.js" %}"></script>
 </body>
 </html>

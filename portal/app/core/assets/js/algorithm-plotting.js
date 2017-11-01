@@ -277,49 +277,115 @@ $(document).ready(function(ns) {
             d02 = getArrayValues(2, dataSource),
             d03 = getArrayValues(3, dataSource),
             d04 = getArrayValues(4, dataSource),
+            d05, d06,
+            trace00, trace01, trace02, trace03, trace04, trace05, trace06,
+            plotlyDataSource;
+
+        if (divId === 'net-power-all' || divId === 'voltage-all') {
+            d05 = getArrayValues(5, dataSource);
+            d06 = getArrayValues(6, dataSource);
             trace00 = {
                 type: "scatter",
                 mode: "lines",
-                name: '00 pos',
+                name: 'Substation',
                 x: timeFrame,
                 y: d00,
                 line: {color: '#17BECF'}
-            },
+            };
             trace01 = {
                 type: "scatter",
                 mode: "lines",
-                name: '01 pos',
+                name: 'Transformer',
                 x: timeFrame,
                 y: d01,
                 line: {color: '#7F7F7F'}
-            },
+            };
             trace02 = {
                 type: "scatter",
                 mode: "lines",
-                name: '02 pos',
+                name: 'Building',
                 x: timeFrame,
                 y: d02,
                 line: {color: '#FFFF00'}
-            },
+            };
             trace03 = {
                 type: "scatter",
                 mode: "lines",
-                name: '03 pos',
+                name: 'Home One',
                 x: timeFrame,
                 y: d03,
                 line: {color: '#FF0000'}
-            },
+            };
             trace04 = {
                 type: "scatter",
                 mode: "lines",
-                name: '04 pos',
+                name: 'Home Two',
                 x: timeFrame,
                 y: d04,
                 line: {color: '#008000'}
             };
+            trace05 = {
+                type: "scatter",
+                mode: "lines",
+                name: 'Home Three',
+                x: timeFrame,
+                y: d05,
+                line: {color: '#011b72'}
+            };
+            trace06 = {
+                type: "scatter",
+                mode: "lines",
+                name: 'Home Four',
+                x: timeFrame,
+                y: d06,
+                line: {color: '#000000'}
+            };
+            plotlyDataSource = [trace00, trace01, trace02, trace03, trace04, trace05, trace06];
+        } else {
+            trace00 = {
+                type: "scatter",
+                mode: "lines",
+                name: 'Building',
+                x: timeFrame,
+                y: d00,
+                line: {color: '#17BECF'}
+            };
+            trace01 = {
+                type: "scatter",
+                mode: "lines",
+                name: 'Home One',
+                x: timeFrame,
+                y: d01,
+                line: {color: '#7F7F7F'}
+            };
+            trace02 = {
+                type: "scatter",
+                mode: "lines",
+                name: 'Home Two',
+                x: timeFrame,
+                y: d02,
+                line: {color: '#FFFF00'}
+            };
+            trace03 = {
+                type: "scatter",
+                mode: "lines",
+                name: 'Home Three',
+                x: timeFrame,
+                y: d03,
+                line: {color: '#FF0000'}
+            };
+            trace04 = {
+                type: "scatter",
+                mode: "lines",
+                name: 'Home Four',
+                x: timeFrame,
+                y: d04,
+                line: {color: '#008000'}
+            };
+            plotlyDataSource = [trace00, trace01, trace02, trace03, trace04];
+        }
 
-
-        Plotly.newPlot(divId, [trace00, trace01, trace02, trace03, trace04], layout);
+        Plotly.newPlot(divId, plotlyDataSource, layout);
     },
 
     getArrayValues = function(position, dataSource) {
