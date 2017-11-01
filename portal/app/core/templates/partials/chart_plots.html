@@ -11,15 +11,18 @@
         </div>
     </div>
 
-    <div id="temp-chart">
-
-    </div>
+    <div id="net-power-all"></div>
+    <div id="solar-all"></div>
+    <div id="q-all"></div>
+    <div id="u-all"></div>
+    <div id="voltage-all"></div>
 
 {% endblock main-content %}
 
 {% block page-scripts %}
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
     <script src="{% static "js/algorithm-plotting.js" %}"></script>
 {% endblock page-scripts %}
 
