@@ -61,3 +61,18 @@ class ApplianceJsonData(models.Model):
         db_table = 'appliance_data'
 
     devices_json = JSONField(null=True, blank=True)
+
+
+class HueStatesType(Enum):
+    UNKNOWN = 'UNKNOWN'
+    BASE = 'BASE'
+    COORDINATED = 'COORDINATED'
+    VIOLATION = 'VIOLATION'
+
+
+class HueStates(models.Model):
+
+    class Meta:
+        db_table = 'hue_states'
+
+    state = EnumField(HueStatesType, default=HueStatesType.UNKNOWN, max_length=40)

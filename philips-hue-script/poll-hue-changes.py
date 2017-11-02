@@ -49,7 +49,13 @@ def get_hue_lights_status():
     print(r.json())
 
 
+def setup_polling_listener():
+    while True:
+        query_for_updates()    
+        #change_hue_to_grid_support()
+        #get_hue_lights_status()
+
+
 if __name__ == '__main__':
-    change_hue_to_grid_support()
-    get_hue_lights_status()
+    setup_polling_listener()
 
