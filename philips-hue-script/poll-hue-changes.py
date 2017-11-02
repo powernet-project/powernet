@@ -1,13 +1,13 @@
 """
     Setup a listener for Philips hue lightbulb changes
 """
+from __future__ import print_function
+
 __author__ = 'Jonathan G.'
 __copyright__ = 'Stanford University'
 __version__ = '0.1'
 __email__ = 'jongon@stanford.edu'
 __status__ = 'Prototype'
-
-from __future__ import print_function
 
 import time
 import requests
@@ -61,26 +61,43 @@ def get_hue_lights_status():
         Retrieve the statuses for hue lights in the BitsLab
     """
     req = requests.get(PHILPS_HUE_BRIDGE_URL + HUE_API_KEY + '/lights/')
-    print(req.json())
+    return req.json()
 
-def query_for_updates():
+def query_for_updates(global_condition):
     """
         Query the powernet server for state change on the philips hue lights
     """
     req = requests.get(url=POLL_SERVER_URL)
-    print(req.json())
-    if condtion ==
+    print(req.json()['state'])
+    
+    condition = req.json()['state']
 
+    if global_condition != condition:
+        if condition == 'ON':
+            turn_hue_on()
+        elif condition == 'OFF':
+            turn_hue_off()
+        elif condition == 'COORDINATED':
+            change_hue_to_grid_support()
+        elif condition == 'VIOLATION':
+            change_hue_to_violation()
+        elif condition == 'BASE':
+            change_hue_to_base()
+        else:
+            pass  # Condition is unknown - either we just started or the server may be down
+
+    return condition
 
 def setup_polling_listener():
     """
         Setup HTTP long polling of our server for changes in home state, which
         we'll reflect in color changes in the Philips Hue
     """
+    gc = 'UNKNOWN'
     while True:
-        query_for_updates()    
-        #change_hue_to_grid_support()
-        #get_hue_lights_status()
+        c = query_for_updates(gc)
+        gc = c
+        time.sleep(2)
 
 
 if __name__ == '__main__':
