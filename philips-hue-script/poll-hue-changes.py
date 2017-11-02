@@ -1,4 +1,15 @@
+"""
+    Setup a listener for Philips hue lightbulb changes
+"""
+__author__ = 'Jonathan G.'
+__copyright__ = 'Stanford University'
+__version__ = '0.1'
+__email__ = 'jongon@stanford.edu'
+__status__ = 'Prototype'
+
 from __future__ import print_function
+
+import time
 import requests
 
 HUE_IDS = ['1','2','3','4','5','6']
