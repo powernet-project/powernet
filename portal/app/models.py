@@ -64,10 +64,12 @@ class ApplianceJsonData(models.Model):
 
 
 class HueStatesType(Enum):
-    UNKNOWN = 'UNKNOWN'
+    ON = 'ON'
+    OFF = 'OFF'
     BASE = 'BASE'
-    COORDINATED = 'COORDINATED'
+    UNKNOWN = 'UNKNOWN'
     VIOLATION = 'VIOLATION'
+    COORDINATED = 'COORDINATED'
 
 
 class HueStates(models.Model):
