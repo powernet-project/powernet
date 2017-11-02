@@ -68,7 +68,6 @@ def query_for_updates(global_condition):
         Query the powernet server for state change on the philips hue lights
     """
     req = requests.get(url=POLL_SERVER_URL)
-    print(req.json()['state'])
     
     condition = req.json()['state']
 
@@ -95,8 +94,11 @@ def setup_polling_listener():
     """
     gc = 'UNKNOWN'
     while True:
-        c = query_for_updates(gc)
-        gc = c
+        try:
+            c = query_for_updates(gc)
+            gc = c
+        except Exception as exc:
+            print(exc)
         time.sleep(2)
 
 
