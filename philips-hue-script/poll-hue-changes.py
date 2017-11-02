@@ -15,7 +15,7 @@ import requests
 HUE_IDS = ['1', '2', '3', '4', '5', '6']
 HUE_API_KEY = 'q5B8MeIbazaKRZQ91UHqUBojNvLLh2IMH3B82C-f'
 # FIXME: this should become .69 after our static IP setup works
-PHILPS_HUE_BRIDGE_URL = 'http://192.168.0.100/api/'
+PHILPS_HUE_BRIDGE_URL = 'http://192.168.0.69/api/'
 POLL_SERVER_URL = 'https://pwrnet-158117.appspot.com/api/v1/hue_states/1'
 
 def change_hue_to_violation():
@@ -103,4 +103,8 @@ def setup_polling_listener():
 
 
 if __name__ == '__main__':
-    setup_polling_listener()
+    try:
+        setup_polling_listener()
+    except Exception as exc:
+        print(exc)
+        setup_polling_listener()
