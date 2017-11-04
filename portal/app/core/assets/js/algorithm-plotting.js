@@ -290,7 +290,7 @@ $(document).ready(function(ns) {
                 name: 'Substation',
                 x: timeFrame,
                 y: d00,
-                line: {color: '#17BECF'}
+                line: {color: '#000000'}
             };
             trace01 = {
                 type: "scatter",
@@ -298,7 +298,7 @@ $(document).ready(function(ns) {
                 name: 'Transformer',
                 x: timeFrame,
                 y: d01,
-                line: {color: '#7F7F7F'}
+                line: {color: '#7F7123'}
             };
             trace02 = {
                 type: "scatter",
@@ -306,7 +306,7 @@ $(document).ready(function(ns) {
                 name: 'Building',
                 x: timeFrame,
                 y: d02,
-                line: {color: '#FFFF00'}
+                line: {color: '#17BECF'}
             };
             trace03 = {
                 type: "scatter",
@@ -314,7 +314,7 @@ $(document).ready(function(ns) {
                 name: 'Home One',
                 x: timeFrame,
                 y: d03,
-                line: {color: '#FF0000'}
+                line: {color: '#7F7F7F'}
             };
             trace04 = {
                 type: "scatter",
@@ -322,7 +322,7 @@ $(document).ready(function(ns) {
                 name: 'Home Two',
                 x: timeFrame,
                 y: d04,
-                line: {color: '#008000'}
+                line: {color: '#FFFF00'}
             };
             trace05 = {
                 type: "scatter",
@@ -330,7 +330,7 @@ $(document).ready(function(ns) {
                 name: 'Home Three',
                 x: timeFrame,
                 y: d05,
-                line: {color: '#011b72'}
+                line: {color: '#FF0000'}
             };
             trace06 = {
                 type: "scatter",
@@ -338,7 +338,7 @@ $(document).ready(function(ns) {
                 name: 'Home Four',
                 x: timeFrame,
                 y: d06,
-                line: {color: '#000000'}
+                line: {color: '#008000'}
             };
             plotlyDataSource = [trace00, trace01, trace02, trace03, trace04, trace05, trace06];
         } else {
