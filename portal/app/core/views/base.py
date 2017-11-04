@@ -33,3 +33,7 @@ def pv(request):
 
 def charts(request):
     return render(request, 'partials/chart_plots.html')
+
+
+def charts_no_control(request):
+    return render(request, 'partials/chart_plots_no_control.html')

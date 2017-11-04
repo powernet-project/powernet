@@ -152,7 +152,7 @@ def mainDemo(solarAlphas, storageAlphas, control):
 
 if __name__ == '__main__':
 	# Set default input parameters
-	control = 1 # whether or not to use control
+	control = 0 # whether or not to use control
 	solarAlphas = np.array([9, 3, 3, 3, 3,]) # 9kW commercial 3kW residential solar installations
 	storageAlphas = np.array([3*14, 14, 14, 14, 14]) # 14kWh per tesla powerwall
 	ARBeach, netPowerAll, solarAll, Uall, Qall, voltageAll = mainDemo(solarAlphas, storageAlphas, control)
@@ -172,29 +172,29 @@ if __name__ == '__main__':
 	# print 'U All: ', Uall.T
 	# print 'Voltage All: ', voltageAll.T
 
-	#print json.dumps(voltageAll.T.tolist())
+	print json.dumps(netPowerAll.T.tolist())
 
-	plt.figure(0)
-	plt.plot(netPowerAll.T)
-	plt.title('Net Power for Each Node')
+	# plt.figure(0)
+	# plt.plot(netPowerAll.T)
+	# plt.title('Net Power for Each Node')
 	
-	plt.figure(1)
-	plt.plot(solarAll.T)
-	plt.title('Solar Generation for Each Node')
+	# plt.figure(1)
+	# plt.plot(solarAll.T)
+	# plt.title('Solar Generation for Each Node')
 	
-	plt.figure(2)
-	plt.plot(Qall.T)
-	plt.title('State of Charge for Each Node')
+	# plt.figure(2)
+	# plt.plot(Qall.T)
+	# plt.title('State of Charge for Each Node')
 	
-	plt.figure(3)
-	plt.plot(Uall.T)
-	plt.title('Charging Action for Each Node')
+	# plt.figure(3)
+	# plt.plot(Uall.T)
+	# plt.title('Charging Action for Each Node')
 	
-	plt.figure(4)
-	plt.plot(voltageAll.T)
-	plt.title('Voltage for Each Node')
+	# plt.figure(4)
+	# plt.plot(voltageAll.T)
+	# plt.title('Voltage for Each Node')
 	
-	plt.show()
+	# plt.show()
 
 
 
