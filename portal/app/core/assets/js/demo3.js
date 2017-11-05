@@ -106,28 +106,28 @@ $(document).ready(function(ns) {
             $.get('/api/v1/rms/consumption?id=12', function(data) {
                 stove12 = data['result'] * 120;
                 stove12 = Math.round(stove12 * 10) / 10;
-                $('#stove-12').text(stove12.toString());
+                $('#stove-12').text(stove12.toString() + ' kW');
             });
         });
         $('#gwd-taparea_dishwasher').on('click', function() {
             $.get('/api/v1/rms/consumption?id=14', function(data) {
                 dishWasher14 = data['result'] * 120;
                 dishWasher14 = Math.round(dishWasher14 * 10) / 10;
-                $('#dish-washer-14').text(dishWasher14.toString());
+                $('#dish-washer-14').text(dishWasher14.toString() + ' kW');
             });
         });
         $('#gwd-taparea_fridge').on('click', function() {
             $.get('/api/v1/rms/consumption?id=10', function(data) {
                 fridge10 = data['result'] * 120;
                 fridge10 = Math.round(fridge10 * 10) / 10;
-                $('#fridge-10').text(fridge10.toString());
+                $('#fridge-10').text(fridge10.toString() + ' kW');
             });
         });
         $('#gwd-taparea-laundry').on('click', function() {
             $.get('/api/v1/rms/consumption?id=13', function(data) {
                 washer13 = data['result'] * 120;
                 washer13 = Math.round(washer13 * 10) / 10;
-                $('#washer-13').text(washer13.toString());
+                $('#washer-13').text(washer13.toString() + ' kW');
             });
         });
 
