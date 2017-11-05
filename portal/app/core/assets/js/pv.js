@@ -30,7 +30,7 @@ $(document).ready(function(ns) {
             success: function(data) {
                 $('#storage-status-home-one').html(JSON.stringify(data, null, '\t'));
             },
-            error: function() { alert('Failed!'); }
+            error: function() { console.warn('Failed to load storage status'); }
         });
     };
 

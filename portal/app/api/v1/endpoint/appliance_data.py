@@ -28,4 +28,4 @@ class ApplianceJsonDataViewSet(viewsets.ModelViewSet):
                 result = item['samples'][0]['RMS']
                 break
 
-        return Response({'result': result}, status=status.HTTP_200_OK)
+        return Response({'result': result, 'id': id}, status=status.HTTP_200_OK)
