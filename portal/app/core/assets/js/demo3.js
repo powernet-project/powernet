@@ -180,7 +180,7 @@ $(document).ready(function(ns) {
     };
 
     ns.loadWeatherData = function() {
-        var url = "http://api.openweathermap.org/data/2.5/weather?zip=94305,us&APPID=6faafe3de999509b86b118803ee2ca8f&units=imperial";
+        var url = "https://api.openweathermap.org/data/2.5/weather?zip=94305,us&APPID=6faafe3de999509b86b118803ee2ca8f&units=imperial";
         $.get(url, function(data) {
             $('#weather-value').text(data['main']['temp']);
         });
