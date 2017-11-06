@@ -17,7 +17,9 @@ class UtilityEnergyPrice(models.Model):
 class DeviceStatus(Enum):
     ON = 'ON'
     OFF = 'OFF'
+    CHARGE = 'CHARGE'
     UNKNOWN = 'UNKNOWN'
+    DISCHARGE = 'DISCHARGE'
 
 
 class DeviceType(Enum):

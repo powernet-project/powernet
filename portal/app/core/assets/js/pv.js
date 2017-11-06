@@ -18,17 +18,15 @@ $(document).ready(function(ns) {
     },
 
     loadStorageStatus = function() {
-        var storageUrl = 'https://monitoringapi.solaredge.com/sites/list',
-            queryParams = '?size=5&searchText=Lyon&sortProperty=name&sortOrder=ASC',
-            apiKeyStorageOne = '&api_key=UZCVK3JK5KNY1LXY8F2ZCTEWUK7X4CN5';
+        var storageUrl = 'https://monitoringapi.solaredge.com/site/549572/currentPowerFlow?api_key=UZCVK3JK5KNY1LXY8F2ZCTEWUK7X4CN5';
 
         $.ajax({
-            url: storageUrl + queryParams + apiKeyStorageOne,
+            url: storageUrl,
             type: 'GET',
             crossDomain: true,
             dataType: 'jsonp',
             success: function(data) {
-                $('#storage-status-home-one').html(JSON.stringify(data, null, '\t'));
+                $('#storage-status-home-one').html(JSON.stringify(data['siteCurrentPowerFlow']['STORAGE'], null, '\t'));
             },
             error: function() { console.warn('Failed to load storage status'); }
         });
