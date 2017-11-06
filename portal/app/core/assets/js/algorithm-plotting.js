@@ -270,29 +270,39 @@ $(document).ready(function(ns) {
         buildCharts(uAllTransposed, 'u-all', {title: 'Charging Action for Each Node'});
         buildCharts(voltageAllTransposed, 'voltage-all', {title: 'Voltage for Each Node'});
 
+        var interval = null;
 
-        // attempt to trigger mousemoveenvets
-        var e = $.Event('mousemove');
-        e.pageX = 100;
-        e.pageY = 300;
+        $('#play-animation-control').on('click', function() {
+            function getHoverLayerMarkup(idx) {
+                var incrementer = 23.97,
+                    seed = 80.5,
+                    xVal = (idx * incrementer) + seed;
+                console.warn(xVal);
+                return '' +
+                    '<g class="axistext" transform="translate(' + xVal.toString() + ',370)">' +
+                    '    <path d="M0,0L6,6H10.2265625v21H-10.2265625V6H-6Z" style="stroke-width: 1px; fill: rgb(68, 68, 68); stroke: rgb(255, 255, 255);"></path>' +
+                    '        <text data-notex="1" x="0" y="21" data-unformatted="' + (idx + 1).toString() + '" data-math="N" text-anchor="middle" style="font-family: Arial, sans-serif; font-size: 13px; fill: rgb(255, 255, 255); fill-opacity: 1; white-space: pre;">' + (idx + 1).toString() + '</text>' +
+                    '</g>';
+            }
 
-        // trigger event - must trigger on document
-        $(document).trigger(e);
-        console.warn('triggering 01');
+            if(interval !== null) {
+                return;
+            }
 
-        setInterval(function() {
-            e.pageX += 5;
-            $(document).trigger(e);
-            console.warn(e.pageX, e.pageY);
-        }, 500);
-
-        // $(document).mousemove(function( event ) {
-        //   var pageCoords = "( " + event.pageX + ", " + event.pageY + " )";
-        //   var clientCoords = "( " + event.clientX + ", " + event.clientY + " )";
-        //   console.warn( "( event.pageX, event.pageY ) : " + pageCoords );
-        //   console.warn( "( event.clientX, event.clientY ) : " + clientCoords );
-        // });
-
+            var hl = $('.hoverlayer');
+            var timeValue = 0;
+            interval = setInterval(function() {
+                hl.html(getHoverLayerMarkup(timeValue));
+                timeValue++;
+                if (timeValue === 48) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        });
+        $('#stop-animation-control').on('click', function() {
+            clearInterval(interval);
+            interval = null;
+        });
     },
 
     buildCharts = function(dataSource, divId, layout) {
