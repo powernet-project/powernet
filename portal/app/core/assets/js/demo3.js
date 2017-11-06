@@ -81,13 +81,15 @@ $(document).ready(function(ns) {
                 data: JSON.stringify({status: 'OFF', name: 'Dish_Washer', type: 'DISH_WASHER'})
             });
         });
+
+        // AC Labels are swapped on the UI
         $('#gwd-taparea_ac-ON').on('click', function() {
             $.ajax({
                 url: '/api/v1/device/5/',
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'ON', name: 'AC_1', type: 'AIR_CONDITIONER'})
+                data: JSON.stringify({status: 'OFF', name: 'AC_1', type: 'AIR_CONDITIONER'})
             });
         });
         $('#gwd-taparea_ac-OFF').on('click', function() {
@@ -96,7 +98,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'OFF', name: 'AC_1', type: 'AIR_CONDITIONER'})
+                data: JSON.stringify({status: 'ON', name: 'AC_1', type: 'AIR_CONDITIONER'})
             });
         });
 

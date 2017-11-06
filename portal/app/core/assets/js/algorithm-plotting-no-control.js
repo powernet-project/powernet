@@ -25,6 +25,7 @@ $(document).ready(function(ns) {
         buildCharts(voltageAllTransposed, 'voltage-all', {title: 'Voltage for Each Node'});
 
         var interval = null;
+        var timeValue = 0;
 
         $('#play-animation-no-control').on('click', function() {
             function getHoverLayerMarkup(idx) {
@@ -44,18 +45,30 @@ $(document).ready(function(ns) {
             }
 
             var hl = $('.hoverlayer');
-            var timeValue = 0;
+
             interval = setInterval(function() {
                 hl.html(getHoverLayerMarkup(timeValue));
                 timeValue++;
                 if (timeValue === 48) {
                     clearInterval(interval);
+                } else if (timeValue === 17 || timeValue === 41) {
+                    demo2.triggerViolation();
+                } else if (timeValue === 22 || timeValue === 46) {
+                    demo2.triggerBaseCondition();
                 }
-            }, 1000);
+            }, 3000);
         });
+
         $('#stop-animation-no-control').on('click', function() {
             clearInterval(interval);
             interval = null;
+        });
+
+        $('#reset-animation-no-control').on('click', function() {
+            timeValue = 0;
+            clearInterval(interval);
+            interval = null;
+            $('.hoverlayer').html('');
         });
     },
 

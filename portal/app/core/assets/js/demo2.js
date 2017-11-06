@@ -26,6 +26,7 @@ $(document).ready(function(ns) {
         ns.toggleApplianceState(12, 'Stove_Oven_Exhaust_1', 'STOVE_OVEN_EXHAUST', 'ON');
         ns.toggleApplianceState(13, 'C_Washer_1', 'CLOTHES_WASHER', 'ON');
         ns.toggleApplianceState(14, 'Dish_Washer', 'DISH_WASHER', 'ON');
+        ns.toggleApplianceState(19, 'PW2', 'STORAGE', 'CHARGE');
     };
 
     ns.triggerCoordination = function() {
@@ -35,6 +36,7 @@ $(document).ready(function(ns) {
         ns.toggleApplianceState(12, 'Stove_Oven_Exhaust_1', 'STOVE_OVEN_EXHAUST', 'ON');
         ns.toggleApplianceState(13, 'C_Washer_1', 'CLOTHES_WASHER', 'ON');
         ns.toggleApplianceState(14, 'Dish_Washer', 'DISH_WASHER', 'ON');
+        ns.toggleApplianceState(19, 'PW2', 'STORAGE', 'DISCHARGE');
     };
 
     ns.triggerTransformerMeltdown = function() {
