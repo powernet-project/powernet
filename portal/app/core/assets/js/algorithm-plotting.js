@@ -269,6 +269,30 @@ $(document).ready(function(ns) {
         buildCharts(qAllTransposed, 'q-all', {title: 'State of Charge for Each Node'});
         buildCharts(uAllTransposed, 'u-all', {title: 'Charging Action for Each Node'});
         buildCharts(voltageAllTransposed, 'voltage-all', {title: 'Voltage for Each Node'});
+
+
+        // attempt to trigger mousemoveenvets
+        var e = $.Event('mousemove');
+        e.pageX = 100;
+        e.pageY = 300;
+
+        // trigger event - must trigger on document
+        $(document).trigger(e);
+        console.warn('triggering 01');
+
+        setInterval(function() {
+            e.pageX += 5;
+            $(document).trigger(e);
+            console.warn(e.pageX, e.pageY);
+        }, 500);
+
+        // $(document).mousemove(function( event ) {
+        //   var pageCoords = "( " + event.pageX + ", " + event.pageY + " )";
+        //   var clientCoords = "( " + event.clientX + ", " + event.clientY + " )";
+        //   console.warn( "( event.pageX, event.pageY ) : " + pageCoords );
+        //   console.warn( "( event.clientX, event.clientY ) : " + clientCoords );
+        // });
+
     },
 
     buildCharts = function(dataSource, divId, layout) {
