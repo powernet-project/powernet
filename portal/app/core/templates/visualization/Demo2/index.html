@@ -2,12 +2,12 @@
 
 {% block main-content %}
 
-  <gwd-doubleclick id="gwd-ad" polite-load="">
+      <gwd-doubleclick id="gwd-ad" polite-load="">
     <gwd-metric-configuration>
-      <gwd-metric-event source="gwd-taparea_2" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
-      <gwd-metric-event source="tapArea_noViolation" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
-      <gwd-metric-event source="tapArea_coordinated" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
-      <gwd-metric-event source="tapArea_LightOnFire" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
+      <gwd-metric-event source="tapArea_Violation" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
+      <gwd-metric-event source="tapArea-NoViolation" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
+      <gwd-metric-event source="tapArea_Coordinated" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
+      <gwd-metric-event source="tapArea_LightItOnFire" event="tapareaexit" metric="" exit="Exit"></gwd-metric-event>
     </gwd-metric-configuration>
     <div is="gwd-pagedeck" class="gwd-page-container" id="pagedeck" data-gwd-offset-top="0px" data-gwd-offset-left="0px">
       <div is="gwd-page" id="page1" class="gwd-page-wrapper gwd-page-size gwd-lightbox gwd-div-1aoo" data-gwd-width="100%" data-gwd-height="700%">
@@ -57,9 +57,6 @@
           <div data-gwd-motion-path-node="x" class="gwd-motion-path-1hex-anim-x"><div data-gwd-motion-path-node="y" class="gwd-motion-path-1hex-anim-y"><canvas is="gwd-oval" width="12" height="12" class="gwd-canvas-irsr gwd-gen-1eyrgwdanimation gwd-canvas-1oe4" x-off="5.684341886080802e-14" y-off="0" stroke-width="1" stroke-color="[1,0.9568627450980393,0,0.65]" fill-color="[0.9725490196078431,0.8980392156862745,0.01568627450980392,1]" inner-radius="0" stroke-style="Solid" id="flowUnid-3"></canvas></div></div>
           <div data-gwd-motion-path-node="x" class="gwd-motion-path-smqe-anim-x"><div data-gwd-motion-path-node="y" class="gwd-motion-path-smqe-anim-y"><canvas is="gwd-oval" width="12" height="12" class="gwd-canvas-irsr gwd-canvas-1oe4 gwd-gen-3dpdgwdanimation" x-off="5.684341886080802e-14" y-off="0" stroke-width="1" stroke-color="[1,0.9568627450980393,0,0.65]" fill-color="[0.9725490196078431,0.8980392156862745,0.01568627450980392,1]" inner-radius="0" stroke-style="Solid" id="flowUnid-3_MultiPhase"></canvas></div></div>
           <div data-gwd-motion-path-node="x" class="gwd-motion-path-cft9-anim-x"><div data-gwd-motion-path-node="y" class="gwd-motion-path-cft9-anim-y"><canvas is="gwd-oval" width="12" height="12" class="gwd-canvas-irsr gwd-canvas-1oe4 gwd-gen-icl0gwdanimation" x-off="5.684341886080802e-14" y-off="0" stroke-width="1" stroke-color="[1,0.9568627450980393,0,0.65]" fill-color="[0.9725490196078431,0.8980392156862745,0.01568627450980392,1]" inner-radius="0" stroke-style="Solid" id="flowUnid-3_MultiPhase_1"></canvas></div></div>
-          <gwd_animation_label_element data-label-name="pFlowUniDend" data-label-time="4600" data-label-animation-class-name="pFlowUniDend"></gwd_animation_label_element>
-          <gwd_animation_label_element data-label-name="pFlowUniDstart" data-label-time="3300" data-label-animation-class-name="pFlowUniDstart"></gwd_animation_label_element>
-          <div class="gwd-animation-event event-2-animation" data-event-name="event-2" data-event-time="4600"></div>
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/House-13.svg" id="House1" class="gwd-img-13jg gwd-gen-s3h8gwdanimation gwd-img-1vc7 gwd-img-l3yf">
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/House-15.svg" id="houseDoor1" class="gwd-img-jl66 gwd-gen-1frggwdanimation gwd-img-2ls4 gwd-img-1luu">
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/House-16.svg" id="houseWindow1" class="gwd-img-1paq gwd-gen-1xw2gwdanimation gwd-img-fewc gwd-img-1vzn">
@@ -92,12 +89,11 @@
           <canvas is="gwd-bezierpath" width="191" height="205" class="gwd-canvas-7gkw gwd-gen-1ki8gwdanimation" id="powerPlantEnergy" anchors="[[[120.61,204.09,0],[121.61,202.09,0],[121.61,202.09,0]],[[186.8,166.94,0],[186.8,166.94,0],[186.8,166.94,0]],[[187.66,107.66,0],[187.66,107.66,0],[187.66,107.66,0]],[[160.62,75.05,0],[160.62,75.05,0],[160.62,75.05,0]],[[152.94,82.68,0],[152.94,82.68,0],[152.94,82.68,0]],[[136.97,62.54,0],[136.97,62.54,0],[136.97,62.54,0]],[[128.62,70.18,0],[128.62,70.18,0],[128.62,70.18,0]],[[112.72,51.44,0],[112.72,51.44,0],[112.72,51.44,0]],[[100.84,60.45,0],[100.84,60.45,0],[100.84,60.45,0]],[[79.31,47.26,0],[79.31,47.26,0],[79.31,47.26,0]],[[75.12,3.5,0],[75.12,3.5,0],[75.12,3.5,0]],[[57.07,4.2,0],[57.07,4.2,0],[57.07,4.2,0]],[[55.75,53.52,0],[55.75,53.52,0],[55.75,53.52,0]],[[50.88,57.3,0],[50.88,56.3,0],[50.88,55.3,0]],[[48.63,17.31,0],[48.63,17.31,0],[48.63,17.31,0]],[[29.88,16.62,0],[29.88,16.62,0],[29.88,16.62,0]],[[27.12,66.64,0],[27.12,66.64,0],[27.12,66.64,0]],[[3.5,79.14,0],[3.5,79.14,0],[3.5,79.14,0]],[[4.24,140.28,0],[4.24,140.28,0],[4.24,140.28,0]]]" closed="" stroke-width="7" stroke-color="[0.9725490196078431,0.8980392156862745,0.0196078431372549,0.49]" fill-color="null" geom-type="5"></canvas>
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/menuBar-24.svg" id="violation_buttonBackground" class="gwd-img-1h0m gwd-gen-39hdgwdanimation">
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Buttons-22.svg" id="gridButton-violation" class="gwd-img-a1f2 gwd-gen-1yv4gwdanimation">
-          <gwd-taparea id="gwd-taparea_2" class="gwd-taparea-29cq gwd-taparea-8yll"></gwd-taparea>
-          <gwd_animation_label_element data-label-name="voltageViolation" data-label-time="4700" data-label-animation-class-name="voltageViolation"></gwd_animation_label_element>
+          <gwd-taparea id="tapArea_Violation" class="gwd-taparea-1ujg"></gwd-taparea>
           <canvas is="gwd-bezierpath" width="141" height="79" class="gwd-canvas-70t7 gwd-canvas-n1uw gwd-gen-1txigwdanimation" id="transformerShadow" anchors="[[[84.71,0.73,0],[84.69,0,0],[84.69,0,0]],[[0,49.4,0],[0,49.4,0],[0,49.4,0]],[[52.93,79.4,0],[52.93,79.4,0],[52.93,79.4,0]],[[141.02,27.75,0],[141.02,27.75,0],[141.02,27.75,0]]]" closed="" stroke-width="0" stroke-color="null" fill-color="[0,0,0,1]" geom-type="5"></canvas>
           <div class="gwd-div-x2sw" data-gwd-group="Transformer" id="transformer">
       <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Transformer-26.svg" class="gwd-img-1szt gwd-grp-rbm9 gwd-gen-qjldgwdanimation" data-gwd-grp-id="t_base" scaling="stretch">
-      <div class="gwd-div-1y8z gwd-grp-rbm9 gwd-div-12xr" data-gwd-group="electricity_coil" data-gwd-grp-id="electricPulse">
+      <div class="gwd-div-1y8z gwd-grp-rbm9 gwd-div-1f1s" data-gwd-group="electricity_coil" data-gwd-grp-id="electricPulse">
       <canvas is="gwd-bezierpath" width="35" height="50" class="gwd-canvas-gy1n gwd-grp-n64v gwd-canvas-1qeo gwd-gen-p2bwgwdanimation" anchors="[[[16.63,47.52,0],[16.06,47.9,0],[16.06,47.9,0]],[[6.33,46.83,0],[6.33,46.83,0],[6.33,46.83,0]],[[14.62,40.19,0],[14.62,40.19,0],[14.62,40.19,0]],[[6.34,38.16,0],[6.34,38.16,0],[6.34,38.16,0]],[[13.1,31.89,0],[13.1,31.89,0],[13.1,31.89,0]],[[4.42,29.97,0],[4.42,29.97,0],[4.42,29.97,0]],[[12.62,23.7,0],[12.62,23.7,0],[12.62,23.7,0]],[[2.5,21.29,0],[2.5,21.29,0],[2.5,21.29,0]],[[11.24,15.11,0],[11.24,15.11,0],[11.24,15.11,0]],[[2.99,13.1,0],[2.99,13.1,0],[2.99,13.1,0]],[[9.26,6.84,0],[9.74,6.84,0],[10.23,6.84,0]],[[15.53,2.5,0],[15.53,2.5,0],[15.53,2.5,0]],[[20.36,4.43,0],[20.36,4.43,0],[20.36,4.43,0]],[[30.97,7.81,0],[29.05,8.3,0],[27.12,8.78,0]],[[23.75,13.12,0],[23.75,13.12,0],[23.75,13.12,0]],[[30.99,17.47,0],[30.99,17.47,0],[30.99,17.47,0]],[[24.26,20.9,0],[24.26,20.9,0],[24.26,20.9,0]],[[31.47,25.2,0],[31.47,25.2,0],[31.47,25.2,0]],[[25.68,30.03,0],[25.68,30.03,0],[25.68,30.03,0]],[[31.47,34.37,0],[31.47,34.37,0],[31.47,34.37,0]],[[26.68,38.75,0],[26.68,38.75,0],[26.68,38.75,0]],[[33.41,42.1,0],[33.41,42.1,0],[33.41,42.1,0]],[[25.23,47.42,0],[25.23,47.42,0],[25.23,47.42,0]]]" closed="" stroke-width="5" stroke-color="[1,1,0,1]" fill-color="null" geom-type="5"></canvas>
       <canvas is="gwd-bezierpath" width="35" height="50" class="gwd-canvas-gy1n gwd-canvas-1lm3 gwd-grp-n64v gwd-gen-7bwmgwdanimation" anchors="[[[16.63,47.52,0],[16.06,47.9,0],[16.06,47.9,0]],[[6.33,46.83,0],[6.33,46.83,0],[6.33,46.83,0]],[[14.62,40.19,0],[14.62,40.19,0],[14.62,40.19,0]],[[6.34,38.16,0],[6.34,38.16,0],[6.34,38.16,0]],[[13.1,31.89,0],[13.1,31.89,0],[13.1,31.89,0]],[[4.42,29.97,0],[4.42,29.97,0],[4.42,29.97,0]],[[12.62,23.7,0],[12.62,23.7,0],[12.62,23.7,0]],[[2.5,21.29,0],[2.5,21.29,0],[2.5,21.29,0]],[[11.24,15.11,0],[11.24,15.11,0],[11.24,15.11,0]],[[2.99,13.1,0],[2.99,13.1,0],[2.99,13.1,0]],[[9.26,6.84,0],[9.74,6.84,0],[10.23,6.84,0]],[[15.53,2.5,0],[15.53,2.5,0],[15.53,2.5,0]],[[20.36,4.43,0],[20.36,4.43,0],[20.36,4.43,0]],[[30.97,7.81,0],[29.05,8.3,0],[27.12,8.78,0]],[[23.75,13.12,0],[23.75,13.12,0],[23.75,13.12,0]],[[30.99,17.47,0],[30.99,17.47,0],[30.99,17.47,0]],[[24.26,20.9,0],[24.26,20.9,0],[24.26,20.9,0]],[[31.47,25.2,0],[31.47,25.2,0],[31.47,25.2,0]],[[25.68,30.03,0],[25.68,30.03,0],[25.68,30.03,0]],[[31.47,34.37,0],[31.47,34.37,0],[31.47,34.37,0]],[[26.68,38.75,0],[26.68,38.75,0],[26.68,38.75,0]],[[33.41,42.1,0],[33.41,42.1,0],[33.41,42.1,0]],[[25.23,47.42,0],[25.23,47.42,0],[25.23,47.42,0]]]" closed="" stroke-width="5" stroke-color="[1,1,0,1]" fill-color="null" geom-type="5"></canvas>
       <div class="gwd-animation-event event-7-animation" data-event-name="event-7" data-event-time="3500"></div>
@@ -116,9 +112,9 @@
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Buttons-18.svg" id="wo_PowerNet" class="gwd-img-dgql gwd-gen-1v2xgwdanimation">
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/menuBar-24.svg" id="buttonBackground-t-fire" class="gwd-img-3zk4 gwd-gen-ra7vgwdanimation">
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Buttons-Fire.svg" id="transformer_OnFire" class="gwd-img-6sp6 gwd-gen-buxjgwdanimation">
-          <gwd-taparea id="tapArea_noViolation" class="gwd-taparea-rp8a gwd-taparea-e08f"></gwd-taparea>
-          <gwd-taparea id="tapArea_coordinated" class="gwd-taparea-rp8a gwd-taparea-5yfq"></gwd-taparea>
-          <gwd-taparea id="tapArea_LightOnFire" class="gwd-taparea-gwss"></gwd-taparea>
+          <gwd-taparea id="tapArea-NoViolation" class="gwd-taparea-nowp"></gwd-taparea>
+          <gwd-taparea id="tapArea_Coordinated" class="gwd-taparea-1yqv"></gwd-taparea>
+          <gwd-taparea id="tapArea_LightItOnFire" class="gwd-taparea-jz7h"></gwd-taparea>
           <div class="gwd-div-4enk" data-gwd-group="Group-Smoke" id="smoke_powerPlant">
       <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/smoke1.svg" class="gwd-img-1jje gwd-gen-hq3qgwdanimation gwd-grp-1s5r" data-gwd-grp-id="smoke_1">
       <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/smoke2.svg" class="gwd-img-1t6f gwd-gen-1i2sgwdanimation gwd-grp-1s5r" data-gwd-grp-id="smoke_2">
@@ -128,12 +124,14 @@
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Fire_Transformer-01.svg" id="fire-1" class="gwd-img-jd0m gwd-gen-vunsgwdanimation">
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Fire_Transformer-02.svg" id="fire-2" class="gwd-img-tl3n gwd-gen-c7itgwdanimation">
           <img is="gwd-image" source="https://storage.googleapis.com/powernet-media-artifacts/visualization_assets/Fire_Transformer-03.svg" id="fire-3" class="gwd-img-10ec gwd-gen-676kgwdanimation">
-          <gwd_animation_label_element data-label-name="pFlowMultidStart" data-label-time="6200" data-label-animation-class-name="pFlowMultidStart"></gwd_animation_label_element>
-          <div class="gwd-animation-event event-4-animation" data-event-name="event-4" data-event-time="6000"></div>
-          <div class="gwd-animation-event event-6-animation" data-event-name="event-6" data-event-time="8500"></div>
-          <gwd_animation_label_element data-label-name="onFire" data-label-time="7800" data-label-animation-class-name="onFire"></gwd_animation_label_element>
-          <gwd_animation_label_element data-label-name="pFlowMultidEnd" data-label-time="7500" data-label-animation-class-name="pFlowMultidEnd"></gwd_animation_label_element>
-          <div class="gwd-animation-event event-3-animation" data-event-name="event-3" data-event-time="7500"></div>
+          <gwd_animation_label_element data-label-name="powerPlantEnergyFlow" data-label-time="3300" data-label-animation-class-name="powerPlantEnergyFlow"></gwd_animation_label_element>
+          <div class="gwd-animation-event event-10-animation" data-event-name="event-10" data-event-time="4600"></div>
+          <gwd_animation_label_element data-label-name="systemViolation" data-label-time="4800" data-label-animation-class-name="systemViolation"></gwd_animation_label_element>
+          <div class="gwd-animation-event event-11-animation" data-event-name="event-11" data-event-time="6000"></div>
+          <gwd_animation_label_element data-label-name="energyFlowCoordinated" data-label-time="6200" data-label-animation-class-name="energyFlowCoordinated"></gwd_animation_label_element>
+          <div class="gwd-animation-event event-12-animation" data-event-name="event-12" data-event-time="7500"></div>
+          <gwd_animation_label_element data-label-name="transformerOnFire" data-label-time="7800" data-label-animation-class-name="transformerOnFire"></gwd_animation_label_element>
+          <div class="gwd-animation-event event-13-animation" data-event-name="event-13" data-event-time="8500"></div>
         </div>
       </div>
     </div>
@@ -180,5 +178,6 @@
 <script data-exports-type="gwd-studio-registration">function StudioExports() {
 Enabler.setFloatingPixelDimensions(0,700);
 }</script><script type="text/gwd-admetadata">{"version":1,"type":"DoubleClick","format":"","template":"Interstitial 3.0.0","politeload":true,"fullscreen":false,"counters":[],"timers":[],"exits":[],"creativeProperties":{"minWidth":0,"minHeight":700,"maxWidth":0,"maxHeight":700},"components":["gwd-bezierpath","gwd-doubleclick","gwd-image","gwd-oval","gwd-page","gwd-pagedeck","gwd-taparea"],"responsive":true}</script>
+
 
 {% endblock main-content %}
