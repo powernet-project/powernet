@@ -43,8 +43,8 @@ $(document).ready(function(ns) {
     ns.triggerTransformerMeltdown = function() {
         ns.setHouseLightingCondition('VIOLATION');
         ns.toggleApplianceState(5, 'AC_1', 'AIR_CONDITIONER', 'OFF');
-        ns.toggleApplianceState(10, 'Refrigerator_1', 'REFRIGERATOR', 'OFF');
-        ns.toggleApplianceState(12, 'Stove_Oven_Exhaust_1', 'STOVE_OVEN_EXHAUST', 'OFF');
+        ns.toggleApplianceState(10, 'Refrigerator_1', 'REFRIGERATOR', 'ON');
+        ns.toggleApplianceState(12, 'Stove_Oven_Exhaust_1', 'STOVE_OVEN_EXHAUST', 'ON');
         ns.toggleApplianceState(13, 'C_Washer_1', 'CLOTHES_WASHER', 'OFF');
         ns.toggleApplianceState(14, 'Dish_Washer', 'DISH_WASHER', 'OFF');
     };

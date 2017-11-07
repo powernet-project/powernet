@@ -105,39 +105,75 @@ $(document).ready(function(ns) {
 
         // setup listeners for tapareas
         $('#gwd-taparea_oven').on('click', function() {
-            $.get('/api/v1/rms/consumption?id=12', function(data) {
-                stove12 = data['result'] * 120;
-                stove12 = Math.round(stove12 * 10) / 10;
-                $('#stove-12').text(stove12.toString() + ' W');
+            ns.getStatus(12, function(data) {
+                if(data['status'] === 'OFF') {
+                     $('#stove-12').text('0 W');
+                } else {
+                    $.get('/api/v1/rms/consumption?id=12', function(data) {
+                        stove12 = data['result'] * 120;
+                        stove12 = Math.round(stove12 * 10) / 10;
+                        $('#stove-12').text(stove12.toString() + ' W');
+                    });
+                }
             });
         });
         $('#gwd-taparea_dishwasher').on('click', function() {
-            $.get('/api/v1/rms/consumption?id=14', function(data) {
-                dishWasher14 = data['result'] * 120;
-                dishWasher14 = Math.round(dishWasher14 * 10) / 10;
-                $('#dish-washer-14').text(dishWasher14.toString() + ' W');
+            ns.getStatus(14, function(data) {
+                if(data['status'] === 'OFF') {
+                    $('#dish-washer-14').text('0 W');
+                } else {
+                    $.get('/api/v1/rms/consumption?id=14', function(data) {
+                        dishWasher14 = data['result'] * 120;
+                        dishWasher14 = Math.round(dishWasher14 * 10) / 10;
+                        $('#dish-washer-14').text(dishWasher14.toString() + ' W');
+                    });
+                }
             });
         });
         $('#gwd-taparea_fridge').on('click', function() {
-            $.get('/api/v1/rms/consumption?id=10', function(data) {
-                fridge10 = data['result'] * 120;
-                fridge10 = Math.round(fridge10 * 10) / 10;
-                $('#fridge-10').text(fridge10.toString() + ' W');
+            ns.getStatus(10, function(data) {
+                if(data['status'] === 'OFF') {
+                    $('#fridge-10').text('0 W');
+                } else {
+                    $.get('/api/v1/rms/consumption?id=10', function(data) {
+                        fridge10 = data['result'] * 120;
+                        fridge10 = Math.round(fridge10 * 10) / 10;
+                        $('#fridge-10').text(fridge10.toString() + ' W');
+                    });
+                }
             });
         });
         $('#gwd-taparea-laundry').on('click', function() {
-            $.get('/api/v1/rms/consumption?id=13', function(data) {
-                washer13 = data['result'] * 120;
-                washer13 = Math.round(washer13 * 10) / 10;
-                $('#washer-13').text(washer13.toString() + ' W');
+            ns.getStatus(13, function(data) {
+                if(data['status'] === 'OFF') {
+                    $('#washer-13').text('0 W');
+                } else {
+                    $.get('/api/v1/rms/consumption?id=13', function(data) {
+                        washer13 = data['result'] * 120;
+                        washer13 = Math.round(washer13 * 10) / 10;
+                        $('#washer-13').text(washer13.toString() + ' W');
+                    });
+                }
             });
         });
         $('#gwd-taparea_ac').on('click', function() {
-            $.get('/api/v1/rms/consumption?id=5', function(data) {
-                ac5 = data['result'] * 120;
-                ac5 = Math.round(ac5 * 10) / 10;
-                $('#ac-5').text(ac5.toString() + ' W');
+            ns.getStatus(5, function(data) {
+                if(data['status'] === 'OFF') {
+                    $('#ac-5').text('0 W');
+                } else {
+                    $.get('/api/v1/rms/consumption?id=5', function(data) {
+                        ac5 = data['result'] * 120;
+                        ac5 = Math.round(ac5 * 10) / 10;
+                        $('#ac-5').text(ac5.toString() + ' W');
+                    });
+                }
             });
+        });
+    };
+
+    ns.getStatus = function(id, callback) {
+        $.get('/api/v1/device/' + id.toString() + '/', function (data) {
+            callback(data);
         });
     };
 

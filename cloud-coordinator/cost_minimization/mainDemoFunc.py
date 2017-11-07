@@ -172,7 +172,7 @@ if __name__ == '__main__':
 	# print 'U All: ', Uall.T
 	# print 'Voltage All: ', voltageAll.T
 
-	print json.dumps(netPowerAll.T.tolist())
+	print json.dumps(ARBeach.T.tolist())
 
 	# plt.figure(0)
 	# plt.plot(netPowerAll.T)
