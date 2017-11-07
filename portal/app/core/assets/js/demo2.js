@@ -4,13 +4,14 @@ $(document).ready(function(ns) {
     var onLoad = function() {};
 
     ns.setupListeners = function() {
-        $('#gwd-taparea_2').on('click', this.triggerViolation);
-        $('#tapArea_noViolation').on('click', this.triggerBaseCondition);
-        $('#tapArea_coordinated').on('click', this.triggerCoordination);
-        $('#tapArea_LightOnFire').on('click', this.triggerTransformerMeltdown);
+        $('#tapArea_Violation').on('click', this.triggerViolation);
+        $('#tapArea-NoViolation').on('click', this.triggerBaseCondition);
+        $('#tapArea_Coordinated').on('click', this.triggerCoordination);
+        $('#tapArea_LightItOnFire').on('click', this.triggerTransformerMeltdown);
     };
 
     ns.triggerViolation = function() {
+        console.warn('triggering violation');
         ns.setHouseLightingCondition('VIOLATION');
         ns.toggleApplianceState(5, 'AC_1', 'AIR_CONDITIONER', 'OFF');
         ns.toggleApplianceState(10, 'Refrigerator_1', 'REFRIGERATOR', 'OFF');
