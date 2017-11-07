@@ -275,9 +275,20 @@ $(document).ready(function(ns) {
 
         $('#play-animation-control').on('click', function() {
             function getHoverLayerMarkup(idx) {
-                var incrementer = 23.97,
+                // the incrementer is currently based off an 1126 screen dimension
+                // with need to get the relative ratio if diff
+                var layerWidth = $('.bglayer')[0].getBoundingClientRect().width,
+                    incrementer = 23.97,
                     seed = 80.5,
-                    xVal = (idx * incrementer) + seed;
+                    xVal;
+
+                if (layerWidth !== 1126) {
+                    // calculate the new incrementer 1126 - 23.97 | layerWidth - x
+                    incrementer = (layerWidth * 23.97) / 1126
+                }
+
+                xVal = (idx * incrementer) + seed;
+
                 console.warn(xVal);
                 return '' +
                     '<g class="axistext" transform="translate(' + xVal.toString() + ',370)">' +
