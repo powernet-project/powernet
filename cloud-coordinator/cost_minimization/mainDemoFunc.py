@@ -172,29 +172,29 @@ if __name__ == '__main__':
 	# print 'U All: ', Uall.T
 	# print 'Voltage All: ', voltageAll.T
 
-	print json.dumps(ARBeach.T.tolist())
+	#print json.dumps(ARBeach.T.tolist())
 
-	# plt.figure(0)
-	# plt.plot(netPowerAll.T)
-	# plt.title('Net Power for Each Node')
+	plt.figure(0)
+	plt.plot(netPowerAll.T)
+	plt.title('Net Power for Each Node')
 	
-	# plt.figure(1)
-	# plt.plot(solarAll.T)
-	# plt.title('Solar Generation for Each Node')
+	plt.figure(1)
+	plt.plot(solarAll.T)
+	plt.title('Solar Generation for Each Node')
 	
-	# plt.figure(2)
-	# plt.plot(Qall.T)
-	# plt.title('State of Charge for Each Node')
+	plt.figure(2)
+	plt.plot(Qall.T)
+	plt.title('State of Charge for Each Node')
 	
-	# plt.figure(3)
-	# plt.plot(Uall.T)
-	# plt.title('Charging Action for Each Node')
+	plt.figure(3)
+	plt.plot(Uall.T)
+	plt.title('Charging Action for Each Node')
 	
-	# plt.figure(4)
-	# plt.plot(voltageAll.T)
-	# plt.title('Voltage for Each Node')
+	plt.figure(4)
+	plt.plot(voltageAll.T)
+	plt.title('Voltage for Each Node')
 	
-	# plt.show()
+	plt.show()
 
 
 
