@@ -1,0 +1,7 @@
+#python-smbus
+-e git://github.com/mikexstudios/python-firebase.git#egg=python-firebase
+git+https://github.com/pgmmpk/beaglebone_pru_adc.git#egg=beaglebone_pru_adc
+Adafruit_BBIO
+raven==6.1.0
+pyModbusTCP
+requests
