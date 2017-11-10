@@ -14,7 +14,6 @@ import requests
 
 HUE_IDS = ['1', '2', '3', '4', '5', '6']
 HUE_API_KEY = 'q5B8MeIbazaKRZQ91UHqUBojNvLLh2IMH3B82C-f'
-# FIXME: this should become .69 after our static IP setup works
 PHILPS_HUE_BRIDGE_URL = 'http://192.168.0.69/api/'
 POLL_SERVER_URL = 'https://pwrnet-158117.appspot.com/api/v1/hue_states/1'
 
@@ -44,13 +43,13 @@ def change_hue_to_grid_support():
 
 def turn_hue_on():
     """
-        The all the 6 BitsLab Philips Hue on to base
+        Turn all the 6 BitsLab Philips Hue on to base
     """
     change_hue_to_base()
 
 def turn_hue_off():
     """
-        The all the 6 BitsLab Philips Hue to off
+        Turn all the 6 BitsLab Philips Hue to off
     """
     for hue_id in HUE_IDS:
         on_url = PHILPS_HUE_BRIDGE_URL + HUE_API_KEY + '/lights/' + hue_id + '/state'
