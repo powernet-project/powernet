@@ -27,4 +27,4 @@ pip install requests
 nohup python poll-hue-changes.py & exit
 ```
 
-### you may also leverage the virtualenv at the home_hub level as opposed to creating this separate one! 
+### You may also leverage the virtualenv at the home_hub level as opposed to creating this separate one! 
