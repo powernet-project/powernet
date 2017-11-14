@@ -1,9 +1,11 @@
 from django.contrib import admin
-from app.core.views import base
+from app.core.views import base, auth
 from django.conf.urls import include, url
 
 urlpatterns = [
     url(r'^$', base.index, name='Powernet Home'),
+    url(r'^login/$', auth.login, name='Login'),
+    url(r'^logout/$', auth.logout, name='Logout'),
     url(r'^admin/', admin.site.urls),
     url(r'^weather/', base.weather, name='Weather Information'),
     url(r'^pv/', base.pv, name='Enphase PV status'),
