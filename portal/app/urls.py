@@ -3,7 +3,8 @@ from app.core.views import base, auth
 from django.conf.urls import include, url
 
 urlpatterns = [
-    url(r'^$', base.index, name='Powernet Home'),
+    #url(r'^$', base.index, name='Powernet Home'),
+    url(r'^$', auth.login, name='Powernet Home'),
     url(r'^login/$', auth.login, name='Login'),
     url(r'^logout/$', auth.logout, name='Logout'),
     url(r'^admin/', admin.site.urls),

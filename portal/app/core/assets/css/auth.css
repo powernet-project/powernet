@@ -1,5 +1,6 @@
-body {
-    padding-top: 90px;
+body {  }
+#login-logo {
+	margin:10px 0 0 10px;
 }
 .panel-login {
     border-color: #ccc;
