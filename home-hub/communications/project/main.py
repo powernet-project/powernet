@@ -1,5 +1,6 @@
 # Main script to run in the BBB
 import HardwareBBBClass
+import StorageClass
 import logging
 
 from threading import Thread
@@ -24,8 +25,10 @@ def main():
     # Initializing variables for queue and threads
     gpioMap = {"CW1": "P8_9", "DW1": "P8_10", "AC1": "P8_15", "RF1": "P8_14", "SE1": "P8_11"}
     bbb = HardwareBBBClass.HardwareBBB(gpio_map=gpioMap)
+    batt = StorageClass.Storage()
     buffer_size = 7
     q_ai = Queue(buffer_size)
+    q_batt = Queue(3)
 
     # FIXME: Number of analog inputs -> Needs to be automated
     n_ai = 7
@@ -38,8 +41,11 @@ def main():
     consumer_ai_thread = Thread(name='Consumer', target=bbb.consumer_ai, args=(q_ai,))
     consumer_ai_thread.start()
 
-    devices_thread = Thread(name='Device', target=bbb.devices_th)
+    devices_thread = Thread(name='Device', target=bbb.devices_th, args=(q_batt,))
     devices_thread.start()
+
+    battery_thread = Thread(name='Battery', target=batt.battery_thread, args=(q_batt,))
+    battery_thread.start()
 
 if __name__ == '__main__':
     try:

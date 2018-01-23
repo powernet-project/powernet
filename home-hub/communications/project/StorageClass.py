@@ -138,20 +138,20 @@ class Storage:
             self.tcpClient.open()
             return -1
 
-    def battery_thread(self, q_state):
+    def battery_thread(self, q_batt):
         logging.info('Battery Thread called')
         state = "OFF"
         fct = "url"     # Which function to call, url or realtime
         #devId = 19
         while True:
-            if not q_state.empty():
+            if not q_batt.empty():
                 try:
-                    queue_param = q_state.get(True,1)
-                    state = queue_param[0]
-                    fct = queue_param[1]
-                    battval = queue_param[2]
-                    #devId = queue_param[2]
-                    q_state.task_done()
+                    queue_param = q_batt.get(True,1)
+                    state = queue_param[0]      # State: CHARGING, DISCHARGING, OFF
+                    fct = queue_param[1]        # Function: url, realtime
+                    battval = queue_param[2]    # Only used for realtime function
+                    q_batt.task_done()
+                    print "Queue battery: ", queue_param
                 except Exception as exc:
                     logging.exception(exc)
                     client.captureException()

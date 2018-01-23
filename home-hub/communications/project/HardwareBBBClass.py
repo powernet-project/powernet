@@ -202,7 +202,7 @@ class HardwareBBB:
                     logging.exception(exc)
                     client.captureException()
 
-    def devices_th(self):
+    def devices_th(self, q_batt):
         """
             Devices Status
         """
@@ -230,23 +230,34 @@ class HardwareBBB:
                 logging.exception(exc)
                 client.captureException()
 
+            # Building queue for battery thread
+            temp_q_batt = [status_PW2, "url", 0.0]
+            try:
+                q_batt.put(temp_q_batt)
+            except Exception as exc:
+                logging.exception(exc)
+                client.captureException()
+
             for index, (first, second) in enumerate(zip(app_orig_states, app_new_status)):
                 if first != second:
                     self.devices_act(self.appliance_lst[index], second)
                     app_orig_states = copy.deepcopy(app_new_status)
-            self.devices_act("battery", status_PW2)
+            #self.devices_act("battery", status_PW2)
 
             time.sleep(2)   # Delay between readings
 
     def devices_act(self, device, state):
         # Think about the time and that the battery will not be always in a while loop. Maybe have it in its own thread
-        if device == "battery":
-            battTime = battery_fct.urlBased(19, state)
-            while battTime == -1:
-                try:
-                    battTime = battery_fct.urlBased(19, state)
-                except Exception as exc:
-                    logging.exception(exc)
-                    client.captureException()
-        else:
-            GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
+        #if device == "battery":
+        #    battTime = battery_fct.urlBased(19, state)
+        #    while battTime == -1:
+        #        try:
+        #            battTime = battery_fct.urlBased(19, state)
+        #        except Exception as exc:
+        #            logging.exception(exc)
+        #            client.captureException()
+        #else:
+        #    GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
+        GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
+
+
