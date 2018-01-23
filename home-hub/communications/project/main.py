@@ -1,6 +1,5 @@
 # Main script to run in the BBB
 import HardwareBBBClass
-import StorageClass
 import logging
 
 from threading import Thread
@@ -39,8 +38,8 @@ def main():
     consumer_ai_thread = Thread(name='Consumer', target=bbb.consumer_ai, args=(q_ai,))
     consumer_ai_thread.start()
 
-    relay_thread = Thread(name='Relay', target=bbb.relay_th)
-    relay_thread.start()
+    devices_thread = Thread(name='Device', target=bbb.devices_th)
+    devices_thread.start()
 
 if __name__ == '__main__':
     try:
