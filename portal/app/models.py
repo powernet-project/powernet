@@ -44,6 +44,7 @@ class Device(models.Model):
     name = models.CharField(max_length=200)
     type = EnumField(DeviceType, max_length=40)
     status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN, max_length=40)
+    value = models.IntegerField(default=0)
 
 
 class DeviceState(models.Model):
