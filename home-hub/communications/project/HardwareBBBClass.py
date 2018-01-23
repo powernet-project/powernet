@@ -5,13 +5,14 @@ import time
 import copy
 import requests
 import logging
+import StorageClass
 from raven import Client
 from datetime import datetime
-from firebase import Firebase as fb
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 client = Client(SENTRY_DSN)
+battery_fct = StorageClass.Storage(timeBatt=5)
 
 class HardwareBBB:
 
@@ -29,7 +30,7 @@ class HardwareBBB:
         # self.client = Client(self.SENTRY_DSN)
 
         # Initializing GPIOs:
-        self.appliance_lst = ["AC1", "SE1", "RF1" ,"CW1", "DW1"]
+        self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "battery"]
 
         self.N_SAMPLES = N_SAMPLES
         if gpio_map == None:
@@ -40,7 +41,10 @@ class HardwareBBB:
 
         for key in self.gpio_map:
             GPIO.setup(gpio_map[key], GPIO.OUT)
-            GPIO.output(gpio_map[key], GPIO.HIGH)
+            if gpio_map[key] == "P8_14":
+                GPIO.output(gpio_map[key], GPIO.LOW)
+            else:
+                GPIO.output(gpio_map[key], GPIO.HIGH)
 
     def analog_read(self, off_value):
         logging.info('Analog read called')
@@ -56,9 +60,6 @@ class HardwareBBB:
         capture.wait()
         capture.close()
         return capture.oscilloscope_data(self.N_SAMPLES)
-
-    def relay_act(self, device, state):
-        GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     # Thread Producer_AI
     def producer_ai(self, format_ai, q_ai):
@@ -201,15 +202,16 @@ class HardwareBBB:
                     logging.exception(exc)
                     client.captureException()
 
-    def relay_th(self):
+    def devices_th(self):
         """
-            Relay Status
+            Devices Status
         """
 
-        logging.info('Relay Thread called')
+        logging.info('Device Thread called')
 
-        app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]
-        app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]
+        app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
+        app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
+        status_PW2 = "OFF"
 
         while True:
             try:
@@ -220,8 +222,9 @@ class HardwareBBB:
                 status_RF1 = [v for v in dev_status if v['id']==10][0]['status']
                 status_CW1 = [v for v in dev_status if v['id']==13][0]['status']
                 status_DW1 = [v for v in dev_status if v['id']==14][0]['status']
+                status_PW2 = [v for v in dev_status if v['id']==19][0]['status']
 
-                app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
+                app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_PW2]
 
             except Exception as exc:
                 logging.exception(exc)
@@ -229,7 +232,21 @@ class HardwareBBB:
 
             for index, (first, second) in enumerate(zip(app_orig_states, app_new_status)):
                 if first != second:
-                    self.relay_act(self.appliance_lst[index], second)
+                    self.devices_act(self.appliance_lst[index], second)
                     app_orig_states = copy.deepcopy(app_new_status)
+            self.devices_act("battery", status_PW2)
 
-            time.sleep(2)
+            time.sleep(2)   # Delay between readings
+
+    def devices_act(self, device, state):
+        # Think about the time and that the battery will not be always in a while loop. Maybe have it in its own thread
+        if device == "battery":
+            battTime = battery_fct.urlBased(19, state)
+            while battTime == -1:
+                try:
+                    battTime = battery_fct.urlBased(19, state)
+                except Exception as exc:
+                    logging.exception(exc)
+                    client.captureException()
+        else:
+            GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
