@@ -212,6 +212,7 @@ class HardwareBBB:
         app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
         app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
         status_PW2 = "OFF"
+        value_PW2 = 0.0
 
         while True:
             try:
@@ -222,7 +223,9 @@ class HardwareBBB:
                 status_RF1 = [v for v in dev_status if v['id']==10][0]['status']
                 status_CW1 = [v for v in dev_status if v['id']==13][0]['status']
                 status_DW1 = [v for v in dev_status if v['id']==14][0]['status']
+
                 status_PW2 = [v for v in dev_status if v['id']==19][0]['status']
+                value_PW2 = [v for v in dev_status if v['id']==19][0]['value']
 
                 app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
 
@@ -231,7 +234,7 @@ class HardwareBBB:
                 client.captureException()
 
             # Building queue for battery thread
-            temp_q_batt = [status_PW2, "url", 0.0]
+            temp_q_batt = [status_PW2, "url", value_PW2]
             try:
                 q_batt.put(temp_q_batt)
             except Exception as exc:

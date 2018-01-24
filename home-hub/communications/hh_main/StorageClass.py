@@ -40,17 +40,15 @@ class Storage:
 
         if self.tcpClient.is_open():
             # Setting time
-            regs_timeout = self.tcpClient.write_multiple_registers(self.addr_time,[self.timeBatt&0xffff,(self.timeBatt&0xffff0000)>>16])
+            self.tcpClient.write_multiple_registers(self.addr_time,[self.timeBatt&0xffff,(self.timeBatt&0xffff0000)>>16])
 
             # Setting mode
-            regs_command = self.tcpClient.write_single_register(self.addr_command, command_mode)
+            self.tcpClient.write_single_register(self.addr_command, command_mode)
 
             # Setting power
             if command_mode == 4:
                 powerFloat = utils.encode_ieee(battPower) # Converting to ieee float32
                 regs_disPower = self.tcpClient.write_multiple_registers(self.addr_disPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
-                #print "disPower Write: ", str(regs_disPower)
-                # print "disPower: ", battVal
 
                 if str(regs_disPower) != "True":    # Check if write function worked
                     return 0
@@ -60,25 +58,21 @@ class Storage:
             elif command_mode == 3:
                 powerFloat = utils.encode_ieee(battPower) # Converting to ieee float32
                 regs_chaPower = self.tcpClient.write_multiple_registers(self.addr_chaPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
-                #print "chaPower Write: ", str(regs_chaPower)
-                # print "chaPower: ", battVal
 
                 if str(regs_chaPower) != "True":    # Check if write function worked
                     return 0
                 else:
-                    # print "chaPowerTime: ",
                     return float(time.time())
 
             else:
-                #print "battery OFF"
                 return 0
 
         else:
-            #print "tcpClient did not open"
+
             self.tcpClient.open()
             return -1
 
-    def urlBased(self, devId, state=None):
+    def urlBased(self, devId, state=None, powerReal=0):
         logging.info('Storage URL function called')
         if state == None:
             batt = requests.get(url=self.PWRNET_API_BASE_URL + "device/" + devId + "/", timeout=10)
@@ -95,23 +89,20 @@ class Storage:
         else:
             command_mode = 1
 
-        #print "Command_Mode: ", command_mode
-        disPower = 1500         # [W]: float32: [-3300W ... 3300W]
-        chaPower = 1000         # [W]: float32
+        powerFloat = utils.encode_ieee(powerReal) # Converting power to ieee float32
 
         if self.tcpClient.is_open():
 
             # Setting time
-            regs_timeout = self.tcpClient.write_multiple_registers(self.addr_time, [self.timeBatt & 0xffff, (self.timeBatt & 0xffff0000) >> 16])
+            self.tcpClient.write_multiple_registers(self.addr_time, [self.timeBatt & 0xffff, (self.timeBatt & 0xffff0000) >> 16])
 
             # Setting mode
-            regs_command = self.tcpClient.write_single_register(self.addr_command, command_mode)
+            self.tcpClient.write_single_register(self.addr_command, command_mode)
 
             # Setting power
             if (command_mode == 4):
-                powerFloat = utils.encode_ieee(disPower) # Converting to ieee float32
                 regs_disPower = self.tcpClient.write_multiple_registers(self.addr_disPower, [powerFloat & 0xffff, (powerFloat & 0xffff0000) >> 16])
-                #print "disPower Write: ", str(regs_disPower)
+
 
                 if (str(regs_disPower) != "True"):    # Check if write function worked
                     return 0
@@ -119,19 +110,14 @@ class Storage:
                     return float(time.time())
 
             elif (command_mode == 3):
-                powerFloat = utils.encode_ieee(chaPower) # Converting to ieee float32
                 regs_chaPower = self.tcpClient.write_multiple_registers(self.addr_chaPower, [powerFloat & 0xffff, (powerFloat & 0xffff0000) >> 16])
-                #print "chaPower Write: ", str(regs_chaPower)
 
                 if (str(regs_chaPower) != "True"):    # Check if write function worked
                     return 0
                 else:
-                    #print "chaPowerTime: ",
                     return float(time.time())
 
             else:
-                #off_status = requests.put(url=self.PWRNET_API_BASE_URL+'device/' + devId + '/', data={'id': 19, 'type': 'STORAGE', 'name': 'PW2', 'status': 'OFF'},timeout=10)
-                #print "status: ", off_status
                 return 0
 
         else:
@@ -142,6 +128,7 @@ class Storage:
         logging.info('Battery Thread called')
         state = "OFF"
         fct = "url"     # Which function to call, url or realtime
+        battval = 0
         #devId = 19
         while True:
             if not q_batt.empty():
@@ -156,10 +143,10 @@ class Storage:
                     logging.exception(exc)
                     client.captureException()
             if fct == "url":
-                batt = self.urlBased(19, state)
+                batt = self.urlBased(19, state, battval)
                 while batt == -1:
                     try:
-                        batt = self.urlBased(19, state)
+                        batt = self.urlBased(19, state, battval)
                     except Exception as exc:
                         logging.exception(exc)
                         client.captureException()
