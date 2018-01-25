@@ -1,8 +1,9 @@
-from pyModbusTCP.client import ModbusClient
-from pyModbusTCP import utils
 import time
 import requests
 import logging
+import struct
+from pyModbusTCP.client import ModbusClient
+from pyModbusTCP import utils
 from raven import Client
 
 # Global variables
@@ -37,6 +38,7 @@ class Storage:
 
         # Battery power
         battPower = abs(battVal)      # [W]: float32: [-3300W ... 3300W]
+        powerFloat = utils.encode_ieee(battPower) # Converting to ieee float32
 
         if self.tcpClient.is_open():
             # Setting time
@@ -47,7 +49,7 @@ class Storage:
 
             # Setting power
             if command_mode == 4:
-                powerFloat = utils.encode_ieee(battPower) # Converting to ieee float32
+
                 regs_disPower = self.tcpClient.write_multiple_registers(self.addr_disPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
 
                 if str(regs_disPower) != "True":    # Check if write function worked
@@ -56,7 +58,6 @@ class Storage:
                     return float(time.time())
 
             elif command_mode == 3:
-                powerFloat = utils.encode_ieee(battPower) # Converting to ieee float32
                 regs_chaPower = self.tcpClient.write_multiple_registers(self.addr_chaPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
 
                 if str(regs_chaPower) != "True":    # Check if write function worked
@@ -159,7 +160,25 @@ class Storage:
                         logging.exception(exc)
                         client.captureException()
 
+    def readSOE(self,):
+        logging.info('readSOE called')
+        addr = 62852    # Modbus address of SOE
 
+        if self.tcpClient.is_open():
+            try:
+                resp = self.tcpClient.read_holding_registers(addr, 2)   # Reading 2 registers, int16
+                Lh = hex(resp[0])
+                Mh = hex(resp[1])
+                Sh = Mh[2:]+Lh[2:]
+                val = struct.unpack('f',struct.pack('i',int(Sh,16)))    # Converting from hex to float
+                return val[0]
+
+            except Exception as exc:
+                logging.exception(exc)
+                client.captureException()
+        else:
+            self.tcpClient.open()
+            return -1
 
 
 
@@ -168,23 +187,29 @@ class Storage:
 ########################
 
 if __name__ == '__main__':
-    storageRT = Storage()
-    storageURL = Storage()
+    storage = Storage()
     powerTime = 10
     battTime = 0.0
     deviceId = '19'
-    funStor = raw_input("Which function to test, urlBased or storageRT: ")
+    soe = 0
+    funStor = raw_input("Which function to test: urlBased, storageRT, readSOE: ")
 
     while True:
         if funStor == "storageRT":
             val = float(raw_input("Enter battery power value - positive = discharge, negative = charge: "))
             current_time = float(time.time())
-            battTime = storageRT.realtime(val)
+            battTime = storage.realtime(val)
             if battTime == -1:
-                battTime = storageRT.realtime(val)
+                battTime = storage.realtime(val)
+            time.sleep(1)
+        elif funStor == "urlBased":
+            battTime = storage.urlBased(deviceId)
+            if battTime == -1:
+                battTime = storage.urlBased(deviceId)
             time.sleep(1)
         else:
-            battTime = storageURL.urlBased(deviceId)
-            if battTime == -1:
-                battTime = storageURL.urlBased(deviceId)
+            soe = storage.readSOE()
+            if soe == -1:
+                soe = storage.readSOE()
+            print "SOE: ", soe
             time.sleep(1)
