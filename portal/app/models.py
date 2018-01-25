@@ -45,6 +45,7 @@ class Device(models.Model):
     type = EnumField(DeviceType, max_length=40)
     status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN, max_length=40)
     value = models.IntegerField(default=0)
+    cosphi = models.FloatField(default=1.0)
 
 
 class DeviceState(models.Model):
