@@ -180,6 +180,32 @@ class Storage:
             self.tcpClient.open()
             return -1
 
+    def readCosPhi(self):
+        logging.info('readCosPhi called')
+        addr = 61706    # Modbus address of SOE
+
+        if self.tcpClient.is_open():
+            try:
+                resp = self.tcpClient.read_holding_registers(addr, 2)   # Reading 2 registers, int16
+                Lh = hex(resp[0])
+                Mh = hex(resp[1])
+                if Lh[2:] == '0':
+                    Sh = Mh[2:]+'0000'
+                else:
+                    Sh = Mh[2:]+Lh[2:]
+                val = struct.unpack('f',struct.pack('i',int(Sh,16)))    # Converting from hex to float
+                return val[0]
+
+            except Exception as exc:
+                logging.exception(exc)
+                client.captureException()
+        else:
+            self.tcpClient.open()
+            return -9   # cannot be -1 as cosPhi can be thos number
+
+    def writeCosPhi(self, val):
+        pass
+
 
 
 
@@ -192,7 +218,7 @@ if __name__ == '__main__':
     battTime = 0.0
     deviceId = '19'
     soe = 0
-    funStor = raw_input("Which function to test: urlBased, storageRT, readSOE: ")
+    funStor = raw_input("Which function to test: urlBased, storageRT, readSOE, readCosPhi: ")
 
     while True:
         if funStor == "storageRT":
@@ -207,9 +233,15 @@ if __name__ == '__main__':
             if battTime == -1:
                 battTime = storage.urlBased(deviceId)
             time.sleep(1)
-        else:
+        elif funStor == "readSOE":
             soe = storage.readSOE()
             if soe == -1:
                 soe = storage.readSOE()
             print "SOE: ", soe
+            time.sleep(1)
+        else:
+            cosPhi = storage.readCosPhi()
+            if cosPhi == -9:
+                cosPhi = storage.readCosPhi()
+            print "cosPhi: ", cosPhi
             time.sleep(1)
