@@ -25,10 +25,8 @@ class Storage:
         self.PWRNET_API_BASE_URL = PWRNET_API_BASE_URL
         logging.info('Storage class called')
 
-    def realtime(self, battVal = 0.0):
-
+    def realtime(self, battVal = 0.0, cosPhi = 1.0):
         logging.info('StorageRT function called')
-
         if battVal > 0:
             command_mode = 4    # Discharging (positive values)
         elif battVal < 0:
@@ -49,9 +47,7 @@ class Storage:
 
             # Setting power
             if command_mode == 4:
-
                 regs_disPower = self.tcpClient.write_multiple_registers(self.addr_disPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
-
                 if str(regs_disPower) != "True":    # Check if write function worked
                     return 0
                 else:
@@ -59,7 +55,6 @@ class Storage:
 
             elif command_mode == 3:
                 regs_chaPower = self.tcpClient.write_multiple_registers(self.addr_chaPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
-
                 if str(regs_chaPower) != "True":    # Check if write function worked
                     return 0
                 else:
@@ -73,11 +68,15 @@ class Storage:
             self.tcpClient.open()
             return -1
 
-    def urlBased(self, devId, state=None, powerReal=0):
+    def urlBased(self, devId, state=None, powerReal=0, cosPhi = 1.0):
         logging.info('Storage URL function called')
         if state == None:
             batt = requests.get(url=self.PWRNET_API_BASE_URL + "device/" + devId + "/", timeout=10)
             battStatus = batt.json()["status"]
+            power = batt.json()["value"]
+            phi = batt.json()["cosphi"]
+            print "power: ", power
+            print "phi: ", phi
         else:
             battStatus = state
 
@@ -89,8 +88,8 @@ class Storage:
 
         else:
             command_mode = 1
-
         powerFloat = utils.encode_ieee(powerReal) # Converting power to ieee float32
+        #powerFloat = utils.encode_ieee(power) # Converting power to ieee float32
 
         if self.tcpClient.is_open():
 
@@ -100,11 +99,17 @@ class Storage:
             # Setting mode
             self.tcpClient.write_single_register(self.addr_command, command_mode)
 
+            # Setting cosphi
+            #print "writing cosphi"
+            #regs_cosphi = self.writeCosPhi(valCosPhi=phi)
+            regs_cosphi = self.writeCosPhi(valCosPhi=cosPhi)
+            #print "regs_cosphi: ", regs_cosphi
+            if regs_cosphi == False:
+                return -1
+
             # Setting power
             if (command_mode == 4):
                 regs_disPower = self.tcpClient.write_multiple_registers(self.addr_disPower, [powerFloat & 0xffff, (powerFloat & 0xffff0000) >> 16])
-
-
                 if (str(regs_disPower) != "True"):    # Check if write function worked
                     return 0
                 else:
@@ -112,7 +117,6 @@ class Storage:
 
             elif (command_mode == 3):
                 regs_chaPower = self.tcpClient.write_multiple_registers(self.addr_chaPower, [powerFloat & 0xffff, (powerFloat & 0xffff0000) >> 16])
-
                 if (str(regs_chaPower) != "True"):    # Check if write function worked
                     return 0
                 else:
@@ -130,24 +134,25 @@ class Storage:
         state = "OFF"
         fct = "url"     # Which function to call, url or realtime
         battval = 0
-        #devId = 19
+        cosphi = 1.0
         while True:
             if not q_batt.empty():
                 try:
                     queue_param = q_batt.get(True,1)
                     state = queue_param[0]      # State: CHARGING, DISCHARGING, OFF
                     fct = queue_param[1]        # Function: url, realtime
-                    battval = queue_param[2]    # Only used for realtime function
+                    battval = queue_param[2]
+                    cosphi = queue_param[3]
                     q_batt.task_done()
                     #print "Queue battery: ", queue_param
                 except Exception as exc:
                     logging.exception(exc)
                     client.captureException()
             if fct == "url":
-                batt = self.urlBased(19, state, battval)
+                batt = self.urlBased(19, state, battval, cosphi)
                 while batt == -1:
                     try:
-                        batt = self.urlBased(19, state, battval)
+                        batt = self.urlBased(19, state, battval, cosphi)
                     except Exception as exc:
                         logging.exception(exc)
                         client.captureException()
@@ -182,7 +187,7 @@ class Storage:
 
     def readCosPhi(self):
         logging.info('readCosPhi called')
-        addr = 61706    # Modbus address of SOE
+        addr = 61706    # Modbus address of FixedCosPhi
 
         if self.tcpClient.is_open():
             try:
@@ -199,12 +204,37 @@ class Storage:
             except Exception as exc:
                 logging.exception(exc)
                 client.captureException()
+                return -9
         else:
             self.tcpClient.open()
             return -9   # cannot be -1 as cosPhi can be thos number
 
-    def writeCosPhi(self, val):
-        pass
+    def writeCosPhi(self, valCosPhi=1.0, test=False):
+        logging.info('writeCosPhi called')
+        addr = 61706    # Modbus address of FixedCosPhi
+        if test:        # Check to see if this function is going to be used for testing or just writing to register
+            if self.tcpClient.is_open():
+                try:
+                    data_conv = utils.encode_ieee(valCosPhi)
+                    regs_data = self.tcpClient.write_multiple_registers(addr,[data_conv&0xffff,(data_conv&0xffff0000)>>16])
+                    return str(regs_data)
+                except Exception as exc:
+                    logging.exception(exc)
+                    client.captureException()
+                    return False
+            else:
+                self.tcpClient.open()
+                return False
+        else:
+            try:
+                data_conv = utils.encode_ieee(valCosPhi)
+                regs_data = self.tcpClient.write_multiple_registers(addr,[data_conv&0xffff,(data_conv&0xffff0000)>>16])
+                return str(regs_data)
+            except Exception as exc:
+                logging.exception(exc)
+                client.captureException()
+                return False
+
 
 
 
@@ -218,30 +248,41 @@ if __name__ == '__main__':
     battTime = 0.0
     deviceId = '19'
     soe = 0
-    funStor = raw_input("Which function to test: urlBased, storageRT, readSOE, readCosPhi: ")
+    funStor = raw_input("Which function to test: urlBased, storageRT, readSOE, readCosPhi, writeCosPhi: ")
 
     while True:
         if funStor == "storageRT":
             val = float(raw_input("Enter battery power value - positive = discharge, negative = charge: "))
             current_time = float(time.time())
             battTime = storage.realtime(val)
+
             if battTime == -1:
                 battTime = storage.realtime(val)
             time.sleep(1)
+
         elif funStor == "urlBased":
             battTime = storage.urlBased(deviceId)
             if battTime == -1:
                 battTime = storage.urlBased(deviceId)
             time.sleep(1)
+
         elif funStor == "readSOE":
             soe = storage.readSOE()
             if soe == -1:
                 soe = storage.readSOE()
             print "SOE: ", soe
             time.sleep(1)
-        else:
+
+        elif funStor == "readCosPhi":
             cosPhi = storage.readCosPhi()
             if cosPhi == -9:
                 cosPhi = storage.readCosPhi()
             print "cosPhi: ", cosPhi
+            time.sleep(1)
+
+        else:
+            writeCosPhi = storage.writeCosPhi(0.5, True)
+            if writeCosPhi == False:
+                writeCosPhi = storage.writeCosPhi(0.5, True)
+            print "cosPhi: ", writeCosPhi
             time.sleep(1)

@@ -30,7 +30,7 @@ class HardwareBBB:
         # self.client = Client(self.SENTRY_DSN)
 
         # Initializing GPIOs:
-        self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "battery"]
+        self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1"]
 
         self.N_SAMPLES = N_SAMPLES
         if gpio_map == None:
@@ -212,7 +212,8 @@ class HardwareBBB:
         app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
         app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
         status_PW2 = "OFF"
-        value_PW2 = 0.0
+        power_PW2 = 0.0
+        cosphi_PW2 = 1.0
 
         while True:
             try:
@@ -225,7 +226,8 @@ class HardwareBBB:
                 status_DW1 = [v for v in dev_status if v['id']==14][0]['status']
 
                 status_PW2 = [v for v in dev_status if v['id']==19][0]['status']
-                value_PW2 = [v for v in dev_status if v['id']==19][0]['value']
+                power_PW2 = [v for v in dev_status if v['id']==19][0]['value']
+                cosphi_PW2 = [v for v in dev_status if v['id']==19][0]['cosphi']
 
                 app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
 
@@ -234,7 +236,7 @@ class HardwareBBB:
                 client.captureException()
 
             # Building queue for battery thread
-            temp_q_batt = [status_PW2, "url", value_PW2]
+            temp_q_batt = [status_PW2, "url", power_PW2, cosphi_PW2]
             try:
                 q_batt.put(temp_q_batt)
             except Exception as exc:
