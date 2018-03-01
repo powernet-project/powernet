@@ -83,7 +83,11 @@ def main():
     while True:
 
         PW2 = requests.get(url=PWRNET_API_BASE_URL + "device/19/", timeout=10)
-        status_PW2 = PW2.json()["status"]
+        try:
+            status_PW2 = PW2.json()["status"]
+        except Exception as e:
+            print 'There was an exception parsing the status response code'
+            status_PW2 = 'UNKNOWN'
         #print "status_PW2: ", status_PW2
 
         current_time = float(time.time())
