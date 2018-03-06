@@ -98,7 +98,8 @@ def setup_polling_listener():
             gc = c
         except Exception as exc:
             print(exc)
-        time.sleep(2)
+            time.sleep(3)
+        time.sleep(3)
 
 
 if __name__ == '__main__':
@@ -106,4 +107,5 @@ if __name__ == '__main__':
         setup_polling_listener()
     except Exception as exc:
         print(exc)
+        time.sleep(3)
         setup_polling_listener()
