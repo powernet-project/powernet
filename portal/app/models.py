@@ -1,6 +1,8 @@
 from django.db import models
 from enumfields import EnumField
+from django.utils import timezone
 from enumfields import Enum  # Uses Ethan Furman's "enum34" backport
+from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField
 
 
@@ -82,3 +84,45 @@ class HueStates(models.Model):
         db_table = 'hue_states'
 
     state = EnumField(HueStatesType, default=HueStatesType.UNKNOWN, max_length=40)
+
+
+class PowernetUser(models.Model):
+
+    class Meta:
+        db_table = 'powernet_user'
+
+    user = models.OneToOneField(User)
+    first_name = models.CharField(max_length=50, null=True)
+    last_name = models.CharField(max_length=50, null=True)
+    email = models.EmailField(blank=True, null=True, unique=True)
+    date_joined = models.DateTimeField(default=timezone.now)
+    last_access_dt_stamp = models.DateTimeField(default=timezone.now)
+
+
+class HomeType(Enum):
+    REAL = 'REAL'
+    UNKNOWN = 'UNKNOWN'
+    SIMULATED = 'SIMULATED'
+
+
+class Home(models.Model):
+
+    class Meta:
+        db_table = 'home'
+
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=1000)
+    type = EnumField(HomeType, default=HomeType.UNKNOWN, max_length=20)
+    owner = models.ForeignKey(PowernetUser)
+
+
+class HomeData(models.Model):
+
+    class Meta:
+        db_table = 'home_data'
+
+    home = models.ForeignKey(Home)
+    reactive_power = models.FloatField(default=0)
+    real_power = models.FloatField(default=0)
+    state_of_charge = models.FloatField(default=0)
+    dt_stamp = models.DateTimeField(default=timezone.now)
