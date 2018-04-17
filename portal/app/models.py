@@ -26,6 +26,7 @@ class DeviceStatus(Enum):
 
 class DeviceType(Enum):
     PV = 'PV'
+    SDF = 'SDF'
     STORAGE = 'STORAGE'
     MICROWAVE = 'MICROWAVE'
     STOVE_OVEN = 'STOVE_OVEN'
