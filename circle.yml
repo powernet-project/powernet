@@ -15,9 +15,6 @@ dependencies:
     # Retrieve our secrets from the CircleCI environment
     - echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
 
-    # vendor our dependencies    
-    - pip install -r portal/requirements.txt
-
     # Make sure gcloud is up to date
     - gcloud --quiet components update app
 
