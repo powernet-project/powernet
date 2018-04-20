@@ -1,4 +1,4 @@
-runtime: python
+runtime: python27
 env: flex
 entrypoint: gunicorn -b :$PORT app.wsgi
 
@@ -7,11 +7,6 @@ handlers:
   static_dir: staticfiles/*
 - url: .*
   script: app.wsgi.application
-
-# library entries are only supported by runtime python27
-#libraries:
-#- name: django
-#  version: "1.11"
 
 beta_settings:
   cloud_sql_instances: pwrnet-158117:us-central1:pwrnet-dev-store
