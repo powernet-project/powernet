@@ -5,7 +5,6 @@ requests==2.14.2
 psycopg2==2.7.1
 gunicorn==19.7.1
 cvxpy 
-numpy 
 scipy 
 pypower 
 networkx
