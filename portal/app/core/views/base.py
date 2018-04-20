@@ -36,4 +36,6 @@ def charts(request):
 
 
 def charts_no_control(request):
-    return render(request, 'partials/chart_plots_no_control.html')
+    import numpy as np 
+    a = np.array([60, 2, 3])
+    return render(request, 'partials/chart_plots_no_control.html', {"my_numpy_var": a[0]})
