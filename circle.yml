@@ -16,10 +16,7 @@ dependencies:
     - echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
 
     # vendor our dependencies
-    - mkdir -p lib
-    - pip install virtualenv
-    - virtualenv venv
-    - source venv/bin/activate
+    - mkdir -p lib    
     - pip install --upgrade pip
     - pip install -r portal/requirements.txt
     - pip install -r portal/requirements.txt -t lib
