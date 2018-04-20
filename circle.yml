@@ -16,10 +16,7 @@ dependencies:
     - echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
 
     # vendor our dependencies    
-    - mkdir -p portal/lib    
-    - pip install --upgrade pip
     - pip install -r portal/requirements.txt
-    - pip install -r portal/requirements.txt -t portal/lib
 
     # Make sure gcloud is up to date
     - gcloud --quiet components update app
