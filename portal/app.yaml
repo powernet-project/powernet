@@ -1,5 +1,4 @@
-runtime: python27
-threadsafe: true
+runtime: python
 env: flex
 entrypoint: gunicorn -b :$PORT app.wsgi
 
