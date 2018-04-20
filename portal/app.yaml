@@ -12,8 +12,6 @@ handlers:
 libraries:
 - name: django
   version: "1.11"
-- name: numpy
-  version: "1.6.1"
 
 beta_settings:
   cloud_sql_instances: pwrnet-158117:us-central1:pwrnet-dev-store
