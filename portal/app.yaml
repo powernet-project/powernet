@@ -9,11 +9,11 @@ handlers:
   script: app.wsgi.application
 
 # library entries are only supported by runtime python27
-#libraries:
-#- name: django
-#  version: "1.11"
-#- name: ssl
-#  version: 2.7.11
+libraries:
+- name: django
+  version: "1.11"
+- name: numpy
+  version: "1.6.1"
 
 beta_settings:
   cloud_sql_instances: pwrnet-158117:us-central1:pwrnet-dev-store
