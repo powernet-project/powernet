@@ -11,6 +11,7 @@ ENV PATH /env/bin:$PATH
 
 # Copy the application's requirements.txt and run pip to install all
 # dependencies into the virtualenv.
+ADD requirements.txt /app/
 RUN pip install numpy
 RUN pip install -r requirements.txt
 
