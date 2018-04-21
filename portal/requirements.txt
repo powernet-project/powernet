@@ -1,4 +1,3 @@
-wheels
 numpy==1.14.2
 CVXcanon==0.1.1
 cvxpy==0.4.11
