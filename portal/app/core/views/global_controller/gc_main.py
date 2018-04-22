@@ -120,7 +120,7 @@ def run_gc():
         print '\nIteration #: ', GCiter
         if GCiter == 1:
             break
-            
+
         # Get forecasts and prices for current run
 
         if GCiter % 2:
