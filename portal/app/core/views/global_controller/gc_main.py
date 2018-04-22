@@ -32,7 +32,7 @@ def run_gc():
     sellFactor = 1  # 0 means selling is not profitable
     V_weight = 1000
     Vtol = .005
-    GCtime = 8
+    GCtime = 1
     GCstepsTotal = 2  # 30 = 30 days when GCtime = 24 hours
     lookAheadTime = 24
     LCscens = 1
