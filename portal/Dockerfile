@@ -16,6 +16,7 @@ ENV PATH /env/bin:$PATH
 ADD requirements.txt /app/
 RUN pip install numpy
 RUN pip install -r requirements.txt
+RUN pip install -f https://download.mosek.com/stable/wheel/index.html Mosek==8.1.43
 
 # Add the application source code.
 ADD . /app/
