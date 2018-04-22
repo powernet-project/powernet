@@ -118,7 +118,9 @@ def run_gc():
     # This loop repeats daily
     for GCiter in range(GCstepsTotal):
         print '\nIteration #: ', GCiter
-
+        if GCiter == 1:
+            break
+            
         # Get forecasts and prices for current run
 
         if GCiter % 2:
