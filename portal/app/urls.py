@@ -7,6 +7,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^weather/', base.weather, name='Weather Information'),
     url(r'^pv/', base.pv, name='Enphase PV status'),
+    url(r'^gc_algo/', base.run_gc_algo, name='Run Global Controller Algorithm'),
     url(r'^charts/', base.charts, name='Algorithm Charts/Plots'),
     url(r'^charts_no_control/', base.charts_no_control, name='No Control Algo Charts'),
     url(r'^electricity/', base.electricity, name='ComEd Energy Price Information'),
