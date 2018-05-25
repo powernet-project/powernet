@@ -1,0 +1,499 @@
+// Test multiple houses: test1.gld
+clock {
+	timezone EST+5EDT;
+	//starttime '2000-01-01 00:00:00';
+	//stoptime '2000-01-01 23:59:59';
+	starttime '2017-07-01 00:00:00';
+	stoptime '2017-07-01 9:59:59';
+	}
+
+module residential {
+          implicit_enduses NONE;
+ //         default_outdoor_temperature 68 degF;
+     };
+module powerflow {
+	solver_method NR;
+	default_maximum_voltage_error 1e-6;
+	NR_iteration_limit 50;
+	NR_superLU_procs 1;
+	}
+module tape;
+module generators;
+
+module climate;
+
+object climate {
+	name test_weather;
+	tmyfile "724940TYA.tmy3";
+	interpolate LINEAR;
+}
+
+//object house:..2{
+
+// Power Distribution --------------------------------------------
+
+//object node {
+//	name Node0;
+//	nominal_voltage 120V;
+//	phases ABCN;
+//	bustype SWING;
+//	}
+
+object triplex_node {
+	name Node1;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+	}
+
+object triplex_line_conductor {
+	name "c1/0 AA triplex";
+	resistance 0.97;
+	geometric_mean_radius 0.0111;
+	}
+
+object triplex_line_configuration {
+	name triplex_line_config;
+	conductor_1 "c1/0 AA triplex";
+	conductor_2 "c1/0 AA triplex";
+	conductor_N "c1/0 AA triplex";
+	insulation_thickness 0.08;
+	diameter 0.368;
+	}
+
+// House # 1  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+object triplex_line {
+	from Node1;
+	to node1_meter_H1;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+	}
+
+object triplex_meter {
+	name node1_meter_H1;
+	nominal_voltage 120V;
+	phases AS;
+	object recorder {
+		property measured_real_power, measured_reactive_power;
+		interval 60;
+		file out_power_meter_H1.csv;
+					};
+//	object recorder {
+//		property measured_current_1;
+//		interval 60;
+//		file out_current_H1.csv;
+//					};
+}
+
+object house{
+	name node1_House1;
+	floor_area 2500;
+	parent node1_meter_H1;
+	number_of_stories 1;
+	//panel.power_factor 0.98; //What is that??
+	//heating_setpoint 70;
+	//cooling_setpoint 80;
+	heating_setpoint 68;
+	cooling_setpoint 71;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	airchange_per_hour 0.51;
+	Rdoors 5;
+	Rfloor 22;
+	Rroof 30;
+	Rwall 19;
+	//thermostat_deadband 4;
+	//air_temperature 78;
+			}
+
+
+//object recorder {
+//	parent node1_House1;
+//	property panel.power;
+//	interval 60;
+//	file out_power_H1.csv;
+//};
+
+// test inverter + battery --------------------------------------------
+
+object triplex_line {
+     name line_batt_H1;
+     from Node1;
+     to node1_meter_B1;
+     phases AS;
+     length 30 ft;
+     configuration triplex_line_config;
+}
+object triplex_meter {
+     name node1_meter_B1;
+     phases AS;
+     nominal_voltage 124.00;
+     object recorder {
+		 interval 60;
+		property measured_real_power, measured_reactive_power;
+		file out_power_inv_batt_H1.csv;
+};
+//	object recorder {
+//		property measured_current_1;
+//		interval 60;
+//		file out_current_inv_batt_H1.csv;
+//};
+}
+
+object inverter {
+    name node1_batt_inv_H1;
+    generator_status ONLINE;
+    inverter_type FOUR_QUADRANT;
+    four_quadrant_control_mode CONSTANT_PQ;
+    generator_mode CONSTANT_PQ;
+		parent node1_meter_B1; 							//parent must be a triplex_meter or meter object.
+    rated_power 3000.0;									//Per phase rating
+    inverter_efficiency .95;
+    Q_Out 0;
+}
+
+
+object battery {
+	name node1_batt_H1;
+	parent node1_batt_inv_H1;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	power_type DC;
+	state_of_charge 0.2;					//Initial state of charge
+	generator_mode SUPPLY_DRIVEN;
+	object recorder {
+		property state_of_charge;
+		interval 60;
+		file SOC_batt_H1.csv;
+					};
+}
+
+//object inverter {
+//      name node1_batt_inv_H1;
+//      generator_status ONLINE;
+//      inverter_type FOUR_QUADRANT;
+//      four_quadrant_control_mode CONSTANT_PQ; //LOAD_FOLLOWING;
+//	  	parent node1_meter_B1; 							//parent must be a triplex_meter or meter object.
+//	  	sense_object node1_meter_H1;								//the sense_object must be a meter, triplex_meter, or transformer.
+//      rated_power 3000.0;								//Per phase rating
+//      inverter_efficiency .95;
+//	  charge_on_threshold 1.5 kW;		//when the load at the sense_object drops below this value the inverter starts to charge the battery.
+//	  charge_off_threshold 1.7 kW;		//when the battery is charging and the load at the sense_object rises above this value the inverter stops charging the battery.
+//	  discharge_off_threshold 2 kW;     //when the battery is discharging and the load at the sense_object drops below this value the inverter stops discharging the battery.
+//	  discharge_on_threshold 3 kW;      //when the load at the sense_object rises above this value the inverter starts to discharge the battery.
+//	  max_discharge_rate 0.5 kW;	// 3
+//	  max_charge_rate 0.5 kW; 	// 3
+// 	  	P_Out 0.120 kW;
+//	  	Q_Out 0;
+//	  	charge_lockout_time 1;
+//	  	discharge_lockout_time 1;
+//	  object player{
+//					property P_Out;
+//					file "battery_sched.player";
+//					loop 365;
+//					};
+//}
+
+
+//object battery {
+//	name node1_batt_H1;
+//	parent node1_batt_inv_H1;
+//	use_internal_battery_model TRUE;
+//	battery_type LI_ION;
+//	rated_power 3 kW;
+//	nominal_voltage 120;
+//	battery_capacity 10 kWh;
+//	round_trip_efficiency 0.81;
+//	state_of_charge 0.5;
+//	generator_mode SUPPLY_DRIVEN;
+//	object recorder {
+//		property state_of_charge;
+//		interval 60;
+//		file SOC_batt_H1.csv;
+//					};
+//}
+
+
+// PV + Inverter ----------------------------------------------------------
+
+object triplex_line {
+     name line_solar_H1;
+     from Node1;
+     to node1_meter_S1;
+     phases AS;
+     length 10 ft;
+     configuration triplex_line_config;
+}
+object triplex_meter {
+     name node1_meter_S1;
+     phases AS;
+     nominal_voltage 124.00;
+     object recorder {
+		 interval 60;
+		 property measured_real_power,measured_reactive_power;
+		 file out_power_inv_solar_H1.csv;
+					};
+}
+object inverter {
+	name node1_solar_inv_H1;
+	phases AS;
+	parent node1_meter_S1;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+    four_quadrant_control_mode CONSTANT_PF;
+    generator_mode SUPPLY_DRIVEN;
+    inverter_efficiency .95;
+	rated_power 3000;
+}
+object solar {
+	name node1_solar_H1;
+	phases AS;
+	parent node1_solar_inv_H1;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 250 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 270; //equator-facing (South)
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+//	latitude 21.30812;
+// 	longitude -158.07935;
+}
+
+
+// House # 2  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+object triplex_line {
+	from Node1;
+	to node1_meter_H2;
+	phases AS;
+	length 40 ft;
+	configuration triplex_line_config;
+	}
+
+object triplex_meter {
+	name node1_meter_H2;
+	nominal_voltage 120V;
+	phases AS;
+	object recorder {
+		property measured_real_power, measured_reactive_power;
+		interval 60;
+		file out_power_meter_H2.csv;
+					};
+//	object recorder {
+//		property measured_current_1;
+//		interval 60;
+//		file out_current_H2.csv;
+//					};
+	}
+
+object house{
+	name node1_House2;
+	floor_area 1500 sf;
+	parent node1_meter_H2;
+	panel.power_factor 0.98; //What is that??
+	heating_setpoint 70;
+	cooling_setpoint 80;
+	thermostat_deadband 4;
+	air_temperature 78;
+			}
+
+
+//object recorder {
+//	parent node1_House2;
+//	property panel.power;
+//	interval 60;
+//	file out_power_H2.csv;
+//					};
+
+
+// House # 3  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+object triplex_line {
+	from Node1;
+	to node1_meter_H3;
+	phases AS;
+	length 50 ft;
+	configuration triplex_line_config;
+	}
+
+object triplex_meter {
+	name node1_meter_H3;
+	nominal_voltage 120V;
+	phases AS;
+	object recorder {
+		property measured_real_power, measured_reactive_power;
+		interval 60;
+		file out_power_meter_H3.csv;
+					};
+	//object recorder {
+	//	property measured_current_1;
+	//	interval 60;
+	//	file out_current_H3.csv;
+	//				};
+	}
+
+object house{
+	name node1_House3;
+	floor_area 2000 sf;
+	parent node1_meter_H3;
+	panel.power_factor 0.98; //What is that??
+	heating_setpoint 70;
+	cooling_setpoint 80;
+	thermostat_deadband 4;
+	air_temperature 78;
+			}
+
+
+//object recorder {
+//	parent node1_House3;
+//	property panel.power;
+//	interval 60;
+//	file out_power_H3.csv;
+//					};
+
+// test inverter + battery --------------------------------------------
+
+object triplex_line {
+     name line_batt_H3;
+     from Node1;
+     to node1_meter_B3;
+     phases AS;
+     length 50 ft;
+     configuration triplex_line_config;
+}
+object triplex_meter {
+     name node1_meter_B3;
+     phases AS;
+     nominal_voltage 124.00;
+     object recorder {
+		 interval 60;
+		property measured_real_power,measured_reactive_power;
+		file out_power_inv_batt_H3.csv;
+					};
+//	object recorder {
+//		property measured_current_1;
+//		interval 60;
+//		file out_current_inv_batt_H3.csv;
+//					};
+}
+object inverter {
+      name node1_batt_inv_H3;
+      generator_status ONLINE;
+      inverter_type FOUR_QUADRANT;
+      four_quadrant_control_mode CONSTANT_PQ; //LOAD_FOLLOWING;
+	  parent node1_meter_B3; 							//parent must be a triplex_meter or meter object.
+	  sense_object node1_meter_H3;								//the sense_object must be a meter, triplex_meter, or transformer.
+      rated_power 3000.0;								//Per phase rating
+      inverter_efficiency .95;
+//	  charge_on_threshold 1.5 kW;		//when the load at the sense_object drops below this value the inverter starts to charge the battery.
+//	  charge_off_threshold 1.7 kW;		//when the battery is charging and the load at the sense_object rises above this value the inverter stops charging the battery.
+//	  discharge_off_threshold 2 kW;     //when the battery is discharging and the load at the sense_object drops below this value the inverter stops discharging the battery.
+//	  discharge_on_threshold 3 kW;      //when the load at the sense_object rises above this value the inverter starts to discharge the battery.
+//	  max_discharge_rate 0.5 kW;	// 3
+//	  max_charge_rate 0.5 kW; 	// 3
+// 	  P_Out 0.120 kW;
+//	  Q_Out 0;
+	  charge_lockout_time 1;
+	  discharge_lockout_time 1;
+//	  object player{
+//					property P_Out;
+//					file "battery_sched.player";
+//					loop 365;
+//					};
+}
+object battery {
+	name node1_batt_H3;
+	parent node1_batt_inv_H3;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	rated_power 3 kW;
+	nominal_voltage 120;
+	battery_capacity 10 kWh;
+	round_trip_efficiency 0.81;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+	object recorder {
+		property state_of_charge;
+		interval 60;
+		file SOC_batt_H3.csv;
+					};
+}
+// PV + Inverter ----------------------------------------------------------
+
+object triplex_line {
+     name line_solar_H3;
+     from Node1;
+     to node1_meter_S3;
+     phases AS;
+     length 10 ft;
+     configuration triplex_line_config;
+}
+object triplex_meter {
+     name node1_meter_S3;
+     phases AS;
+     nominal_voltage 124.00;
+     object recorder {
+		 interval 60;
+		property measured_real_power,measured_reactive_power;
+		file out_power_inv_solar_H3.csv;
+					};
+//	object recorder {
+//		property measured_current_1;
+//		interval 60;
+//		file out_current_inv_solar_H3.csv;
+//					};
+}
+object inverter {
+	name node1_solar_inv_H3;
+	phases AS;
+	parent node1_meter_S3;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+    four_quadrant_control_mode CONSTANT_PF;
+    generator_mode SUPPLY_DRIVEN;
+    inverter_efficiency .95;
+	rated_power 3000;
+//	    object recorder {
+//		property I_In;
+//		interval 360;
+//		file out_currentINV_PV_H3.csv;
+//					};
+//	object recorder {
+//		property V_In;
+//		interval 360;
+//		file out_voltageINV_PV_H3.csv;
+//					};
+}
+object solar {
+	name node1_solar_H3;
+	phases AS;
+	parent node1_solar_inv_H3;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 250 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 270; //equator-facing (South)
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+//	latitude 21.30812;
+// 	longitude -158.07935;
+}
+
+script export clock;
+script on_init python ./gld_init_batt_3H.py;
+script on_precommit python ./gld_precommit_batt_3Hv2.py;
