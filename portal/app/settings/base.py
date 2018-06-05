@@ -56,6 +56,9 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+# If the user isn't logged, send them to the login page
+LOGIN_URL = '/login'
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/' if DEBUG else 'https://storage.googleapis.com/powernet-app-assets/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -80,7 +83,7 @@ TEMPLATES = [
 ]
 
 # Database
-# PROD
+# PROD - Config for when this runs on GCPs AppEngine
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
