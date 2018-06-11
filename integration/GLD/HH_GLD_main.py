@@ -21,7 +21,7 @@ def main():
     umino = -0.3
     qmaxo = 1.0
     qmino = 0.0
-    prices = DataPreLoaded("pricesCurrent.csv",0)
+    prices = DataPreLoaded_Prices("pricesCurrent.csv",0)
 
     #Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(realS, NLweight, prices, sellFactor, q0, LCscens, GCtime, pre_pDemands, umaxo, umino, qmaxo, qmino):
     Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
