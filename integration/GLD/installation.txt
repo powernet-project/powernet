@@ -1,0 +1,75 @@
+Installation of packages to have the optimization running (configuration: aws running linux with miniconda):
+
+These are the standard packages you need to install (dont worry too much about the version). I'd recommend using conda:
+numpy==1.14.2
+multiprocess==0.70.5
+networkx==1.11
+PYPOWER==5.1.3
+pytz==2018.4
+scipy==0.19.1
+six==1.11.0
+toolz==0.9.0
+lapack (conda install -c conda-forge lapack)
+scs (conda install -c cvxgrp scs)
+python-dateutil
+ecos (conda install -c anaconda ecos)
+glpk (conda install -c conda-forge glpk)
+CVXcanon
+cvxpy (conda install -c omnia cvxpy)
+mosek (conda install -c mosek mosek)
+nose -> then run nosetests cvxpy to make sure cvxpy is installed correctly
+
+These are the list of packages in my conda environment. Installing the ones above should automatically add all the other ones in the list below.
+
+blas                      1.0                         mkl
+ca-certificates           2018.03.07                    0    anaconda
+certifi                   2018.4.16                py27_0    anaconda
+cvxcanon                  0.1.1            py27h91e6341_0
+cvxopt                    1.1.8                    py27_0    omnia
+cvxpy                     0.4.8                    py27_0    omnia
+decorator                 4.3.0                    py27_0
+dill                      0.2.7.1          py27h28bf823_0
+ecos                      2.0.5            py27h3010b51_0    anaconda
+fastcache                 1.0.2            py27h14c3975_2
+glpk                      4.65                 h16a7912_1    conda-forge
+gmp                       6.1.2                         0    conda-forge
+intel-openmp              2018.0.3                      0
+lapack                    3.6.1                         1    conda-forge
+libcurl                   7.60.0               h1ad7b7a_0    anaconda
+libedit                   3.1.20170329         h6b74fdf_2
+libffi                    3.2.1                hd88cf55_4
+libgcc-ng                 7.2.0                hdf63c60_3
+libgfortran               3.0.0                         1
+libgfortran-ng            7.2.0                hdf63c60_3
+libopenblas               0.2.20               h9ac9557_7
+libssh2                   1.8.0                h9cfc8f7_4    anaconda
+libstdcxx-ng              7.2.0                hdf63c60_3
+mkl                       2018.0.3                      1
+mkl_fft                   1.0.1            py27h3010b51_0
+mkl_random                1.0.1            py27h629b387_0
+mosek                     8.1.53           py27h654711f_0    mosek
+multiprocess              0.70.4                   py27_0    omnia
+ncurses                   6.1                  hf484d3e_0
+networkx                  2.1                      py27_0
+nose                      1.3.7            py27heec2199_2
+numpy                     1.12.1           py27h9378851_1
+numpy-base                1.14.3           py27hdbf6ddf_2
+openblas                  0.2.20                        4
+openblas-devel            0.2.20                        7
+openssl                   1.0.2o               h20670df_0    anaconda
+pip                       10.0.1                   py27_0
+pycurl                    7.43.0.2         py27hb7f436b_0    anaconda
+pypower                   4.0.1                    py27_0    auto
+python                    2.7.15               h1571d57_0
+python-dateutil           2.7.3                    py27_0    anaconda
+pytz                      2018.4                   py27_0
+readline                  7.0                  ha6073c6_4
+scipy                     1.1.0            py27hfc37229_0
+scs                       1.2.6                    py27_0    cvxgrp
+setuptools                3.3                      py27_0    auto
+six                       1.11.0           py27h5f960f1_1
+sqlite                    3.23.1               he433501_0
+tk                        8.6.7                hc745277_3
+toolz                     0.9.0                    py27_0
+wheel                     0.31.1                   py27_0
+zlib                      1.2.11               ha838bed_2

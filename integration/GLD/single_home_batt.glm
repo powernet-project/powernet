@@ -1,0 +1,157 @@
+#set minimum_timestep=60
+#define houselist="NONE"
+
+
+clock {
+	timezone EST+5EDT;
+	starttime '2017-07-01 00:00:00';
+	stoptime '2017-07-01 01:59:59';
+}
+
+#option server // required for python library get/set/control operations
+#set complex_format="%d+%dj" // required for python to parse complex values
+
+module residential {
+//     implicit_enduses DISHWASHER|WATERHEATER;
+     };
+
+module climate;
+module tape;
+module generators;
+
+module powerflow {
+	solver_method NR;
+	default_maximum_voltage_error 1e-6;
+	NR_iteration_limit 50;
+	NR_superLU_procs 1;
+}
+
+object climate {
+	name test_weather;
+	tmyfile "724940TYA.tmy3";
+	interpolate LINEAR;
+}
+
+//-----House objects
+
+
+object triplex_node {
+	name Node1;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+	}
+
+object triplex_line_conductor {
+	name "c1/0 AA triplex";
+	resistance 0.97;
+	geometric_mean_radius 0.0111;
+	}
+	
+object triplex_line_configuration {
+	name triplex_line_config;
+	conductor_1 "c1/0 AA triplex";
+	conductor_2 "c1/0 AA triplex";
+	conductor_N "c1/0 AA triplex";
+	insulation_thickness 0.08;
+	diameter 0.368;
+	}
+	
+object triplex_line {
+	from Node1;
+	to meter1;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+	}	
+
+
+object triplex_meter {
+	name meter1;
+	nominal_voltage 120V;
+	phases AS;
+	object recorder {
+		property measured_real_power;
+		file power_meter1.csv;
+		interval 60;
+	};
+	object recorder {
+		property measured_current_1;
+		interval 60;
+		file current_meter1.csv;
+	};			
+}
+
+
+object house{
+	//name elec_gas_1_1;
+	name GLD_0001;
+	parent meter1;
+	floor_area 1491;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 71;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	airchange_per_hour 0.51;
+	Rdoors 5;
+	Rfloor 22;
+	Rroof 30;
+	Rwall 19;
+}
+
+
+
+// Battery and inverter
+
+object triplex_line {
+    name line_batt;
+    from Node1;
+    to node1_batt_meter;
+    phases AS;
+    length 30 ft;
+    configuration triplex_line_config;
+}
+
+object triplex_meter {     
+    name node1_batt_meter;
+    phases AS;
+    nominal_voltage 124.00; 
+    object recorder {
+		property measured_real_power;
+		interval 60;
+		file power_inv_batt.csv;
+	};  	
+}
+
+object inverter {
+    name node1_batt_inv;
+    generator_status ONLINE;
+    inverter_type FOUR_QUADRANT;
+    four_quadrant_control_mode CONSTANT_PQ;
+    generator_mode CONSTANT_PQ;
+	parent node1_batt_meter; 							//parent must be a triplex_meter or meter object.
+    rated_power 3000.0;									//Per phase rating
+    inverter_efficiency .95;
+    Q_Out 0;
+}
+
+object battery {
+	name node1_batt;
+	parent node1_batt_inv;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	power_type DC;
+	state_of_charge 0.5;					//Initial state of charge
+	generator_mode SUPPLY_DRIVEN;	
+}	
+
+script export clock;
+script on_init python ./gld_script_init.py;
+script on_precommit python ./gld_script_precommit.py;

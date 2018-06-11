@@ -3,6 +3,7 @@ import os
 import rwText
 import json
 from test import *
+from cvxpy import *
 
 
 # Initializing variables
@@ -29,40 +30,7 @@ current_batt = []
 power_solar = []
 current_solar = []
 
-######## LC Controller #########
-'''
-check for file home_U.json to see if the algorithm ran
-if (file doesnt exist):
-     NLweight = 100
-     sellFactor = 1
-     GCtime = 24          # Test for 1 but look into 24
-     LCscens = 1
-     q0 = 0.5
-     umaxo = 0.3
-     umino = -0.3
-     qmaxo = 1.0
-     qmino = 0.0
-     prices = DataPreLoaded("pricesCurrent.csv",0)
-     Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
-     # Saving Q and U
-'''
-'''
-try:
-    with open('home_U.json') as file:
-        pass
-    except Exception as exc:
-        NLweight = 100
-        sellFactor = 1
-        GCtime = 24          # Test for 1 but look into 24
-        LCscens = 1
-        q0 = 0.5
-        umaxo = 0.3
-        umino = -0.3
-        qmaxo = 1.0
-        qmino = 0.0
-        prices = DataPreLoaded("pricesCurrent.csv",0)
-        Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
-'''
+
 
 
 sim_time = os.getenv("clock")
@@ -90,13 +58,76 @@ for i in batt_solar_houses:
 #sim_time = os.getenv("clock")
 print sim_time
 
+######## LC Controller House 1 #########
+NLweight = 100
+sellFactor = 1
+GCtime = 24          # Test for 1 but look into 24
+LCscens = 1
+#q0 = 0.5
+q0 = houses_dict[1]['soc']
+umaxo = 0.3
+umino = -0.3
+qmaxo = 1.0
+qmino = 0.0
+if sim_time[14:16] == "01":
+
+    # Checking if the file exists
+    try:
+        print 'Try BatteryReadRemove function...'
+        u = 1000*BatteryReadRemove()
+        print 'File exists'
+        print 'u: ', u
+
+
+        #with open('home_U.json','r') as file:
+            #read and remove data
+
+    # If file does not exist, run the optimization and create the file
+    except Exception as exc:
+        print 'File does not exist...'
+        prices = DataPreLoaded("pricesCurrent.csv",0)
+        Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
+        U = -U
+        u = 1000*U[0][0]
+        houses_dict[1]['Battery_LC_U'] = u
+        print 'U: ', u
+        BatteryProfiles(U, batt_solar_houses)
+
+
+    gridlabd_functions.set('node1_batt_inv_H1','P_Out',u)
+
 # Creating file with new data
 rwText.create_file_json('TestGLD.json', houses_dict)
 
-# Reading from file
-lineList = rwText.read_file_json('TestGLD.json')
-data = json.loads(lineList[-1])
 
+
+
+
+###############################################
+# Old Functions
+'''
+######## LC Controller House 1 #########
+try:
+    with open('home_U.json') as file:
+        pass
+except Exception as exc:
+    NLweight = 100
+    sellFactor = 1
+    GCtime = 24          # Test for 1 but look into 24
+    LCscens = 1
+    q0 = 0.5
+    umaxo = 0.3
+    umino = -0.3
+    qmaxo = 1.0
+    qmino = 0.0
+    prices = DataPreLoaded("pricesCurrent.csv",0)
+    Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
+'''
+
+# Reading from file
+#lineList = rwText.read_file_json('TestGLD.json')
+#data = json.loads(lineList[-1])
+'''
 soc_H1 = data['1']['soc']
 soc_H3 = data['3']['soc']
 
@@ -111,6 +142,7 @@ else:
     gridlabd_functions.set('node1_batt_inv_H3','P_Out',+500)
 
 set_P_out = 0.099
+'''
 
 '''
 if sim_time[14] != "4":

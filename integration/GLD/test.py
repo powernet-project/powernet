@@ -5,6 +5,8 @@ import time
 from multiprocessing import Pool
 import itertools
 import csv
+import rwText
+import json
 
 # Ideally won't need this function -> all the data should come from CC
 def DataPreLoaded(csv_file,houseNumber):
@@ -15,6 +17,46 @@ def DataPreLoaded(csv_file,houseNumber):
     for r in scen[houseNumber]:
         homeForecast.append(float(r))
     return homeForecast
+
+
+def BatteryProfiles(U, batt_solar_houses):
+    U_houses = {}               # Creating battery house profile
+    for i in batt_solar_houses:
+        U_houses[i] = {}
+
+    U_new = U.tolist()[0]   # converting numpy array (output from LC_Combined_No_Bounds_SingleHome) to list for json. This is for one house
+    for i in batt_solar_houses:
+        U_houses[i]['Battery'] = U_new[1:-1]
+    rwText.create_file_json('home_U.json',U_houses)
+
+
+def BatteryReadRemove():
+    try:
+        with open('home_U.json', 'r') as data_file:
+            data = json.load(data_file)
+    except IOError as e:
+        return
+
+    u_list = data['1']['Battery']
+    #print 'u_list: ', u_list
+    #print 'len u_list: ', len(u_list)
+
+    # This is the value to actuate in the battery
+    u = u_list[0]
+    if len(u_list) == 1:
+        print 'Need to delete the file...'
+
+    # Removing the element that was read
+    data['1']['Battery'] = u_list[1:-1]
+    try:
+        # Overwriting the file with new array (one less element)
+        with open('home_U.json', 'w') as data_file:
+            data = json.dump(data, data_file)
+    except IOError as e:
+        print 'Unable to open write file'
+        return
+    print 'Success!!! u = ', u
+    return u
 
 
 def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino):
@@ -28,7 +70,7 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
     T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
 
     # Ideally won't need this function -> all the data should come from CC
-    #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0)
+    #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0) The 0 here means we are taking the first home
     realS = DataPreLoaded("realS1.csv",0)   # net power profile to be followed by the home
 
     # This loops through the 24hrs of the global controller updates -> calculating all 24hrs at a time
@@ -38,7 +80,7 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
         umax = np.tile(umaxo, (1,T-t))
         qmax = np.tile(qmaxo, (1,T-t+1))
         qmin = np.tile(qmino, (1,T-t+1))
-        #pricesCurrent = np.tile(prices[:,t:], LCscens)
+        #pricesCurrent = np.tile(prices[:,t:], LCscens) -> LCscens means how many scenarios we are leveraging for the optimization
         pricesCurrent = np.tile(prices[t:],(nS,LCscens))
         # Ideally won't need this function -> all the data should come from CC
         homeForecast = DataPreLoaded("ScenarioGen1.csv",t*26)
@@ -62,7 +104,7 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
         for i in range(LCscens):
             # Demand and battery action constraints
             constraints.append( Y[(i*(T-t)):((i+1)*(T-t))] == -LCforecasts[i] - U )
-            print "LCforecast[i]: ", LCforecasts[i]
+            #print "LCforecast[i]: ", LCforecasts[i]
 
         if sellFactor == 0:
             obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )

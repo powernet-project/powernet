@@ -4,7 +4,7 @@ clock {
 	//starttime '2000-01-01 00:00:00';
 	//stoptime '2000-01-01 23:59:59';
 	starttime '2017-07-01 00:00:00';
-	stoptime '2017-07-01 9:59:59';
+	stoptime '2017-07-01 4:59:59';
 	}
 
 module residential {
@@ -167,7 +167,7 @@ object battery {
 	battery_capacity 7000;
 	base_efficiency 0.95;
 	power_type DC;
-	state_of_charge 0.2;					//Initial state of charge
+	state_of_charge 0.5;					//Initial state of charge
 	generator_mode SUPPLY_DRIVEN;
 	object recorder {
 		property state_of_charge;

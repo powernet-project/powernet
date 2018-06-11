@@ -1,0 +1,7768 @@
+// GridLAB-D .glm file for modifying IEEE 123 feeder
+
+#set minimum_timestep=60
+#set complex_format="%d+%dj"
+#option server
+#define houselist="NONE"
+#define bat_list="NONE"
+#define batinv_list="NONE"
+
+clock {
+	timezone EST+5EDT;
+	starttime '2017-07-01 00:00:00';
+	stoptime '2017-07-01 02:00:00';
+}
+
+module residential{
+};
+
+module climate;
+
+module tape;
+
+module generators;
+
+module powerflow {
+	solver_method NR;
+	default_maximum_voltage_error 1e-6;
+	NR_iteration_limit 50;
+	NR_superLU_procs 1;
+}
+
+object climate {
+	name tmy_file;
+	tmyfile "724940TYA.tmy3";
+	interpolate LINEAR;
+}
+
+
+//Line and conductor configurations
+
+object triplex_line_conductor {
+	name "c1/0 AA triplex"; 
+	resistance 0.97;
+	geometric_mean_radius 0.0111;
+}
+
+object triplex_line_configuration {
+	name triplex_line_config;
+	conductor_1 "c1/0 AA triplex";
+	conductor_2 "c1/0 AA triplex";
+	conductor_N "c1/0 AA triplex";
+	insulation_thickness 0.08;
+	diameter 0.368;
+}
+
+//Line
+
+object triplex_node {
+	name node_GLD_0001;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0001;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0001;
+	parent meter_GLD_0001;
+	floor_area 3003;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0001;
+	to meter_GLD_0001;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder{
+	name rec_GLD_0001_power;
+	parent meter_GLD_0001;
+	property measured_real_power;
+	file GLD_0001_power.csv;
+	interval 60;
+}
+
+object triplex_line {
+	name bat_line_GLD_0001;
+	from node_GLD_0001;
+	to bat_meter_GLD_0001;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0001;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0001;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0001;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0001;
+	parent inv_0001;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0002;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0002;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0002;
+	parent meter_GLD_0002;
+	floor_area 1745;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0002;
+	to meter_GLD_0002;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0002;
+	from node_GLD_0002;
+	to bat_meter_GLD_0002;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0002;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0002;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0002;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0002;
+	parent inv_0002;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0003;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0003;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0003;
+	parent meter_GLD_0003;
+	floor_area 3991;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0003;
+	to meter_GLD_0003;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0003;
+	from node_GLD_0003;
+	to bat_meter_GLD_0003;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0003;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0003;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0003;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0003;
+	parent inv_0003;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0004;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0004;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0004;
+	parent meter_GLD_0004;
+	floor_area 2456;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0004;
+	to meter_GLD_0004;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0004;
+	from node_GLD_0004;
+	to bat_meter_GLD_0004;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0004;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0004;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0004;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0004;
+	parent inv_0004;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0005;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0005;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0005;
+	parent meter_GLD_0005;
+	floor_area 2255;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0005;
+	to meter_GLD_0005;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0005;
+	from node_GLD_0005;
+	to bat_meter_GLD_0005;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0005;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0005;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0005;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0005;
+	parent inv_0005;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0006;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0006;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0006;
+	parent meter_GLD_0006;
+	floor_area 3584;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_GLD_0006;
+	to meter_GLD_0006;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0006;
+	from node_GLD_0006;
+	to bat_meter_GLD_0006;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0006;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0006;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0006;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0006;
+	parent inv_0006;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0007;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0007;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0007;
+	parent meter_GLD_0007;
+	floor_area 3188;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0007;
+	to meter_GLD_0007;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0007;
+	from node_GLD_0007;
+	to bat_meter_GLD_0007;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0007;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0007;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0007;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0007;
+	parent inv_0007;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0008;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0008;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0008;
+	parent meter_GLD_0008;
+	floor_area 2357;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0008;
+	to meter_GLD_0008;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0008;
+	from node_GLD_0008;
+	to bat_meter_GLD_0008;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0008;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0008;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0008;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0008;
+	parent inv_0008;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0009;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0009;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0009;
+	parent meter_GLD_0009;
+	floor_area 1831;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0009;
+	to meter_GLD_0009;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0009;
+	from node_GLD_0009;
+	to bat_meter_GLD_0009;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0009;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0009;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0009;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0009;
+	parent inv_0009;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0010;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0010;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0010;
+	parent meter_GLD_0010;
+	floor_area 2673;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0010;
+	to meter_GLD_0010;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0010;
+	from node_GLD_0010;
+	to bat_meter_GLD_0010;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0010;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0010;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0010;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0010;
+	parent inv_0010;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0011;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0011;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0011;
+	parent meter_GLD_0011;
+	floor_area 1122;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.64;
+}
+
+object triplex_line {
+	from node_GLD_0011;
+	to meter_GLD_0011;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0011;
+	from node_GLD_0011;
+	to bat_meter_GLD_0011;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0011;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0011;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0011;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0011;
+	parent inv_0011;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0012;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0012;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0012;
+	parent meter_GLD_0012;
+	floor_area 2735;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0012;
+	to meter_GLD_0012;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0012;
+	from node_GLD_0012;
+	to bat_meter_GLD_0012;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0012;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0012;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0012;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0012;
+	parent inv_0012;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0013;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0013;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0013;
+	parent meter_GLD_0013;
+	floor_area 1752;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0013;
+	to meter_GLD_0013;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0013;
+	from node_GLD_0013;
+	to bat_meter_GLD_0013;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0013;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0013;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0013;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0013;
+	parent inv_0013;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0014;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0014;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0014;
+	parent meter_GLD_0014;
+	floor_area 3346;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_GLD_0014;
+	to meter_GLD_0014;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0014;
+	from node_GLD_0014;
+	to bat_meter_GLD_0014;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0014;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0014;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0014;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0014;
+	parent inv_0014;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0015;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0015;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0015;
+	parent meter_GLD_0015;
+	floor_area 1680;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0015;
+	to meter_GLD_0015;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0015;
+	from node_GLD_0015;
+	to bat_meter_GLD_0015;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0015;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0015;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0015;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0015;
+	parent inv_0015;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0016;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0016;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0016;
+	parent meter_GLD_0016;
+	floor_area 2058;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0016;
+	to meter_GLD_0016;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0016;
+	from node_GLD_0016;
+	to bat_meter_GLD_0016;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0016;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0016;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0016;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0016;
+	parent inv_0016;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0017;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0017;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0017;
+	parent meter_GLD_0017;
+	floor_area 1018;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.64;
+}
+
+object triplex_line {
+	from node_GLD_0017;
+	to meter_GLD_0017;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0017;
+	from node_GLD_0017;
+	to bat_meter_GLD_0017;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0017;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0017;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0017;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0017;
+	parent inv_0017;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0018;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0018;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0018;
+	parent meter_GLD_0018;
+	floor_area 3628;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_GLD_0018;
+	to meter_GLD_0018;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0018;
+	from node_GLD_0018;
+	to bat_meter_GLD_0018;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0018;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0018;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0018;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0018;
+	parent inv_0018;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0019;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0019;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0019;
+	parent meter_GLD_0019;
+	floor_area 1024;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.64;
+}
+
+object triplex_line {
+	from node_GLD_0019;
+	to meter_GLD_0019;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0019;
+	from node_GLD_0019;
+	to bat_meter_GLD_0019;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0019;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0019;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0019;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0019;
+	parent inv_0019;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0020;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0020;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0020;
+	parent meter_GLD_0020;
+	floor_area 1900;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0020;
+	to meter_GLD_0020;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0020;
+	from node_GLD_0020;
+	to bat_meter_GLD_0020;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0020;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0020;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0020;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0020;
+	parent inv_0020;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0021;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0021;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0021;
+	parent meter_GLD_0021;
+	floor_area 2799;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0021;
+	to meter_GLD_0021;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0021;
+	from node_GLD_0021;
+	to bat_meter_GLD_0021;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0021;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0021;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0021;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0021;
+	parent inv_0021;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0022;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0022;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0022;
+	parent meter_GLD_0022;
+	floor_area 3677;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_GLD_0022;
+	to meter_GLD_0022;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0022;
+	from node_GLD_0022;
+	to bat_meter_GLD_0022;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0022;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0022;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0022;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0022;
+	parent inv_0022;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0023;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0023;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0023;
+	parent meter_GLD_0023;
+	floor_area 3766;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0023;
+	to meter_GLD_0023;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0023;
+	from node_GLD_0023;
+	to bat_meter_GLD_0023;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0023;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0023;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0023;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0023;
+	parent inv_0023;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0024;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0024;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0024;
+	parent meter_GLD_0024;
+	floor_area 2560;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0024;
+	to meter_GLD_0024;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0024;
+	from node_GLD_0024;
+	to bat_meter_GLD_0024;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0024;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0024;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0024;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0024;
+	parent inv_0024;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0025;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0025;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0025;
+	parent meter_GLD_0025;
+	floor_area 3764;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0025;
+	to meter_GLD_0025;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0025;
+	from node_GLD_0025;
+	to bat_meter_GLD_0025;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0025;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0025;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0025;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0025;
+	parent inv_0025;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0026;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0026;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0026;
+	parent meter_GLD_0026;
+	floor_area 1831;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0026;
+	to meter_GLD_0026;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0026;
+	from node_GLD_0026;
+	to bat_meter_GLD_0026;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0026;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0026;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0026;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0026;
+	parent inv_0026;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0027;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0027;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0027;
+	parent meter_GLD_0027;
+	floor_area 1724;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0027;
+	to meter_GLD_0027;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0027;
+	from node_GLD_0027;
+	to bat_meter_GLD_0027;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0027;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0027;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0027;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0027;
+	parent inv_0027;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0028;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0028;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0028;
+	parent meter_GLD_0028;
+	floor_area 2809;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0028;
+	to meter_GLD_0028;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0028;
+	from node_GLD_0028;
+	to bat_meter_GLD_0028;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0028;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0028;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0028;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0028;
+	parent inv_0028;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0029;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0029;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0029;
+	parent meter_GLD_0029;
+	floor_area 3772;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0029;
+	to meter_GLD_0029;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0029;
+	from node_GLD_0029;
+	to bat_meter_GLD_0029;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0029;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0029;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0029;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0029;
+	parent inv_0029;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0030;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0030;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0030;
+	parent meter_GLD_0030;
+	floor_area 3618;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_GLD_0030;
+	to meter_GLD_0030;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0030;
+	from node_GLD_0030;
+	to bat_meter_GLD_0030;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0030;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0030;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0030;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0030;
+	parent inv_0030;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0031;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0031;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0031;
+	parent meter_GLD_0031;
+	floor_area 2462;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0031;
+	to meter_GLD_0031;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0031;
+	from node_GLD_0031;
+	to bat_meter_GLD_0031;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0031;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0031;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0031;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0031;
+	parent inv_0031;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0032;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0032;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0032;
+	parent meter_GLD_0032;
+	floor_area 1105;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.64;
+}
+
+object triplex_line {
+	from node_GLD_0032;
+	to meter_GLD_0032;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0032;
+	from node_GLD_0032;
+	to bat_meter_GLD_0032;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0032;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0032;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0032;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0032;
+	parent inv_0032;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0033;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0033;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0033;
+	parent meter_GLD_0033;
+	floor_area 2666;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0033;
+	to meter_GLD_0033;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0033;
+	from node_GLD_0033;
+	to bat_meter_GLD_0033;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0033;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0033;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0033;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0033;
+	parent inv_0033;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0034;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0034;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0034;
+	parent meter_GLD_0034;
+	floor_area 3159;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.17;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0034;
+	to meter_GLD_0034;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0034;
+	from node_GLD_0034;
+	to bat_meter_GLD_0034;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0034;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0034;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0034;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0034;
+	parent inv_0034;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0035;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0035;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0035;
+	parent meter_GLD_0035;
+	floor_area 3914;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0035;
+	to meter_GLD_0035;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0035;
+	from node_GLD_0035;
+	to bat_meter_GLD_0035;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0035;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0035;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0035;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0035;
+	parent inv_0035;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0036;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0036;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0036;
+	parent meter_GLD_0036;
+	floor_area 2529;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0036;
+	to meter_GLD_0036;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0036;
+	from node_GLD_0036;
+	to bat_meter_GLD_0036;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0036;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0036;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0036;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0036;
+	parent inv_0036;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0037;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0037;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0037;
+	parent meter_GLD_0037;
+	floor_area 2428;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0037;
+	to meter_GLD_0037;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0037;
+	from node_GLD_0037;
+	to bat_meter_GLD_0037;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0037;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0037;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0037;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0037;
+	parent inv_0037;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0038;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0038;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0038;
+	parent meter_GLD_0038;
+	floor_area 2493;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0038;
+	to meter_GLD_0038;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0038;
+	from node_GLD_0038;
+	to bat_meter_GLD_0038;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0038;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0038;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0038;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0038;
+	parent inv_0038;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0039;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0039;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0039;
+	parent meter_GLD_0039;
+	floor_area 1713;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0039;
+	to meter_GLD_0039;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0039;
+	from node_GLD_0039;
+	to bat_meter_GLD_0039;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0039;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0039;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0039;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0039;
+	parent inv_0039;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0040;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0040;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0040;
+	parent meter_GLD_0040;
+	floor_area 1852;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0040;
+	to meter_GLD_0040;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0040;
+	from node_GLD_0040;
+	to bat_meter_GLD_0040;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0040;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0040;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0040;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0040;
+	parent inv_0040;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0041;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0041;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0041;
+	parent meter_GLD_0041;
+	floor_area 2362;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0041;
+	to meter_GLD_0041;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0041;
+	from node_GLD_0041;
+	to bat_meter_GLD_0041;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0041;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0041;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0041;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0041;
+	parent inv_0041;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0042;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0042;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0042;
+	parent meter_GLD_0042;
+	floor_area 2297;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0042;
+	to meter_GLD_0042;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0042;
+	from node_GLD_0042;
+	to bat_meter_GLD_0042;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0042;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0042;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0042;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0042;
+	parent inv_0042;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0043;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0043;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0043;
+	parent meter_GLD_0043;
+	floor_area 3686;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_GLD_0043;
+	to meter_GLD_0043;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0043;
+	from node_GLD_0043;
+	to bat_meter_GLD_0043;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0043;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0043;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0043;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0043;
+	parent inv_0043;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0044;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0044;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0044;
+	parent meter_GLD_0044;
+	floor_area 2191;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0044;
+	to meter_GLD_0044;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0044;
+	from node_GLD_0044;
+	to bat_meter_GLD_0044;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0044;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0044;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0044;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0044;
+	parent inv_0044;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0045;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0045;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0045;
+	parent meter_GLD_0045;
+	floor_area 1863;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0045;
+	to meter_GLD_0045;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0045;
+	from node_GLD_0045;
+	to bat_meter_GLD_0045;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0045;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0045;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0045;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0045;
+	parent inv_0045;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0046;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0046;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0046;
+	parent meter_GLD_0046;
+	floor_area 2383;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0046;
+	to meter_GLD_0046;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0046;
+	from node_GLD_0046;
+	to bat_meter_GLD_0046;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0046;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0046;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0046;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0046;
+	parent inv_0046;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0047;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0047;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0047;
+	parent meter_GLD_0047;
+	floor_area 1081;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.17;
+	airchange_per_hour 0.64;
+}
+
+object triplex_line {
+	from node_GLD_0047;
+	to meter_GLD_0047;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0047;
+	from node_GLD_0047;
+	to bat_meter_GLD_0047;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0047;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0047;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0047;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0047;
+	parent inv_0047;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0048;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0048;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0048;
+	parent meter_GLD_0048;
+	floor_area 2290;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0048;
+	to meter_GLD_0048;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0048;
+	from node_GLD_0048;
+	to bat_meter_GLD_0048;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0048;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0048;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0048;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0048;
+	parent inv_0048;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0049;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0049;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0049;
+	parent meter_GLD_0049;
+	floor_area 1686;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0049;
+	to meter_GLD_0049;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0049;
+	from node_GLD_0049;
+	to bat_meter_GLD_0049;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0049;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0049;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0049;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0049;
+	parent inv_0049;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0050;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0050;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0050;
+	parent meter_GLD_0050;
+	floor_area 3212;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0050;
+	to meter_GLD_0050;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0050;
+	from node_GLD_0050;
+	to bat_meter_GLD_0050;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0050;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0050;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0050;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0050;
+	parent inv_0050;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0051;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0051;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0051;
+	parent meter_GLD_0051;
+	floor_area 2346;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0051;
+	to meter_GLD_0051;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0051;
+	from node_GLD_0051;
+	to bat_meter_GLD_0051;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0051;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0051;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0051;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0051;
+	parent inv_0051;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0052;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0052;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0052;
+	parent meter_GLD_0052;
+	floor_area 1368;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0052;
+	to meter_GLD_0052;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0052;
+	from node_GLD_0052;
+	to bat_meter_GLD_0052;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0052;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0052;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0052;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0052;
+	parent inv_0052;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0053;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0053;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0053;
+	parent meter_GLD_0053;
+	floor_area 3015;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0053;
+	to meter_GLD_0053;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0053;
+	from node_GLD_0053;
+	to bat_meter_GLD_0053;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0053;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0053;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0053;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0053;
+	parent inv_0053;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0054;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0054;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0054;
+	parent meter_GLD_0054;
+	floor_area 3401;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_GLD_0054;
+	to meter_GLD_0054;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0054;
+	from node_GLD_0054;
+	to bat_meter_GLD_0054;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0054;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0054;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0054;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0054;
+	parent inv_0054;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0055;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0055;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0055;
+	parent meter_GLD_0055;
+	floor_area 3445;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_GLD_0055;
+	to meter_GLD_0055;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0055;
+	from node_GLD_0055;
+	to bat_meter_GLD_0055;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0055;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0055;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0055;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0055;
+	parent inv_0055;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0056;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0056;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0056;
+	parent meter_GLD_0056;
+	floor_area 3671;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_GLD_0056;
+	to meter_GLD_0056;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0056;
+	from node_GLD_0056;
+	to bat_meter_GLD_0056;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0056;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0056;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0056;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0056;
+	parent inv_0056;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0057;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0057;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0057;
+	parent meter_GLD_0057;
+	floor_area 2420;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0057;
+	to meter_GLD_0057;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0057;
+	from node_GLD_0057;
+	to bat_meter_GLD_0057;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0057;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0057;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0057;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0057;
+	parent inv_0057;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0058;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0058;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0058;
+	parent meter_GLD_0058;
+	floor_area 2141;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0058;
+	to meter_GLD_0058;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0058;
+	from node_GLD_0058;
+	to bat_meter_GLD_0058;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0058;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0058;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0058;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0058;
+	parent inv_0058;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0059;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0059;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0059;
+	parent meter_GLD_0059;
+	floor_area 2028;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0059;
+	to meter_GLD_0059;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0059;
+	from node_GLD_0059;
+	to bat_meter_GLD_0059;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0059;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0059;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0059;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0059;
+	parent inv_0059;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0060;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0060;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0060;
+	parent meter_GLD_0060;
+	floor_area 3512;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_GLD_0060;
+	to meter_GLD_0060;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0060;
+	from node_GLD_0060;
+	to bat_meter_GLD_0060;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0060;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0060;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0060;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0060;
+	parent inv_0060;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0061;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0061;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0061;
+	parent meter_GLD_0061;
+	floor_area 1490;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0061;
+	to meter_GLD_0061;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0061;
+	from node_GLD_0061;
+	to bat_meter_GLD_0061;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0061;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0061;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0061;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0061;
+	parent inv_0061;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0062;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0062;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0062;
+	parent meter_GLD_0062;
+	floor_area 1951;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0062;
+	to meter_GLD_0062;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0062;
+	from node_GLD_0062;
+	to bat_meter_GLD_0062;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0062;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0062;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0062;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0062;
+	parent inv_0062;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0063;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0063;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0063;
+	parent meter_GLD_0063;
+	floor_area 2174;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0063;
+	to meter_GLD_0063;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0063;
+	from node_GLD_0063;
+	to bat_meter_GLD_0063;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0063;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0063;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0063;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0063;
+	parent inv_0063;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0064;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0064;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0064;
+	parent meter_GLD_0064;
+	floor_area 3683;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_GLD_0064;
+	to meter_GLD_0064;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0064;
+	from node_GLD_0064;
+	to bat_meter_GLD_0064;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0064;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0064;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0064;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0064;
+	parent inv_0064;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0065;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0065;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0065;
+	parent meter_GLD_0065;
+	floor_area 1485;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0065;
+	to meter_GLD_0065;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0065;
+	from node_GLD_0065;
+	to bat_meter_GLD_0065;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0065;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0065;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0065;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0065;
+	parent inv_0065;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0066;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0066;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0066;
+	parent meter_GLD_0066;
+	floor_area 3935;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.29;
+}
+
+object triplex_line {
+	from node_GLD_0066;
+	to meter_GLD_0066;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0066;
+	from node_GLD_0066;
+	to bat_meter_GLD_0066;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0066;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0066;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0066;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0066;
+	parent inv_0066;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0067;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0067;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0067;
+	parent meter_GLD_0067;
+	floor_area 1474;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0067;
+	to meter_GLD_0067;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0067;
+	from node_GLD_0067;
+	to bat_meter_GLD_0067;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0067;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0067;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0067;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0067;
+	parent inv_0067;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0068;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0068;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0068;
+	parent meter_GLD_0068;
+	floor_area 2063;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0068;
+	to meter_GLD_0068;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0068;
+	from node_GLD_0068;
+	to bat_meter_GLD_0068;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0068;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0068;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0068;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0068;
+	parent inv_0068;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0069;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0069;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0069;
+	parent meter_GLD_0069;
+	floor_area 3919;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.29;
+}
+
+object triplex_line {
+	from node_GLD_0069;
+	to meter_GLD_0069;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0069;
+	from node_GLD_0069;
+	to bat_meter_GLD_0069;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0069;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0069;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0069;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0069;
+	parent inv_0069;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0070;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0070;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0070;
+	parent meter_GLD_0070;
+	floor_area 1817;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0070;
+	to meter_GLD_0070;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0070;
+	from node_GLD_0070;
+	to bat_meter_GLD_0070;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0070;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0070;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0070;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0070;
+	parent inv_0070;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0071;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0071;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0071;
+	parent meter_GLD_0071;
+	floor_area 2875;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0071;
+	to meter_GLD_0071;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0071;
+	from node_GLD_0071;
+	to bat_meter_GLD_0071;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0071;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0071;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0071;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0071;
+	parent inv_0071;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0072;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0072;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0072;
+	parent meter_GLD_0072;
+	floor_area 1419;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0072;
+	to meter_GLD_0072;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0072;
+	from node_GLD_0072;
+	to bat_meter_GLD_0072;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0072;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0072;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0072;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0072;
+	parent inv_0072;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0073;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0073;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0073;
+	parent meter_GLD_0073;
+	floor_area 2205;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.17;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0073;
+	to meter_GLD_0073;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0073;
+	from node_GLD_0073;
+	to bat_meter_GLD_0073;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0073;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0073;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0073;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0073;
+	parent inv_0073;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0074;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0074;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0074;
+	parent meter_GLD_0074;
+	floor_area 2753;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0074;
+	to meter_GLD_0074;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0074;
+	from node_GLD_0074;
+	to bat_meter_GLD_0074;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0074;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0074;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0074;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0074;
+	parent inv_0074;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0075;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0075;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0075;
+	parent meter_GLD_0075;
+	floor_area 2929;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_GLD_0075;
+	to meter_GLD_0075;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0075;
+	from node_GLD_0075;
+	to bat_meter_GLD_0075;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0075;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0075;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0075;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0075;
+	parent inv_0075;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0076;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0076;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0076;
+	parent meter_GLD_0076;
+	floor_area 2769;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0076;
+	to meter_GLD_0076;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0076;
+	from node_GLD_0076;
+	to bat_meter_GLD_0076;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0076;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0076;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0076;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0076;
+	parent inv_0076;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0077;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0077;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0077;
+	parent meter_GLD_0077;
+	floor_area 2746;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0077;
+	to meter_GLD_0077;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0077;
+	from node_GLD_0077;
+	to bat_meter_GLD_0077;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0077;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0077;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0077;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0077;
+	parent inv_0077;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0078;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0078;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0078;
+	parent meter_GLD_0078;
+	floor_area 2385;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0078;
+	to meter_GLD_0078;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0078;
+	from node_GLD_0078;
+	to bat_meter_GLD_0078;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0078;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0078;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0078;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0078;
+	parent inv_0078;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0079;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0079;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0079;
+	parent meter_GLD_0079;
+	floor_area 2254;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0079;
+	to meter_GLD_0079;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0079;
+	from node_GLD_0079;
+	to bat_meter_GLD_0079;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0079;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0079;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0079;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0079;
+	parent inv_0079;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0080;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0080;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0080;
+	parent meter_GLD_0080;
+	floor_area 1662;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0080;
+	to meter_GLD_0080;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0080;
+	from node_GLD_0080;
+	to bat_meter_GLD_0080;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0080;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0080;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0080;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0080;
+	parent inv_0080;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0081;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0081;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0081;
+	parent meter_GLD_0081;
+	floor_area 2460;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0081;
+	to meter_GLD_0081;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0081;
+	from node_GLD_0081;
+	to bat_meter_GLD_0081;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0081;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0081;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0081;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0081;
+	parent inv_0081;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0082;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0082;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0082;
+	parent meter_GLD_0082;
+	floor_area 3399;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.17;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_GLD_0082;
+	to meter_GLD_0082;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0082;
+	from node_GLD_0082;
+	to bat_meter_GLD_0082;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0082;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0082;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0082;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0082;
+	parent inv_0082;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0083;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0083;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0083;
+	parent meter_GLD_0083;
+	floor_area 1844;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0083;
+	to meter_GLD_0083;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0083;
+	from node_GLD_0083;
+	to bat_meter_GLD_0083;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0083;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0083;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0083;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0083;
+	parent inv_0083;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0084;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0084;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0084;
+	parent meter_GLD_0084;
+	floor_area 1438;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0084;
+	to meter_GLD_0084;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0084;
+	from node_GLD_0084;
+	to bat_meter_GLD_0084;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0084;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0084;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0084;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0084;
+	parent inv_0084;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0085;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0085;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0085;
+	parent meter_GLD_0085;
+	floor_area 2652;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0085;
+	to meter_GLD_0085;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0085;
+	from node_GLD_0085;
+	to bat_meter_GLD_0085;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0085;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0085;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0085;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0085;
+	parent inv_0085;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0086;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0086;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0086;
+	parent meter_GLD_0086;
+	floor_area 3153;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0086;
+	to meter_GLD_0086;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0086;
+	from node_GLD_0086;
+	to bat_meter_GLD_0086;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0086;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0086;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0086;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0086;
+	parent inv_0086;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0087;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0087;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0087;
+	parent meter_GLD_0087;
+	floor_area 2235;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0087;
+	to meter_GLD_0087;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0087;
+	from node_GLD_0087;
+	to bat_meter_GLD_0087;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0087;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0087;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0087;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0087;
+	parent inv_0087;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0088;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0088;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0088;
+	parent meter_GLD_0088;
+	floor_area 1284;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0088;
+	to meter_GLD_0088;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0088;
+	from node_GLD_0088;
+	to bat_meter_GLD_0088;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0088;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0088;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0088;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0088;
+	parent inv_0088;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0089;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0089;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0089;
+	parent meter_GLD_0089;
+	floor_area 2341;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0089;
+	to meter_GLD_0089;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0089;
+	from node_GLD_0089;
+	to bat_meter_GLD_0089;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0089;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0089;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0089;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0089;
+	parent inv_0089;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0090;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0090;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0090;
+	parent meter_GLD_0090;
+	floor_area 3655;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_GLD_0090;
+	to meter_GLD_0090;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0090;
+	from node_GLD_0090;
+	to bat_meter_GLD_0090;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0090;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0090;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0090;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0090;
+	parent inv_0090;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0091;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0091;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0091;
+	parent meter_GLD_0091;
+	floor_area 1656;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0091;
+	to meter_GLD_0091;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0091;
+	from node_GLD_0091;
+	to bat_meter_GLD_0091;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0091;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0091;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0091;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0091;
+	parent inv_0091;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0092;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0092;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0092;
+	parent meter_GLD_0092;
+	floor_area 1974;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.17;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_GLD_0092;
+	to meter_GLD_0092;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0092;
+	from node_GLD_0092;
+	to bat_meter_GLD_0092;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0092;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0092;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0092;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0092;
+	parent inv_0092;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0093;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0093;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0093;
+	parent meter_GLD_0093;
+	floor_area 1594;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_GLD_0093;
+	to meter_GLD_0093;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0093;
+	from node_GLD_0093;
+	to bat_meter_GLD_0093;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0093;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0093;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0093;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0093;
+	parent inv_0093;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0094;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0094;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0094;
+	parent meter_GLD_0094;
+	floor_area 2552;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0094;
+	to meter_GLD_0094;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0094;
+	from node_GLD_0094;
+	to bat_meter_GLD_0094;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0094;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0094;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0094;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0094;
+	parent inv_0094;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0095;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0095;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0095;
+	parent meter_GLD_0095;
+	floor_area 3796;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_GLD_0095;
+	to meter_GLD_0095;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0095;
+	from node_GLD_0095;
+	to bat_meter_GLD_0095;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0095;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0095;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0095;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0095;
+	parent inv_0095;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0096;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0096;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0096;
+	parent meter_GLD_0096;
+	floor_area 2467;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0096;
+	to meter_GLD_0096;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0096;
+	from node_GLD_0096;
+	to bat_meter_GLD_0096;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0096;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0096;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0096;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0096;
+	parent inv_0096;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0097;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0097;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0097;
+	parent meter_GLD_0097;
+	floor_area 2453;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0097;
+	to meter_GLD_0097;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0097;
+	from node_GLD_0097;
+	to bat_meter_GLD_0097;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0097;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0097;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0097;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0097;
+	parent inv_0097;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0098;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0098;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0098;
+	parent meter_GLD_0098;
+	floor_area 1374;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_GLD_0098;
+	to meter_GLD_0098;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0098;
+	from node_GLD_0098;
+	to bat_meter_GLD_0098;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0098;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0098;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0098;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0098;
+	parent inv_0098;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0099;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0099;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0099;
+	parent meter_GLD_0099;
+	floor_area 3403;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_GLD_0099;
+	to meter_GLD_0099;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0099;
+	from node_GLD_0099;
+	to bat_meter_GLD_0099;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0099;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0099;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0099;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0099;
+	parent inv_0099;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+object triplex_node {
+	name node_GLD_0100;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_GLD_0100;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name GLD_0100;
+	parent meter_GLD_0100;
+	floor_area 2438;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_GLD_0100;
+	to meter_GLD_0100;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_line {
+	name bat_line_GLD_0100;
+	from node_GLD_0100;
+	to bat_meter_GLD_0100;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name bat_meter_GLD_0100;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name inv_0100;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent bat_meter_GLD_0100;
+	rated_power 3000.0;
+	inverter_efficiency .95;
+	Q_Out 0;
+}
+
+object battery {
+	name b_0100;
+	parent inv_0100;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+//----
+script export clock;
+script on_init python ./gld_init_batt_100.py;
+script on_precommit python ./gld_precommit_batt_100.py;

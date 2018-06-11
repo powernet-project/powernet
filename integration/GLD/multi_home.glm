@@ -1,0 +1,409 @@
+// GridLAB-D .glm file for modifying IEEE 123 feeder
+
+#set minimum_timestep=60
+#define houselist="NONE"
+
+
+clock {
+	timezone EST+5EDT;
+	starttime '2017-07-01 00:00:00';
+	stoptime '2017-07-01 01:59:59';
+}
+
+#option server // required for python library get/set/control operations
+#set complex_format="%d+%dj" // required for python to parse complex values
+
+module residential{
+	implicit_enduses NONE;
+};
+
+module climate;
+
+module tape;
+
+module powerflow {
+	solver_method NR;
+	default_maximum_voltage_error 1e-6;
+	NR_iteration_limit 50;
+	NR_superLU_procs 1;
+}
+
+object climate {
+	name tmy_file;
+	tmyfile "724940TYA.tmy3";
+	interpolate LINEAR;
+}
+
+
+//Line and conductor configurations
+
+object triplex_line_conductor {
+	name "c1/0 AA triplex"; 
+	resistance 0.97;
+	geometric_mean_radius 0.0111;
+}
+
+object triplex_line_configuration {
+	name triplex_line_config;
+	conductor_1 "c1/0 AA triplex";
+	conductor_2 "c1/0 AA triplex";
+	conductor_N "c1/0 AA triplex";
+	insulation_thickness 0.08;
+	diameter 0.368;
+}
+
+//Line
+
+object triplex_node {
+	name node_H_0001_elec_res_1;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0001_elec_res_1;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0001_elec_res_1;
+	parent meter_H_0001_elec_res_1;
+	floor_area 1505;
+	number_of_stories 1;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.58;
+}
+
+object triplex_line {
+	from node_H_0001_elec_res_1;
+	to meter_H_0001_elec_res_1;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder{
+	name rec_H_0001_elec_res_1_power;
+	parent meter_H_0001_elec_res_1;
+	property measured_real_power;
+	file H_0001_elec_res_1_power.csv;
+	interval 1800;
+}
+
+//----
+object triplex_node {
+	name node_H_0002_elec_res_1;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0002_elec_res_1;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0002_elec_res_1;
+	parent meter_H_0002_elec_res_1;
+	floor_area 3187;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.35;
+}
+
+object triplex_line {
+	from node_H_0002_elec_res_1;
+	to meter_H_0002_elec_res_1;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0003_HP_2;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0003_HP_2;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0003_HP_2;
+	parent meter_H_0003_HP_2;
+	floor_area 2567;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.38;
+}
+
+object triplex_line {
+	from node_H_0003_HP_2;
+	to meter_H_0003_HP_2;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0004_elec_gas_1;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0004_elec_gas_1;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0004_elec_gas_1;
+	parent meter_H_0004_elec_gas_1;
+	floor_area 1088;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_H_0004_elec_gas_1;
+	to meter_H_0004_elec_gas_1;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0005_HP_2;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0005_HP_2;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0005_HP_2;
+	parent meter_H_0005_HP_2;
+	floor_area 3522;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.32;
+}
+
+object triplex_line {
+	from node_H_0005_HP_2;
+	to meter_H_0005_HP_2;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0006_elec_gas_2;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0006_elec_gas_2;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0006_elec_gas_2;
+	parent meter_H_0006_elec_gas_2;
+	floor_area 1001;
+	number_of_stories 2;
+	heating_setpoint 63;
+	cooling_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.52;
+}
+
+object triplex_line {
+	from node_H_0006_elec_gas_2;
+	to meter_H_0006_elec_gas_2;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0007_elec_gas_2;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0007_elec_gas_2;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0007_elec_gas_2;
+	parent meter_H_0007_elec_gas_2;
+	floor_area 2725;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+}
+
+object triplex_line {
+	from node_H_0007_elec_gas_2;
+	to meter_H_0007_elec_gas_2;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0008_elec_res_2;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0008_elec_res_2;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0008_elec_res_2;
+	parent meter_H_0008_elec_res_2;
+	floor_area 3722;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.41;
+}
+
+object triplex_line {
+	from node_H_0008_elec_res_2;
+	to meter_H_0008_elec_res_2;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0009_HP_2;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0009_HP_2;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0009_HP_2;
+	parent meter_H_0009_HP_2;
+	floor_area 2968;
+	number_of_stories 2;
+	heating_setpoint 68;
+	cooling_setpoint 73;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_H_0009_HP_2;
+	to meter_H_0009_HP_2;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_node {
+	name node_H_0010_elec_gas_1;
+	nominal_voltage 120V;
+	phases AS;
+	bustype SWING;
+}
+
+object triplex_meter {
+	name meter_H_0010_elec_gas_1;
+	nominal_voltage 120V;
+	phases AS;
+}
+
+object house {
+	name H_0010_elec_gas_1;
+	parent meter_H_0010_elec_gas_1;
+	floor_area 2097;
+	number_of_stories 1;
+	heating_setpoint 62;
+	cooling_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.44;
+}
+
+object triplex_line {
+	from node_H_0010_elec_gas_1;
+	to meter_H_0010_elec_gas_1;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+script export clock;
+script on_init python ./gld_script_init.py;
+script on_commit python ./gld_script_precommit.py;
+
