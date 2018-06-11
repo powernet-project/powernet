@@ -30,8 +30,9 @@ def DataPreLoaded_Forecast(csv_file,houseNumber):
     #reader = csv.reader(open("ScenarioGen_N.csv", 'rUb'), dialect=csv.excel_tab,delimiter=',')
     scen = list(reader)
     homeForecast = [] # next 48 hours forecast
-    for r in scen[houseNumber]:
-        homeForecast.append(float(r))
+    for i in houseNumber:
+        temp = [float(d) for d in scen[i]]
+        homeForecast.append(temp)
     return homeForecast
 
 def DataPreLoaded_Prices(csv_file,houseNumber):
@@ -86,8 +87,8 @@ def BatteryReadRemove():
 
 def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino):
     # New variables -> pre-computed
-    nS = 1      # # of houses
-    house_numbers = [0,2]
+    house_numbers = np.array([0,2])
+    nS = house_numbers.size      # # of houses
     T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
 
     Qfinal = np.zeros((1,GCtime+1))     # Variable to hold state of charge of the house
@@ -108,7 +109,7 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
         #pricesCurrent = np.tile(prices[:,t:], LCscens) -> LCscens means how many scenarios we are leveraging for the optimization
         pricesCurrent = np.tile(prices[t:],(nS,LCscens))
         # Ideally won't need this function -> all the data should come from CC
-        homeForecast = DataPreLoaded_Forecast("ScenarioGen1.csv",t*26)
+        homeForecast = DataPreLoaded_Forecast("ScenarioGen1.csv",t*26+house_numbers)
         LCforecasts = homeForecast
         #print 'Length LCforecasts: ', len(LCforecasts)
         #print 't: ', t
