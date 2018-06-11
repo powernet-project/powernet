@@ -2,7 +2,7 @@ import gridlabd_functions
 import os
 import rwText
 import json
-from test import *
+from HHoptimizer_funcDefs import *
 from cvxpy import *
 
 
