@@ -87,18 +87,20 @@ def BatteryReadRemove():
 
 def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino):
     # New variables -> pre-computed
-    house_numbers = np.array([0,2])
+    #house_numbers = np.array([0,2])
+    house_numbers = np.array([0])
     nS = house_numbers.size      # # of houses
     T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
 
-    Qfinal = np.zeros((1,GCtime+1))     # Variable to hold state of charge of the house
-    Ufinal = np.zeros((1,GCtime+1))     # Variable to hold batery charging power of the house
+    Qfinal = np.zeros((nS,GCtime+1))     # Variable to hold state of charge of the house
+    Ufinal = np.zeros((nS,GCtime+1))     # Variable to hold batery charging power of the house
     boundsFlag = np.zeros((1,GCtime))
     Qfinal[:,0] = q0                    # Intializing battery state of charge
 
     # Ideally won't need this function -> all the data should come from CC
     #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0) The 0 here means we are taking the first home
-    realS = DataPreLoaded_NetPower("realS1.csv",house_numbers)   # net power profile to be followed by the home
+    realS = DataPreLoaded_NetPower("realS1.csv",house_numbers)[0]   # net power profile to be followed by the home
+
     # This loops through the 24hrs of the global controller updates -> calculating all 24hrs at a time
     for t in range(GCtime):
 
@@ -111,7 +113,7 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
         # Ideally won't need this function -> all the data should come from CC
         homeForecast = DataPreLoaded_Forecast("ScenarioGen1.csv",t*26+house_numbers)
         LCforecasts = homeForecast
-        #print 'Length LCforecasts: ', len(LCforecasts)
+        #print 'LCforecasts: ', LCforecasts[0]
         #print 't: ', t
 
 
@@ -131,13 +133,87 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
 
         for i in range(LCscens):
             # Demand and battery action constraints
-            constraints.append( Y[(i*(T-t)):((i+1)*(T-t))] == -LCforecasts[i] - U )
+            constraints.append( Y[(i*(T-t)):((i+1)*(T-t))] == -LCforecasts[0][i] - U )
             #print "LCforecast[i]: ", LCforecasts[i]
 
         if sellFactor == 0:
-            obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[0][t:], (1,LCscens)), 'fro') )
+            obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
         else:
-			obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, -Y)) + NLweight*norm(Y - np.tile(realS[0][t:], (1,LCscens)), 'fro') )
+			obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, -Y)) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
+
+        if sellFactor == 3:
+			constraints.append( Y <= 0) # nodes cannot sell
+
+        prob = Problem(obj, constraints)
+        prob.solve(solver = MOSEK)
+        if prob.status != "optimal":
+			print 'LC status is: ', prob.status
+        Qfinal[:,t+1] = Q[:,1].value
+        q0 = Q[:,1].value
+        if np.any(np.less(q0, qmino)): # Correct for computational inaccuracies
+			q0 += .00001
+        elif np.any(np.greater(q0, qmaxo)):
+			q0 += -.00001
+        Ufinal[:,t] = U[:,0].value
+
+    return Qfinal, Ufinal, boundsFlag
+
+
+def LC_Combined_No_Bounds_MultiHomes(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino):
+    # New variables -> pre-computed
+    house_numbers = np.array([0,2])
+    #house_numbers = np.array([0])
+    nS = house_numbers.size      # # of houses
+    T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
+
+    Qfinal = np.matrix(np.zeros((nS,GCtime+1)))     # Variable to hold state of charge of the house
+    Ufinal = np.matrix(np.zeros((nS,GCtime+1)))     # Variable to hold batery charging power of the house
+    boundsFlag = np.zeros((1,GCtime))
+    Qfinal[:,0] = q0                    # Intializing battery state of charge
+
+    # Ideally won't need this function -> all the data should come from CC
+    #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0) The 0 here means we are taking the first home
+    realS = DataPreLoaded_NetPower("realS1.csv",house_numbers)   # net power profile to be followed by the home
+
+    # This loops through the 24hrs of the global controller updates -> calculating all 24hrs at a time
+    for t in range(GCtime):
+
+        umin = np.tile(umino, (1,T-t))
+        umax = np.tile(umaxo, (1,T-t))
+        qmax = np.tile(qmaxo, (1,T-t+1))
+        qmin = np.tile(qmino, (1,T-t+1))
+        #pricesCurrent = np.tile(prices[:,t:], LCscens) -> LCscens means how many scenarios we are leveraging for the optimization
+        pricesCurrent = np.tile(prices[:,t:],(nS,LCscens)) #################### Double check prices
+        # Ideally won't need this function -> all the data should come from CC
+        homeForecast = DataPreLoaded_Forecast("ScenarioGen1.csv",t*26+house_numbers)
+        LCforecasts = homeForecast
+        #print 'LCforecasts: ', LCforecasts[0]
+        #print 't: ', t
+
+
+		# initialize variables
+        Y = Variable(nS,(T-t)*LCscens)
+        U = Variable(nS,T-t)
+        Q = Variable(nS,T-t+1)
+
+		# Battery Constraints
+        constraints = [Q[:,0] == q0,
+					Q[:,1:T-t+1] == Q[:,0:T-t] + U,
+					U <= umax,
+					U >= umin,
+					Q <= qmax,
+					Q >= qmin
+					]
+
+        for i in range(LCscens):
+            # Demand and battery action constraints
+            constraints.append( Y[:,(i*(T-t)):((i+1)*(T-t))] == -LCforecasts[i] - U ) #######LCforecasts needs to change
+            print "LCforecast[i]: ", LCforecasts[i]
+
+        if sellFactor == 0:
+            obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
+        else:
+			obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, -Y)) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
 
         if sellFactor == 3:
 			constraints.append( Y <= 0) # nodes cannot sell
