@@ -85,7 +85,7 @@ if sim_time[14:16] == "01":
     # If file does not exist, run the optimization and create the file
     except Exception as exc:
         print 'File does not exist...'
-        prices = DataPreLoaded("pricesCurrent.csv",0)
+        prices = DataPreLoaded_Prices("pricesCurrent.csv",0)
         Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
         U = -U
         u = 1000*U[0][0]
