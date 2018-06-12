@@ -159,12 +159,26 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
     return Qfinal, Ufinal, boundsFlag
 
 
-def LC_Combined_No_Bounds_MultiHomes(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino):
+def LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umax, umin, qmax, qmin):
     # New variables -> pre-computed
     house_numbers = np.array([0,2])
     #house_numbers = np.array([0])
     nS = house_numbers.size      # # of houses
     T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
+    umaxo = []
+    umino = []
+    qmaxo = []
+    qmino = []
+    for i in house_numbers:
+        umaxo.append([umax])
+        umino.append([umin])
+        qmaxo.append([qmax])
+        qmino.append([qmin])
+
+    umaxo = np.asarray(umaxo)
+    umino = np.asarray(umino)
+    qmaxo = np.asarray(qmaxo)
+    qmino = np.asarray(qmino)
 
     Qfinal = np.matrix(np.zeros((nS,GCtime+1)))     # Variable to hold state of charge of the house
     Ufinal = np.matrix(np.zeros((nS,GCtime+1)))     # Variable to hold batery charging power of the house
@@ -173,7 +187,8 @@ def LC_Combined_No_Bounds_MultiHomes(NLweight, prices, sellFactor, q0, LCscens, 
 
     # Ideally won't need this function -> all the data should come from CC
     #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0) The 0 here means we are taking the first home
-    realS = DataPreLoaded_NetPower("realS1.csv",house_numbers)   # net power profile to be followed by the home
+    realS_list = DataPreLoaded_NetPower("realS1.csv",house_numbers)   # net power profile to be followed by the home
+    realS = np.asarray(realS_list)
 
     # This loops through the 24hrs of the global controller updates -> calculating all 24hrs at a time
     for t in range(GCtime):
@@ -183,11 +198,12 @@ def LC_Combined_No_Bounds_MultiHomes(NLweight, prices, sellFactor, q0, LCscens, 
         qmax = np.tile(qmaxo, (1,T-t+1))
         qmin = np.tile(qmino, (1,T-t+1))
         #pricesCurrent = np.tile(prices[:,t:], LCscens) -> LCscens means how many scenarios we are leveraging for the optimization
-        pricesCurrent = np.tile(prices[:,t:],(nS,LCscens)) #################### Double check prices
+        pricesCurrent = np.tile(prices[t:],(nS,LCscens))
         # Ideally won't need this function -> all the data should come from CC
         homeForecast = DataPreLoaded_Forecast("ScenarioGen1.csv",t*26+house_numbers)
-        LCforecasts = homeForecast
-        #print 'LCforecasts: ', LCforecasts[0]
+        LCforecasts = np.asarray(homeForecast)
+
+        #print 'LCforecasts: ', LCforecasts
         #print 't: ', t
 
 
@@ -207,13 +223,12 @@ def LC_Combined_No_Bounds_MultiHomes(NLweight, prices, sellFactor, q0, LCscens, 
 
         for i in range(LCscens):
             # Demand and battery action constraints
-            constraints.append( Y[:,(i*(T-t)):((i+1)*(T-t))] == -LCforecasts[i] - U ) #######LCforecasts needs to change
-            print "LCforecast[i]: ", LCforecasts[i]
+            constraints.append( Y[:,(i*(T-t)):((i+1)*(T-t))] == -LCforecasts - U )
 
         if sellFactor == 0:
-            obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
+            obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[:,t:], (1,LCscens)), 'fro') )
         else:
-			obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, -Y)) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
+			obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, -Y)) + NLweight*norm(Y - np.tile(realS[:, t:], (1,LCscens)), 'fro') )
 
         if sellFactor == 3:
 			constraints.append( Y <= 0) # nodes cannot sell

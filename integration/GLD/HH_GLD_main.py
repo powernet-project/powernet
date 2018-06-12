@@ -17,14 +17,16 @@ def main():
     #umino = -0.41277343
     #qmaxo = 1.23832029
     #qmino = 0
-    umaxo = 0.3
-    umino = -0.3
-    qmaxo = 1.0
-    qmino = 0.0
+    umax = 0.3
+    umin = -0.3
+    qmax = 1.0
+    qmin = 0.0
     prices = DataPreLoaded_Prices("pricesCurrent.csv",0)
+    #print 'price: ', prices
 
     #Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(realS, NLweight, prices, sellFactor, q0, LCscens, GCtime, pre_pDemands, umaxo, umino, qmaxo, qmino):
-    Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
+    #Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
+    Q,U, boundsFlag = LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umax, umin, qmax, qmin)
     Q_new = Q.tolist()[0]
     U_new = U.tolist()
     for i in batt_solar_houses:
