@@ -1,5 +1,6 @@
 from HHoptimizer_funcDefs import *
 from rwText import *
+import json
 
 def main():
     NLweight = 100
@@ -7,7 +8,7 @@ def main():
     GCtime = 24          # Test for 1 but look into 24
     LCscens = 1
     q0 = 0.5
-    batt_solar_houses = [1]
+    batt_solar_houses = [1,3] # Houses with battery
     Q_houses = {}
     U_houses = {}
     for i in batt_solar_houses:
@@ -27,21 +28,25 @@ def main():
     #Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(realS, NLweight, prices, sellFactor, q0, LCscens, GCtime, pre_pDemands, umaxo, umino, qmaxo, qmino):
     #Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
     Q,U, boundsFlag = LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umax, umin, qmax, qmin)
-    Q_new = Q.tolist()[0]
-    U_new = U.tolist()
-    for i in batt_solar_houses:
-        Q_houses[i]['soc'] = Q_new
-        U_houses[i]['Battery'] = U_new
+    #Q_new = Q.tolist()[0]
+    #print "U: ", U
+    #U_new = U.tolist()
+    #print "U_new: ", U_new
+    #u = BatteryProfiles(U, batt_solar_houses)
+    #print "BattreyProfile done"
+    #u = BatteryReadRemove()
 
+    #for i in batt_solar_houses:
+        #Q_houses[i]['soc'] = Q_new
+        #U_houses[i]['Battery'] = U_new
 
-    print 'U_houses: ', U_houses
     #create_file_json('home_U.json',U_houses)
     #create_file_json('home_Q.json',Q_houses)
 
-    print 'Q: ', Q_new
-    print len(Q_new)
-    print 'U: ', U_new
-    print len(U_new)
+    #print 'Q: ', Q_new
+    #print len(Q_new)
+    #print 'U: ', U_new
+    #print len(U_new)
     #print boundsFlag
 
 

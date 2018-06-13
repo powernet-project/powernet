@@ -13,6 +13,7 @@ soc_setpoint = 0.7      # Baterry SOC target
 
 number_of_houses = range(4)[1:] # Houses with batt+solar: 1,3
 batt_solar_houses = [1,3]
+'''
 houses_dict = {}
 for i in number_of_houses:
     houses_dict[i]={}
@@ -29,11 +30,12 @@ current_batt = []
 #Get power and current of solar inverter through meter
 power_solar = []
 current_solar = []
-
+'''
 
 
 
 sim_time = os.getenv("clock")
+'''
 # Can potentially use try/except to avoid these two loops. If the house doesnt have solar or storage either enter 0 or 'NA'
 # Getting house power:
 for i in number_of_houses:
@@ -53,18 +55,18 @@ for i in batt_solar_houses:
     houses_dict[i]['BatteryReactivePower'] = float(gridlabd_functions.get('node1_meter_B'+str(i),'measured_reactive_power')['value'][1:-4])
     houses_dict[i]['AgregatedMeterRealPower'] = houses_dict[i]['AgregatedMeterRealPower']+houses_dict[i]['SolarRealPower']+houses_dict[i]['BatteryRealPower']
     houses_dict[i]['AgregatedMeterReactivePower'] = houses_dict[i]['HouseMeterReactivePower']+houses_dict[i]['SolarReactivePower']+houses_dict[i]['BatteryReactivePower']
-
+'''
 #Print out timestep and state of charge
 #sim_time = os.getenv("clock")
-print sim_time
+#print sim_time
 
 ######## LC Controller House 1 #########
 NLweight = 100
 sellFactor = 1
 GCtime = 24          # Test for 1 but look into 24
 LCscens = 1
-#q0 = 0.5
-q0 = houses_dict[1]['soc']
+q0 = 0.5
+#q0 = houses_dict[1]['soc']
 umaxo = 0.3
 umino = -0.3
 qmaxo = 1.0
@@ -73,10 +75,10 @@ if sim_time[14:16] == "01":
 
     # Checking if the file exists
     try:
-        print 'Try BatteryReadRemove function...'
+#        print 'Try BatteryReadRemove function...'
         u = 1000*BatteryReadRemove()
-        print 'File exists'
-        print 'u: ', u
+#        print 'File exists'
+#        print 'u: ', u
 
 
         #with open('home_U.json','r') as file:
@@ -84,20 +86,23 @@ if sim_time[14:16] == "01":
 
     # If file does not exist, run the optimization and create the file
     except Exception as exc:
-        print 'File does not exist...'
+#        print 'File does not exist...'
         prices = DataPreLoaded_Prices("pricesCurrent.csv",0)
-        Q,U, boundsFlag = LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
+        Q,U, boundsFlag = LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino)
         U = -U
-        u = 1000*U[0][0]
-        houses_dict[1]['Battery_LC_U'] = u
-        print 'U: ', u
-        BatteryProfiles(U, batt_solar_houses)
+        #u = 1000*U[0][0]
+        #houses_dict[1]['Battery_LC_U'] = u
+#        print 'U: ', u
+        u = BatteryProfiles(U, batt_solar_houses)
+        #houses_dict[1]['Battery_LC_U'] = u[0]
+        #houses_dict[3]['Battery_LC_U'] = u[1]
 
 
-    gridlabd_functions.set('node1_batt_inv_H1','P_Out',u)
+    gridlabd_functions.set('node1_batt_inv_H1','P_Out',u[0])
+    gridlabd_functions.set('node1_batt_inv_H3','P_Out',u[1])
 
 # Creating file with new data
-rwText.create_file_json('TestGLD.json', houses_dict)
+#rwText.create_file_json('TestGLD.json', houses_dict)
 
 
 

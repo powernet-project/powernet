@@ -9,7 +9,7 @@ import rwText
 import json
 
 # Ideally won't need this function -> all the data should come from CC
-# HouseNumber is the file line that is being selected
+# HouseNumber is the file line that is being selected - houses with battery should start from 0 to n
 def DataPreLoaded_NetPower(csv_file,houseNumber):
     reader = csv.reader(open(csv_file, 'rUb'), dialect=csv.excel_tab,delimiter=',')
     #reader = csv.reader(open("ScenarioGen_N.csv", 'rUb'), dialect=csv.excel_tab,delimiter=',')
@@ -46,6 +46,7 @@ def DataPreLoaded_Prices(csv_file,houseNumber):
 
 
 def BatteryProfiles(U, batt_solar_houses):
+    '''
     U_houses = {}               # Creating battery house profile
     for i in batt_solar_houses:
         U_houses[i] = {}
@@ -54,6 +55,19 @@ def BatteryProfiles(U, batt_solar_houses):
     for i in batt_solar_houses:
         U_houses[i]['Battery'] = U_new[1:-1]
     rwText.create_file_json('home_U.json',U_houses)
+    '''
+    U_new = U.tolist()   # converting numpy array (output from LC_Combined_No_Bounds_SingleHome) to list for json.
+    #print 'U_new: ', U_new
+    U_houses = {}               # Creating battery house profile
+    u_batt = []
+    for idx,i in enumerate(batt_solar_houses):
+        U_houses[i] = {}
+        u_batt.append(U_new[idx][0])
+        U_houses[i]['Battery'] = U_new[idx][1:-1]
+
+    rwText.create_file_json('home_U.json',U_houses)
+    print 'Battery Profile: u_batt = ', u_batt
+    return u_batt
 
 
 def BatteryReadRemove():
@@ -63,26 +77,29 @@ def BatteryReadRemove():
     except IOError as e:
         return
 
-    u_list = data['1']['Battery']
-    #print 'u_list: ', u_list
-    #print 'len u_list: ', len(u_list)
+    #print 'data: ', data
+    dict_keys = data.keys()
 
-    # This is the value to actuate in the battery
-    u = u_list[0]
-    if len(u_list) == 1:
+    # Value to actuate in the battery
+    u_batt = []
+    for i in dict_keys:
+        u_batt.append(data[i]['Battery'][0])
+        data[i]['Battery'] = data[i]['Battery'][1:-1]
+
+    if len(data[dict_keys[0]]['Battery']) == 1:
         print 'Need to delete the file...'
 
-    # Removing the element that was read
-    data['1']['Battery'] = u_list[1:-1]
     try:
         # Overwriting the file with new array (one less element)
         with open('home_U.json', 'w') as data_file:
             data = json.dump(data, data_file)
+
     except IOError as e:
         print 'Unable to open write file'
         return
-    print 'Success!!! u = ', u
-    return u
+
+    print 'BatteryReadRemove: u_batt = ', u_batt
+    return u_batt
 
 
 def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino):
@@ -161,7 +178,7 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
 
 def LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umax, umin, qmax, qmin):
     # New variables -> pre-computed
-    house_numbers = np.array([0,2])
+    house_numbers = np.array([1,3])
     #house_numbers = np.array([0])
     nS = house_numbers.size      # # of houses
     T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
@@ -189,6 +206,7 @@ def LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, G
     #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0) The 0 here means we are taking the first home
     realS_list = DataPreLoaded_NetPower("realS1.csv",house_numbers)   # net power profile to be followed by the home
     realS = np.asarray(realS_list)
+    #print 'realS: ', realS
 
     # This loops through the 24hrs of the global controller updates -> calculating all 24hrs at a time
     for t in range(GCtime):
