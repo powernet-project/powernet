@@ -1,5 +1,5 @@
 # Main script to run in the BBB
-import HardwareBBBClass
+import HardwareClass
 import StorageClass
 import logging
 
@@ -23,25 +23,27 @@ def main():
     logger.info("Starting main program")
 
     # Initializing variables for queue and threads
-    gpioMap = {"CW1": "P8_9", "DW1": "P8_10", "AC1": "P8_15", "RF1": "P8_14", "SE1": "P8_11"}
-    bbb = HardwareBBBClass.HardwareBBB(gpio_map=gpioMap)
+    #gpioMap = {"CW1": "P8_9", "DW1": "P8_10", "AC1": "P8_15", "RF1": "P8_14", "SE1": "P8_11"}
+    gpioMap = {"CW1": 29, "DW1": 31, "AC1": 33, "RF1": 35, "SE1": 37}
+    rpi = HardwareClass.HardwareRPi(gpio_map=gpioMap)
     batt = StorageClass.Storage()
-    buffer_size = 7
+    buffer_size = 8
     q_ai = Queue(buffer_size)
     q_batt = Queue(3)
 
     # FIXME: Number of analog inputs -> Needs to be automated
-    n_ai = 7
+    n_ai = 8
     format_ai = [i * 4 for i in range(n_ai)]
 
     # Initialize threads
-    producer_ai_thread = Thread(name='Producer', target=bbb.producer_ai, args=(format_ai, q_ai))
+    #producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(format_ai, q_ai)) # This is for BBB
+    producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(q_ai))
     producer_ai_thread.start()
 
-    consumer_ai_thread = Thread(name='Consumer', target=bbb.consumer_ai, args=(q_ai,))
+    consumer_ai_thread = Thread(name='Consumer', target=rpi.consumer_ai, args=(q_ai,))
     consumer_ai_thread.start()
 
-    devices_thread = Thread(name='Device', target=bbb.devices_th, args=(q_batt,))
+    devices_thread = Thread(name='Device', target=rpi.devices_th, args=(q_batt,))
     devices_thread.start()
 
     battery_thread = Thread(name='Battery', target=batt.battery_thread, args=(q_batt,))
@@ -55,6 +57,3 @@ if __name__ == '__main__':
         client.captureException()
         logging.info("Re-starting main program")
         main()
-
-
-

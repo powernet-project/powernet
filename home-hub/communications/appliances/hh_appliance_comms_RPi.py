@@ -156,6 +156,7 @@ def RMS(data):
         sum_i[6] += math.pow((val[6]), 2)
         sum_i[7] += math.pow((val[7]), 2)
 
+    # NEED TO INCLUDE CONVERSION FROM CT
     rms_a0 = math.sqrt(sum_i[0] / N_SAMPLES)
     rms_a1 = math.sqrt(sum_i[1] / N_SAMPLES)
     rms_a2 = math.sqrt(sum_i[2] / N_SAMPLES)
@@ -164,17 +165,7 @@ def RMS(data):
     rms_a5 = math.sqrt(sum_i[5] / N_SAMPLES)
     rms_a6 = math.sqrt(sum_i[6] / N_SAMPLES)
     rms_a7 = math.sqrt(sum_i[7] / N_SAMPLES)
-    '''
-    rms_a0 = math.sqrt(sum_i[0] / N_SAMPLES) * CT10 * 2
-    rms_a1 = math.sqrt(sum_i[1] / N_SAMPLES) * CT10 * 2
-    rms_a2 = math.sqrt(sum_i[2] / N_SAMPLES) * CT10 * 2
-    rms_a3 = math.sqrt(sum_i[3] / N_SAMPLES) * CT10 * 2
-    rms_a4 = math.sqrt(sum_i[4] / N_SAMPLES) * CT20 * 2
-    rms_a5 = math.sqrt(sum_i[5] / N_SAMPLES) * CT20 * 2
-    rms_a6 = math.sqrt(sum_i[6] / N_SAMPLES) * CT10 * 2
-    rms_a7 = math.sqrt(sum_i[7] / N_SAMPLES) * CT10 * 2
-    '''
-    print [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
+
     return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
 
