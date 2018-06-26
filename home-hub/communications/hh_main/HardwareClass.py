@@ -8,9 +8,12 @@ import time
 import copy
 import requests
 import logging
+from logging.handlers import RotatingFileHandler
 import StorageClass
 from raven import Client
 from datetime import datetime
+import spidev
+import numpy as np
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -293,15 +296,15 @@ class HardwareRPi:
                 GPIO.output(gpio_map[key], GPIO.HIGH)
 
         # Initializing SPI
-        spi = spidev.SpiDev()
-        spi.open(0,0)
-        spi.max_speed_hz=1000000
+        self.spi = spidev.SpiDev()
+        self.spi.open(0,0)
+        self.spi.max_speed_hz=1000000
 
 
     # Function to convert data to voltage level,
     # rounded to specified number of decimal places.
     def ConvertVolts(self, data,places):
-      volts = (data * adc_Vin) / float(1023)
+      volts = (data * self.adc_Vin) / float(1023)
       volts = np.around(volts,places)
       return volts
 
@@ -309,13 +312,13 @@ class HardwareRPi:
     # Channel must be an integer 0-7
     def ReadChannel(self, channel):
       n = 0
-      data = np.zeros(N_SAMPLES)
+      data = np.zeros(self.N_SAMPLES)
       #print datetime.now()
       while (n<100):
-          adc = spi.xfer2([1,(8+channel)<<4,0])
+          adc = self.spi.xfer2([1,(8+channel)<<4,0])
           data[n]=((adc[1]&3) << 8) + adc[2]
           n+=1
-          time.sleep(delay)
+          time.sleep(self.delay)
 
       return self.ConvertVolts(data,2)
 
@@ -323,7 +326,7 @@ class HardwareRPi:
         """
             Producer AI
         """
-        logger.info('Producer AI called')
+        logging.info('Producer AI called')
         while(True):
             dts = []  # date/time stamp for each start of analog read
             #AC id:5
@@ -361,7 +364,7 @@ class HardwareRPi:
                 q_ai.put(temp_queue, True, 2)
 
             except Exception as exc:
-                logger.exception(exc)
+                logging.exception(exc)
                 client.captureException()
 
             time.sleep(2)
@@ -383,23 +386,23 @@ class HardwareRPi:
             sum_i[7] += math.pow((val[7]), 2)
 
         # NEED TO INCLUDE CONVERSION FROM CT
-        rms_a0 = math.sqrt(sum_i[0] / N_SAMPLES)
-        rms_a1 = math.sqrt(sum_i[1] / N_SAMPLES)
-        rms_a2 = math.sqrt(sum_i[2] / N_SAMPLES)
-        rms_a3 = math.sqrt(sum_i[3] / N_SAMPLES)
-        rms_a4 = math.sqrt(sum_i[4] / N_SAMPLES)
-        rms_a5 = math.sqrt(sum_i[5] / N_SAMPLES)
-        rms_a6 = math.sqrt(sum_i[6] / N_SAMPLES)
-        rms_a7 = math.sqrt(sum_i[7] / N_SAMPLES)
+        rms_a0 = math.sqrt(sum_i[0] / self.N_SAMPLES)
+        rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)
+        rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)
+        rms_a3 = math.sqrt(sum_i[3] / self.N_SAMPLES)
+        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)
+        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)
+        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)
+        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)
 
         return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
 
-    def consumer_ai(q_ai):
+    def consumer_ai(self, q_ai):
         """
             Consumer AI
         """
-        logger.info('Consumer AI called')
+        logging.info('Consumer AI called')
         template = [
             {
                 "sensor_id": 22, #AC
@@ -451,17 +454,17 @@ class HardwareRPi:
 
                     # Queue is done processing the element
                     q_ai.task_done()
-                    print "length: ", len(d_fb[1]["samples"])
+                    #print "length: ", len(d_fb[1]["samples"])
                     if len(d_fb[1]["samples"]) == 10:
                         try:
                             # send the request to the powernet site instead of firebase
-                            r_post_rms = requests.post(PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=REQUEST_TIMEOUT)
+                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=self.REQUEST_TIMEOUT)
 
                             if r_post_rms.status_code == 201:
                                 # logger.info("Request was successful")
                                 pass
                             else:
-                                logger.exception("Request failed")
+                                logging.exception("Request failed")
                                 r_post_rms.raise_for_status()
 
                             d_fb[:]=[]
@@ -469,7 +472,7 @@ class HardwareRPi:
                             d_fb = copy.deepcopy(template)
 
                         except Exception as exc:
-                            logger.exception(exc)
+                            logging.exception(exc)
                             client.captureException()
 
                             d_fb[:]=[]
@@ -477,7 +480,7 @@ class HardwareRPi:
                             d_fb = copy.deepcopy(template)
 
                 except Exception as exc:
-                    logger.exception(exc)
+                    logging.exception(exc)
                     client.captureException()
 
     def devices_th(self, q_batt):

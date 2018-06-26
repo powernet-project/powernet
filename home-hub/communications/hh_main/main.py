@@ -13,7 +13,6 @@ SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35
 client = Client(SENTRY_DSN)
 
 def main():
-
     # Logger setup for a rotating file handler
     logger = logging.getLogger(__name__)
     logger.setLevel(logging.DEBUG)
@@ -21,7 +20,7 @@ def main():
     logger.addHandler(handler)
 
     logger.info("Starting main program")
-
+    
     # Initializing variables for queue and threads
     #gpioMap = {"CW1": "P8_9", "DW1": "P8_10", "AC1": "P8_15", "RF1": "P8_14", "SE1": "P8_11"}
     gpioMap = {"CW1": 29, "DW1": 31, "AC1": 33, "RF1": 35, "SE1": 37}
@@ -37,7 +36,7 @@ def main():
 
     # Initialize threads
     #producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(format_ai, q_ai)) # This is for BBB
-    producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(q_ai))
+    producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(q_ai,))
     producer_ai_thread.start()
 
     consumer_ai_thread = Thread(name='Consumer', target=rpi.consumer_ai, args=(q_ai,))
