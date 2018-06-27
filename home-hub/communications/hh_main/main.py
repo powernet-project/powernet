@@ -40,19 +40,15 @@ def main():
     #producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(format_ai, q_ai)) # This is for BBB
     producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(q_ai,))
     producer_ai_thread.start()
-    logger.info("Producer AI started")
 
     consumer_ai_thread = Thread(name='Consumer', target=rpi.consumer_ai, args=(q_ai,))
     consumer_ai_thread.start()
-    logger.info("Consumer AI started")
 
     devices_thread = Thread(name='Device', target=rpi.devices_th, args=(q_batt,))
     devices_thread.start()
-    logger.info("devices thread started")
 
     battery_thread = Thread(name='Battery', target=batt.battery_thread, args=(q_batt,))
     battery_thread.start()
-    logger.info("Battery thread started")
 
 if __name__ == '__main__':
     try:
@@ -60,5 +56,5 @@ if __name__ == '__main__':
     except Exception as exc:
         logging.exception(exc)
         client.captureException()
-        logging.info("Re-starting main program")
+        logger.info("Re-starting main program")
         main()
