@@ -1,6 +1,7 @@
 import time
 import requests
 import logging
+from logging.handlers import RotatingFileHandler
 import struct
 from pyModbusTCP.client import ModbusClient
 from pyModbusTCP import utils
@@ -23,10 +24,15 @@ class Storage:
         self.SERVER_PORT = SERVER_PORT
         self.tcpClient = ModbusClient(host=self.SERVER_HOST, port=self.SERVER_PORT, unit_id= 247,timeout=15,auto_open=True)
         self.PWRNET_API_BASE_URL = PWRNET_API_BASE_URL
-        logging.info('Storage class called')
+
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+        self.handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
+        self.logger.addHandler(self.handler)
+        self.logger.info('Storage class called')
 
     def realtime(self, battVal = 0.0, cosPhi = 1.0):
-        logging.info('StorageRT function called')
+        self.logger.info('StorageRT function called')
         if battVal > 0:
             command_mode = 4    # Discharging (positive values)
         elif battVal < 0:
@@ -69,7 +75,7 @@ class Storage:
             return -1
 
     def urlBased(self, devId, state=None, powerReal=0, cosPhi = 1.0):
-        logging.info('Storage URL function called')
+        self.logger.info('Storage URL function called')
         if state == None:
             batt = requests.get(url=self.PWRNET_API_BASE_URL + "device/" + devId + "/", timeout=10)
             battStatus = batt.json()["status"]
@@ -92,7 +98,7 @@ class Storage:
         #powerFloat = utils.encode_ieee(power) # Converting power to ieee float32
 
         if self.tcpClient.is_open():
-
+            print 'battery tcp is open'
             # Setting time
             self.tcpClient.write_multiple_registers(self.addr_time, [self.timeBatt & 0xffff, (self.timeBatt & 0xffff0000) >> 16])
 
@@ -127,10 +133,11 @@ class Storage:
 
         else:
             self.tcpClient.open()
+            print 'Returning batt...'
             return -1
 
     def battery_thread(self, q_batt):
-        logging.info('Battery Thread called')
+        self.logger.info('Battery Thread called')
         state = "OFF"
         fct = "url"     # Which function to call, url or realtime
         battval = 0
@@ -146,27 +153,27 @@ class Storage:
                     q_batt.task_done()
                     #print "Queue battery: ", queue_param
                 except Exception as exc:
-                    logging.exception(exc)
+                    self.logger.exception(exc)
                     client.captureException()
             if fct == "url":
                 batt = self.urlBased(19, state, battval, cosphi)
-                while batt == -1:
+                if batt == -1:
                     try:
                         batt = self.urlBased(19, state, battval, cosphi)
                     except Exception as exc:
-                        logging.exception(exc)
+                        self.logger.exception(exc)
                         client.captureException()
             else:
                 batt = self.realtime(battval)
-                while batt == -1:
+                if batt == -1:
                     try:
                         batt = self.realtime(battval)
                     except Exception as exc:
-                        logging.exception(exc)
+                        self.logger.exception(exc)
                         client.captureException()
 
     def readSOE(self,):
-        logging.info('readSOE called')
+        self.logger.info('readSOE called')
         addr = 62852    # Modbus address of SOE
 
         if self.tcpClient.is_open():
@@ -179,14 +186,14 @@ class Storage:
                 return val[0]
 
             except Exception as exc:
-                logging.exception(exc)
+                self.logger.exception(exc)
                 client.captureException()
         else:
             self.tcpClient.open()
             return -1
 
     def readCosPhi(self):
-        logging.info('readCosPhi called')
+        self.logger.info('readCosPhi called')
         addr = 61706    # Modbus address of FixedCosPhi
 
         if self.tcpClient.is_open():
@@ -202,7 +209,7 @@ class Storage:
                 return val[0]
 
             except Exception as exc:
-                logging.exception(exc)
+                self.logger.exception(exc)
                 client.captureException()
                 return -9
         else:
@@ -210,7 +217,7 @@ class Storage:
             return -9   # cannot be -1 as cosPhi can be thos number
 
     def writeCosPhi(self, valCosPhi=1.0, test=False):
-        logging.info('writeCosPhi called')
+        self.logger.info('writeCosPhi called')
         addr = 61706    # Modbus address of FixedCosPhi
         if test:        # Check to see if this function is going to be used for testing or just writing to register
             if self.tcpClient.is_open():
@@ -219,7 +226,7 @@ class Storage:
                     regs_data = self.tcpClient.write_multiple_registers(addr,[data_conv&0xffff,(data_conv&0xffff0000)>>16])
                     return str(regs_data)
                 except Exception as exc:
-                    logging.exception(exc)
+                    self.logger.exception(exc)
                     client.captureException()
                     return False
             else:
@@ -231,7 +238,7 @@ class Storage:
                 regs_data = self.tcpClient.write_multiple_registers(addr,[data_conv&0xffff,(data_conv&0xffff0000)>>16])
                 return str(regs_data)
             except Exception as exc:
-                logging.exception(exc)
+                self.logger.exception(exc)
                 client.captureException()
                 return False
 

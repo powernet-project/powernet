@@ -12,15 +12,17 @@ from raven import Client
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 client = Client(SENTRY_DSN)
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
+logger.addHandler(handler)
+
 def main():
     # Logger setup for a rotating file handler
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
-    logger.addHandler(handler)
+
 
     logger.info("Starting main program")
-    
+
     # Initializing variables for queue and threads
     #gpioMap = {"CW1": "P8_9", "DW1": "P8_10", "AC1": "P8_15", "RF1": "P8_14", "SE1": "P8_11"}
     gpioMap = {"CW1": 29, "DW1": 31, "AC1": 33, "RF1": 35, "SE1": 37}
@@ -38,15 +40,19 @@ def main():
     #producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(format_ai, q_ai)) # This is for BBB
     producer_ai_thread = Thread(name='Producer', target=rpi.producer_ai, args=(q_ai,))
     producer_ai_thread.start()
+    logger.info("Producer AI started")
 
     consumer_ai_thread = Thread(name='Consumer', target=rpi.consumer_ai, args=(q_ai,))
     consumer_ai_thread.start()
+    logger.info("Consumer AI started")
 
     devices_thread = Thread(name='Device', target=rpi.devices_th, args=(q_batt,))
     devices_thread.start()
+    logger.info("devices thread started")
 
     battery_thread = Thread(name='Battery', target=batt.battery_thread, args=(q_batt,))
     battery_thread.start()
+    logger.info("Battery thread started")
 
 if __name__ == '__main__':
     try:
