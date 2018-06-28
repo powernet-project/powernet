@@ -228,9 +228,8 @@ class HardwareRPi:
                             r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=self.REQUEST_TIMEOUT)
 
                             if r_post_rms.status_code == 201:
-                                self.logger.info("Request was successful")
-
-                                #pass
+                                #self.logger.info("Request was successful")
+                                pass
                             else:
                                 self.logger.exception("Request failed")
                                 r_post_rms.raise_for_status()
@@ -279,7 +278,7 @@ class HardwareRPi:
 
                 app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
 
-                print "app_new_status: ", app_new_status
+                #print "app_new_status: ", app_new_status
 
             except Exception as exc:
                 self.logger.exception(exc)

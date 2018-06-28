@@ -134,7 +134,7 @@ class Storage:
         else:
             #self.logger.debug('tcpClient is not open')
             self.tcpClient.open()
-            print 'Returning batt...'
+            #print 'Returning batt...'
             return -1
 
     def battery_thread(self, q_batt):
