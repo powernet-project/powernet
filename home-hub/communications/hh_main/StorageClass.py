@@ -6,6 +6,7 @@ import struct
 from pyModbusTCP.client import ModbusClient
 from pyModbusTCP import utils
 from raven import Client
+from datetime import datetime
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -22,7 +23,7 @@ class Storage:
         self.timeBatt = timeBatt            # How long to (dis)charge [s]: uint32
         self.SERVER_HOST = SERVER_HOST
         self.SERVER_PORT = SERVER_PORT
-        self.tcpClient = ModbusClient(host=self.SERVER_HOST, port=self.SERVER_PORT, unit_id= 247,timeout=15,auto_open=True)
+        self.tcpClient = ModbusClient(host=self.SERVER_HOST, port=self.SERVER_PORT, unit_id= 247,timeout=2,auto_open=True)
         self.PWRNET_API_BASE_URL = PWRNET_API_BASE_URL
 
         self.logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ class Storage:
         self.logger.info('Storage class called')
 
     def realtime(self, battVal = 0.0, cosPhi = 1.0):
-        self.logger.info('StorageRT function called')
+        #self.logger.info('StorageRT function called')
         if battVal > 0:
             command_mode = 4    # Discharging (positive values)
         elif battVal < 0:
@@ -75,7 +76,7 @@ class Storage:
             return -1
 
     def urlBased(self, devId, state=None, powerReal=0, cosPhi = 1.0):
-        self.logger.info('Storage URL function called')
+        #self.logger.info('Storage URL function called')
         if state == None:
             batt = requests.get(url=self.PWRNET_API_BASE_URL + "device/" + devId + "/", timeout=10)
             battStatus = batt.json()["status"]
@@ -98,7 +99,6 @@ class Storage:
         #powerFloat = utils.encode_ieee(power) # Converting power to ieee float32
 
         if self.tcpClient.is_open():
-            print 'battery tcp is open'
             # Setting time
             self.tcpClient.write_multiple_registers(self.addr_time, [self.timeBatt & 0xffff, (self.timeBatt & 0xffff0000) >> 16])
 
@@ -132,6 +132,7 @@ class Storage:
                 return 0
 
         else:
+            #self.logger.debug('tcpClient is not open')
             self.tcpClient.open()
             print 'Returning batt...'
             return -1
