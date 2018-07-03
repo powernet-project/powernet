@@ -30,6 +30,9 @@ class HardwareRPi:
         self.REQUEST_TIMEOUT = 10
         self.PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
+        self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
+        self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
+
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
         self.handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
@@ -256,8 +259,8 @@ class HardwareRPi:
         """
         self.logger.info('Device Thread called')
 
-        app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
-        app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
+        #app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
+        #app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
         status_PW2 = "OFF"
         power_PW2 = 0.0
         cosphi_PW2 = 1.0
@@ -276,7 +279,7 @@ class HardwareRPi:
                 power_PW2 = [v for v in dev_status if v['id']==19][0]['value']
                 cosphi_PW2 = [v for v in dev_status if v['id']==19][0]['cosphi']
 
-                app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
+                self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
 
                 #print "app_new_status: ", app_new_status
 
@@ -293,10 +296,10 @@ class HardwareRPi:
                 self.logger.exception(exc)
                 client.captureException()
             # Checking difference between appliance states
-            for index, (first, second) in enumerate(zip(app_orig_states, app_new_status)):
+            for index, (first, second) in enumerate(zip(self.app_orig_states, self.app_new_status)):
                 if first != second:
                     self.devices_act(self.appliance_lst[index], second)
-                    app_orig_states = copy.deepcopy(app_new_status)
+                    self.app_orig_states = copy.deepcopy(self.app_new_status)
 
             time.sleep(2)   # Delay between readings
 
@@ -524,7 +527,7 @@ class HardwareBBB:
                 power_PW2 = [v for v in dev_status if v['id']==19][0]['value']
                 cosphi_PW2 = [v for v in dev_status if v['id']==19][0]['cosphi']
 
-                app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
+                self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1]
 
             except Exception as exc:
                 logging.exception(exc)
@@ -538,10 +541,10 @@ class HardwareBBB:
                 logging.exception(exc)
                 client.captureException()
 
-            for index, (first, second) in enumerate(zip(app_orig_states, app_new_status)):
+            for index, (first, second) in enumerate(zip(self.app_orig_states, self.app_new_status)):
                 if first != second:
                     self.devices_act(self.appliance_lst[index], second)
-                    app_orig_states = copy.deepcopy(app_new_status)
+                    self.app_orig_states = copy.deepcopy(self.app_new_status)
 
             time.sleep(2)   # Delay between readings
 
