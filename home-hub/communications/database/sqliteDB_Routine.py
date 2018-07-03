@@ -10,6 +10,7 @@ from logging.handlers import RotatingFileHandler
 from raven import Client
 import spidev
 import numpy as np
+import sqlite3
 
 
 class HardwareRPi:
@@ -27,6 +28,7 @@ class HardwareRPi:
         self.logger.setLevel(logging.DEBUG)
         self.handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
         self.logger.addHandler(self.handler)
+
 
         self.logger.info('HardwareRPi class called')
 
@@ -97,8 +99,6 @@ class HardwareRPi:
 
 if __name__ == '__main__':
     test = HardwareRPi()
-    client = MongoClient()
-    db = client['homehub_test']
 
     while True:
         dts = []  # date/time stamp for each start of analog read
@@ -131,6 +131,12 @@ if __name__ == '__main__':
         temp_queue = [temp_ai, dts]
 
         data = test.RMS(temp_ai)
+        # connecting to sqlite3
+        conn = sqlite3.connect('sensordata.db')
+        c = conn.cursor()
+
+        c.execute(" " " INSERT INTO an0readings (rms, currentdate, currenttime) VALUES ((?), date('now'), time('now'))" " ", (temp[0]) )
+
         print data
         print dts
 
