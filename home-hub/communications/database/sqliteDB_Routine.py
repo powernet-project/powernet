@@ -129,13 +129,22 @@ if __name__ == '__main__':
 
         temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
         temp_queue = [temp_ai, dts]
+        print temp_ai[0]
 
         data = test.RMS(temp_ai)
         # connecting to sqlite3
         conn = sqlite3.connect('sensordata.db')
         c = conn.cursor()
 
-        c.execute(" " " INSERT INTO an0readings (rms, currentdate, currenttime) VALUES ((?), date('now'), time('now'))" " ", (temp[0]) )
+        #c.execute(" " " INSERT INTO an0readings (rms, currentdate, currenttime) VALUES ((?), date('now'), time('now'))" " ", (temp[0]) )
+
+        c.execute("""INSERT INTO an0readings (rms,
+            currentdate, currenttime) VALUES((?), date('now'),
+            time('now'))""", (temp_ai[0] ))
+
+
+        c.commit()
+        c.close()
 
         print data
         print dts
