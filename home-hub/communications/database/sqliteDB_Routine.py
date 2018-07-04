@@ -132,7 +132,7 @@ if __name__ == '__main__':
 
         c.execute("""INSERT INTO measurements (rms,
             currentdate, currenttime, source_id) VALUES((?), (?),
-            (?), (?))""", (temp_ai[0], str(datetime.today()).split()[0], str(datetime.today()).split()[1] 1 ))
+            (?), (?))""", (temp_ai[0], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1 ))
 
 
         conn.commit()
