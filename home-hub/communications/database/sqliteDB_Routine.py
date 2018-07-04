@@ -140,11 +140,11 @@ if __name__ == '__main__':
 
         c.execute("""INSERT INTO an0readings (rms,
             currentdate, currenttime) VALUES((?), date('now'),
-            time('now'))""", (temp_ai[0] ))
+            time('now'))""", (data[0],))
 
 
-        c.commit()
-        c.close()
+        conn.commit()
+        conn.close()
 
         print data
         print dts
