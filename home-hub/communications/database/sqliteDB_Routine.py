@@ -24,14 +24,6 @@ class HardwareRPi:
         self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
         self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
 
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
-        self.handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
-        self.logger.addHandler(self.handler)
-
-
-        self.logger.info('HardwareRPi class called')
-
         # Sentry setup for additional error reporting via 3rd party cloud service
         # self.client = Client(self.SENTRY_DSN)
 
@@ -133,21 +125,21 @@ if __name__ == '__main__':
 
         data = test.RMS(temp_ai)
         # connecting to sqlite3
-        conn = sqlite3.connect('sensordata.db')
+        conn = sqlite3.connect('homehubDB.db')
         c = conn.cursor()
 
         #c.execute(" " " INSERT INTO an0readings (rms, currentdate, currenttime) VALUES ((?), date('now'), time('now'))" " ", (temp[0]) )
 
-        c.execute("""INSERT INTO an0readings (rms,
-            currentdate, currenttime) VALUES((?), date('now'),
-            time('now'))""", (temp_ai[0] ))
+        c.execute("""INSERT INTO measurements (rms,
+            currentdate, currenttime, source_id) VALUES((?), (?),
+            (?), (?))""", (temp_ai[0], str(datetime.today()).split()[0], str(datetime.today()).split()[1] 1 ))
 
 
-        c.commit()
-        c.close()
+        conn.commit()
+        conn.close()
 
-        print data
-        print dts
+        #print data
+        #print dts
 
         time.sleep(2)
 
