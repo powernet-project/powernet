@@ -121,9 +121,11 @@ if __name__ == '__main__':
 
         temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
         temp_queue = [temp_ai, dts]
-        print temp_ai[0]
+        #print temp_ai[0]
 
         data = test.RMS(temp_ai)
+	#print data
+	print data[3]
         # connecting to sqlite3
         conn = sqlite3.connect('homehubDB.db')
         c = conn.cursor()
@@ -132,7 +134,7 @@ if __name__ == '__main__':
 
         c.execute("""INSERT INTO measurements (rms,
             currentdate, currenttime, source_id) VALUES((?), (?),
-            (?), (?))""", (temp_ai[0], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1 ))
+            (?), (?))""", (data[3], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1 ))
 
 
         conn.commit()
