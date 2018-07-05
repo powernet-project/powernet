@@ -23,7 +23,8 @@ class HardwareRPi:
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
         self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
         self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
-
+        self.conn = sqlite3.connect('homehubDB.db')
+        self.c = self.conn.cursor()
         # Sentry setup for additional error reporting via 3rd party cloud service
         # self.client = Client(self.SENTRY_DSN)
 
@@ -48,6 +49,8 @@ class HardwareRPi:
 
     # Function to read SPI data from MCP3008 chip
     # Channel must be an integer 0-7
+
+
     def ReadChannel(self, channel):
       n = 0
       data = np.zeros(self.N_SAMPLES)
@@ -89,6 +92,23 @@ class HardwareRPi:
       return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
 
+      def dbWrite(self, table, vals):
+          try:
+              self.c.execute("INSERT INTO {tn} VALUES ({val}, {date}, {time}, {src_id})".\
+              format(tn = table, val=vals[0], date=vals[1], time=vals[2], src_id=vals[3]))
+          except sqlite3.IntegrityError:
+              print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
+          self.conn.commit()
+          self.conn.close()
+
+          #c.execute("""INSERT INTO measurements (rms,
+            #  currentdate, currenttime, source_id) VALUES((?), (?),
+             # (?), (?))""", (data[3], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1 ))
+          #conn.commit()
+          #conn.close()
+
+
+
 if __name__ == '__main__':
     test = HardwareRPi()
 
@@ -124,21 +144,13 @@ if __name__ == '__main__':
         #print temp_ai[0]
 
         data = test.RMS(temp_ai)
-	#print data
-	print data[3]
+    	#print data
+    	print data[3]
         # connecting to sqlite3
-        conn = sqlite3.connect('homehubDB.db')
-        c = conn.cursor()
+        #conn = sqlite3.connect('homehubDB.db')
+        vals = [data[3], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1]
+        test.dbWrite('measurements', vals)
 
-        #c.execute(" " " INSERT INTO an0readings (rms, currentdate, currenttime) VALUES ((?), date('now'), time('now'))" " ", (temp[0]) )
-
-        c.execute("""INSERT INTO measurements (rms,
-            currentdate, currenttime, source_id) VALUES((?), (?),
-            (?), (?))""", (data[3], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1 ))
-
-
-        conn.commit()
-        conn.close()
 
         #print data
         #print dts
