@@ -90,16 +90,17 @@ class HardwareRPi:
       return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
 
-      def dbWrite(self, table, vals):
-          try:
-              conn = sqlite3.connect('homehubDB.db')
-              c = self.conn.cursor()
-              c.execute("INSERT INTO {tn} VALUES ({val}, {date}, {time}, {src_id})".\
-              format(tn = table, val=vals[0], date=vals[1], time=vals[2], src_id=vals[3]))
-          except sqlite3.IntegrityError:
-              print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
-          conn.commit()
-          conn.close()
+    def dbWrite(self, table, vals):
+
+      try:
+          conn = sqlite3.connect('homehubDB.db')
+          c = self.conn.cursor()
+          c.execute("INSERT INTO {tn} VALUES ({val}, {date}, {time}, {src_id})".\
+          format(tn = table, val=vals[0], date=vals[1], time=vals[2], src_id=vals[3]))
+      except sqlite3.IntegrityError:
+          print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
+      conn.commit()
+      conn.close()
 
           #c.execute("""INSERT INTO measurements (rms,
             #  currentdate, currenttime, source_id) VALUES((?), (?),
