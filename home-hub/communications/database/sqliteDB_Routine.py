@@ -153,7 +153,19 @@ if __name__ == '__main__':
         # connecting to sqlite3
         #conn = sqlite3.connect('homehubDB.db')
         vals = [data[3], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1]
-        test.dbWrite('measurements', vals)
+        #test.dbWrite('measurements', vals)
+
+        conn = sqlite3.connect('homehubDB.db')
+        c = conn.cursor()
+        print vals
+        c.execute("INSERT INTO {tn} VALUES ({val}, {date}, {time}, {src_id})".\
+        format(tn = table, val=vals[0], date=vals[1], time=vals[2], src_id=vals[3]))
+        print 'db data inserted'
+        conn.commit()
+        conn.close()
+
+
+
 
 
         #print data
