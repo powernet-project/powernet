@@ -93,12 +93,15 @@ class HardwareRPi:
     def dbWrite(self, table, vals):
 
       try:
+          print 'connecting'
           conn = sqlite3.connect('homehubDB.db')
-          c = self.conn.cursor()
+          c = conn.cursor()
+          print vals
           c.execute("INSERT INTO {tn} VALUES ({val}, {date}, {time}, {src_id})".\
           format(tn = table, val=vals[0], date=vals[1], time=vals[2], src_id=vals[3]))
       except sqlite3.IntegrityError:
-          print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
+          print 'error connecting to db'
+          #print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
       conn.commit()
       conn.close()
 
