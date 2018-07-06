@@ -154,13 +154,13 @@ if __name__ == '__main__':
         data = test.RMS(temp_ai)
 
         for i in range(len(data)):
-            if data[i] >= prev[i]+self.dP or data[i] <= prev[i]-self.dP:
+            if data[i] >= prev[i]+test.dP or data[i] <= prev[i]-test.dP:
                 temp = [data[i], dts.split()[0], dts.split()[1], i]
-                dbWriteMeasurements(temp)
-                self.flag_db = 1
-        if self.flag_db == 1:
+                test.dbWriteMeasurements(temp)
+                test.flag_db = 1
+        if test.flag_db == 1:
             prev = copy.deepcopy(data)
-            self.flag_db = 0
+            test.flag_db = 0
 
 
     	#print data
