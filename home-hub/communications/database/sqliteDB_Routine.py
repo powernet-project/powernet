@@ -155,7 +155,7 @@ if __name__ == '__main__':
 
         for i in range(len(data)):
             if data[i] >= prev[i]+test.dP or data[i] <= prev[i]-test.dP:
-                temp = [data[i], dts.split()[0], dts.split()[1], i]
+                temp = [data[i], dts[i].split()[0], dts[i].split()[1], i]
                 test.dbWriteMeasurements(temp)
                 test.flag_db = 1
         if test.flag_db == 1:
