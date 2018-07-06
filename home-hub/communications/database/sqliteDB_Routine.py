@@ -34,6 +34,10 @@ class HardwareRPi:
         self.adc_Vin = adc_Vin
         self.delay = 0.002
 
+        # delta in power to save in db
+        self.dP = 0.3
+        self.flag_db = 0
+
         # Initializing SPI
         self.spi = spidev.SpiDev()
         self.spi.open(0,0)
@@ -90,15 +94,15 @@ class HardwareRPi:
       return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
 
-    def dbWrite(self, table, vals):
+    def dbWriteMeasurements(self, vals):
 
       try:
-          print 'connecting'
+          #print 'connecting'
           conn = sqlite3.connect('homehubDB.db')
           c = conn.cursor()
           print vals
-          c.execute("INSERT INTO {tn} VALUES ({val}, {date}, {time}, {src_id})".\
-          format(tn = table, val=vals[0], date=vals[1], time=vals[2], src_id=vals[3]))
+          c.execute("INSERT INTO measurements VALUES ((?), (?), (?), (?))".\
+          format(vals[0], vals[1], vals[2], vals[3]))
       except sqlite3.IntegrityError:
           print 'error connecting to db'
           #print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
@@ -115,7 +119,7 @@ class HardwareRPi:
 
 if __name__ == '__main__':
     test = HardwareRPi()
-
+    prev = [-1,-1,-1,-1,-1,-1,-1,-1]
     while True:
         dts = []  # date/time stamp for each start of analog read
         #AC id:5
@@ -148,28 +152,25 @@ if __name__ == '__main__':
         #print temp_ai[0]
 
         data = test.RMS(temp_ai)
+
+        for i in range(data):
+            if data[i] >= prev[i]+self.dP or data[i] <= prev[i]-self.dP:
+                temp = [data[i], dts.split()[0], dts.split()[1], i]
+                dbWriteMeasurements(temp)
+                self.flag_db = 1
+        if self.flag_db == 1:
+            prev = copy.deepcopy(data)
+            self.flag_db = 0
+
+
     	#print data
     	print data[3]
         # connecting to sqlite3
         #conn = sqlite3.connect('homehubDB.db')
+
         vals = [data[3], str(datetime.today()).split()[0], str(datetime.today()).split()[1], 1]
         #test.dbWrite('measurements', vals)
-
-        conn = sqlite3.connect('homehubDB.db')
-        c = conn.cursor()
         print vals
-        c.execute("INSERT INTO {tn} VALUES ({val}, {date}, {time}, {src_id})".\
-        format(tn = table, val=vals[0], date=vals[1], time=vals[2], src_id=vals[3]))
-        print 'db data inserted'
-        conn.commit()
-        conn.close()
-
-
-
-
-
-        #print data
-        #print dts
 
         time.sleep(2)
 
