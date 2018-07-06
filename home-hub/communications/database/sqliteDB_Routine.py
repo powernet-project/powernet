@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
         data = test.RMS(temp_ai)
 
-        for i in range(data):
+        for i in range(len(data)):
             if data[i] >= prev[i]+self.dP or data[i] <= prev[i]-self.dP:
                 temp = [data[i], dts.split()[0], dts.split()[1], i]
                 dbWriteMeasurements(temp)
