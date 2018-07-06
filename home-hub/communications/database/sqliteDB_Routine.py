@@ -101,8 +101,8 @@ class HardwareRPi:
           conn = sqlite3.connect('homehubDB.db')
           c = conn.cursor()
           print vals
-          c.execute("INSERT INTO measurements VALUES ((?), (?), (?), (?))".\
-          format(vals[0], vals[1], vals[2], vals[3]))
+          c.execute("INSERT INTO measurements VALUES ((?), (?), (?), (?),)".\
+          (vals[0], vals[1], vals[2], vals[3]))
       except sqlite3.IntegrityError:
           print 'error connecting to db'
           #print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
@@ -153,9 +153,10 @@ if __name__ == '__main__':
 
         data = test.RMS(temp_ai)
 
+        # i+1 is foreign key for db
         for i in range(len(data)):
             if data[i] >= prev[i]+test.dP or data[i] <= prev[i]-test.dP:
-                temp = [data[i], dts[i].split()[0], dts[i].split()[1], i]
+                temp = [data[i], dts[i].split()[0], dts[i].split()[1], i+1]
                 test.dbWriteMeasurements(temp)
                 test.flag_db = 1
         if test.flag_db == 1:
