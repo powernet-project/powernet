@@ -101,7 +101,7 @@ class HardwareRPi:
           conn = sqlite3.connect('homehubDB.db')
           c = conn.cursor()
           print vals
-          c.execute("INSERT INTO measurements VALUES ((?), (?), (?), (?),)".\
+          c.execute("INSERT INTO measurements VALUES ((?), (?), (?), (?),)",.\
           (vals[0], vals[1], vals[2], vals[3]))
       except sqlite3.IntegrityError:
           print 'error connecting to db'
