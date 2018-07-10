@@ -25,7 +25,7 @@ def main():
 
     # Initializing variables for queue and threads
     #gpioMap = {"CW1": "P8_9", "DW1": "P8_10", "AC1": "P8_15", "RF1": "P8_14", "SE1": "P8_11"}
-    gpioMap = {"CW1": 29, "DW1": 31, "AC1": 33, "RF1": 35, "SE1": 37}
+    gpioMap = {"CW1": 29, "DW1": 31, "AC1": 33, "RF1": 35, "SE1": 37, "WM1": 38}
     rpi = HardwareClass.HardwareRPi(gpio_map=gpioMap)
     batt = StorageClass.Storage()
     buffer_size = 8

@@ -14,6 +14,7 @@ from raven import Client
 from datetime import datetime
 import spidev
 import numpy as np
+import sqlite3
 #from main import logger
 
 
@@ -30,8 +31,14 @@ class HardwareRPi:
         self.REQUEST_TIMEOUT = 10
         self.PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
-        self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
-        self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
+        #self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
+        #self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
+        #self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1"]
+        self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF","OFF"] # Battery included
+        self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF", "OFF"]  # Battery included
+        self.input_sources_statesDB = {'AC1': [3,22], 'SE1': [4,23], 'RF1':[6,25], 'DW1':[7,28],'WM1':[8,29], 'CW1': [9,24], 'PW2':[10,25]}
+        self.sourcesDBID = [self.input_sources_statesDB['AC1'][0],self.input_sources_statesDB['SE1'][0],self.input_sources_statesDB['RF1'][0],self.input_sources_statesDB['CW1'][0],self.input_sources_statesDB['DW1'][0],self.input_sources_statesDB['WM1'][0],self.input_sources_statesDB['PW2'][0]]
+        self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
@@ -40,12 +47,18 @@ class HardwareRPi:
 
         self.logger.info('HardwareRPi class called')
 
+        # Database:
+        self.flag_db = 0
+        self.prev = [-1,-1,-1,-1,-1,-1,-1,-1]
+        self.dP = 0.3
+        self.flag_state = 0
+
         # Sentry setup for additional error reporting via 3rd party cloud service
         # self.client = Client(self.SENTRY_DSN)
 
         # Initializing GPIOs:
         GPIO.setmode(GPIO.BOARD)
-        self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1"]
+
 
         self.N_SAMPLES = N_SAMPLES
         self.adc_Vin = adc_Vin
@@ -53,7 +66,7 @@ class HardwareRPi:
 
         if gpio_map == None:
             self.gpio_map = {"CW1": 29, "DW1": 31, "AC1": 33,
-            "RF1": 35, "SE1": 37}
+            "RF1": 35, "SE1": 37, "WM1": 38}
         else:
             self.gpio_map = gpio_map
 
@@ -168,6 +181,36 @@ class HardwareRPi:
         return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
 
+    def dbWriteMeasurements(self, vals):
+      try:
+          #print 'connecting'
+          conn = sqlite3.connect('homehubDB.db')
+          c = conn.cursor()
+          #print vals
+          c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
+      except sqlite3.IntegrityError:
+          print 'error connecting to db'
+          #print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
+      conn.commit()
+      conn.close()
+
+
+    def dbWriteStates(self, vals):
+      try:
+          #print 'connecting'
+          conn = sqlite3.connect('homehubDB.db')
+          c = conn.cursor()
+          #print vals
+          c.execute("INSERT INTO input_sources_state (state, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
+          #print 'State written...'
+          #print 'Vals: ', vals
+      except sqlite3.IntegrityError:
+          print 'error connecting to db'
+          #print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
+      conn.commit()
+      conn.close()
+
+
     def consumer_ai(self, q_ai):
         """
             Consumer AI
@@ -211,6 +254,22 @@ class HardwareRPi:
                     temp_date = temp_cons[1]
 
                     i_rms = self.RMS(temp_ai)
+
+                    # Writing data to db:
+                    for i in range(len(i_rms)):
+                        if i_rms[i] >= self.prev[i]+self.dP or i_rms[i] <= self.prev[i]-self.dP:
+                            temp_db = [i_rms[i], temp_date[i].split()[0], temp_date[i].split()[1], i+1]
+                            try:
+                                self.dbWriteMeasurements(temp_db)
+                                self.flag_db = 1
+                                #print 'try flag: ', self.flag_db
+                            except Exception as exc:
+                                self.logger.exception(exc)
+                                client.captureException()
+                    if self.flag_db == 1:
+                        self.prev = copy.deepcopy(i_rms)
+                        self.flag_db = 0
+
 
                     # Adding analog reads, sID and Date to lists for db upload
                     d_fb[0].get("samples").append({"RMS": i_rms[0], "date_time": temp_date[0]})
@@ -268,7 +327,59 @@ class HardwareRPi:
         while True:
             try:
                 dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT).json()["results"]
+                dts = str(datetime.now())
+                status_AC1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['AC1'][1]][0]['status']
+                status_SE1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['SE1'][1]][0]['status']
+                status_RF1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['RF1'][1]][0]['status']
+                status_CW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['CW1'][1]][0]['status']
+                status_DW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['DW1'][1]][0]['status']
+                status_WM1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['WM1'][1]][0]['status']
+                # Battery
+                status_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['status']
+                power_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['value']
+                cosphi_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['cosphi']
 
+                self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_WM1]
+
+                for i in range(len(self.app_new_status)):
+                    if self.app_new_status[i] != self.app_orig_states[i]:
+                        temp_db = [self.app_new_status[i], dts.split()[0], dts.split()[1], self.sourcesDBID[i]]
+                        try:
+                            if self.appliance_lst[i] == 'PW2':
+                                temp_q_batt = [status_PW2, "url", power_PW2, cosphi_PW2]
+                                try:
+                                    q_batt.put(temp_q_batt)
+                                except Exception as exc:
+                                    self.logger.exception(exc)
+                                    client.captureException()
+                            else:
+                                self.devices_act(self.appliance_lst[i], self.app_new_status[i])
+
+                            self.dbWriteStates(temp_db)
+                            self.flag_state = 1
+                            #print 'try flag: ', self.flag_state
+                        except Exception as exc:
+                            self.logger.exception(exc)
+                            client.captureException()
+                if self.flag_state == 1:
+                    #print 'app_orig_states: ', self.app_orig_states
+                    self.app_orig_states = copy.deepcopy(self.app_new_status)
+                    #print 'app_orig_states_new: ', self.app_orig_states
+                    self.flag_state = 0
+
+            except Exception as exc:
+                self.logger.exception(exc)
+                client.captureException()
+
+            time.sleep(2)   # Delay between readings
+
+
+
+
+
+        '''
+            try:
+                dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT).json()["results"]
                 status_AC1 = [v for v in dev_status if v['id']==22][0]['status']
                 status_SE1 = [v for v in dev_status if v['id']==23][0]['status']
                 status_RF1 = [v for v in dev_status if v['id']==25][0]['status']
@@ -300,8 +411,8 @@ class HardwareRPi:
                 if first != second:
                     self.devices_act(self.appliance_lst[index], second)
                     self.app_orig_states = copy.deepcopy(self.app_new_status)
+        '''
 
-            time.sleep(2)   # Delay between readings
 
     def devices_act(self, device, state):
         GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
