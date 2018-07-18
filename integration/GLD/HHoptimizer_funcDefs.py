@@ -7,6 +7,7 @@ import itertools
 import csv
 import rwText
 import json
+import os
 
 # Ideally won't need this function -> all the data should come from CC
 # HouseNumber is the file line that is being selected - houses with battery should start from 0 to n
@@ -58,6 +59,9 @@ def BatteryProfiles(U, batt_solar_houses):
     '''
     U_new = U.tolist()   # converting numpy array (output from LC_Combined_No_Bounds_SingleHome) to list for json.
     #print 'U_new: ', U_new
+
+    # FIX: DICTIONARY DOES NOT PRESERVE ORDER. FIX WHERE U_HOUSES AND U_BATT INTERSECT!!!!!!
+
     U_houses = {}               # Creating battery house profile
     u_batt = []
     for idx,i in enumerate(batt_solar_houses):
@@ -65,38 +69,60 @@ def BatteryProfiles(U, batt_solar_houses):
         u_batt.append(U_new[idx][0])
         U_houses[i]['Battery'] = U_new[idx][1:-1]
 
-    rwText.create_file_json('home_U.json',U_houses)
-    print 'Battery Profile: u_batt = ', u_batt
+    #print 'U_houses: ', U_houses
+    rwText.create_file_json('homes_U.json',U_houses)
+    #print 'Battery Profile: u_batt = ', u_batt
     return u_batt
 
 
-def BatteryReadRemove():
+def BatteryReadRemove(batt_solar_houses):
+    '''
     try:
-        with open('home_U.json', 'r') as data_file:
+        with open('homes_U.json', 'r') as data_file:
             data = json.load(data_file)
+            print 'data: ', data
     except IOError as e:
         return
+    '''
+    with open('homes_U.json', 'r') as data_file:
+        data = json.load(data_file)
+        #print 'data: ', data
 
-    #print 'data: ', data
     dict_keys = data.keys()
 
     # Value to actuate in the battery
-    u_batt = []
-    for i in dict_keys:
-        u_batt.append(data[i]['Battery'][0])
-        data[i]['Battery'] = data[i]['Battery'][1:-1]
+    try:
+        u_batt = []
+        #print 'Length battery: ', len(data[dict_keys[0]]['Battery'])
+        for i in batt_solar_houses:
+            #print 'i: ', i
+            #print 'unatt_i: ', data[str(i)]['Battery'][0]
+            u_batt.append(data[str(i)]['Battery'][0])
+            data[str(i)]['Battery'] = data[str(i)]['Battery'][1:-1]
 
-    if len(data[dict_keys[0]]['Battery']) == 1:
-        print 'Need to delete the file...'
+        if len(data[dict_keys[0]]['Battery']) == 1:
+            os.remove('homes_U.json')
+            #print 'file deleted...'
+        else:
+            with open('homes_U.json', 'w') as data_file:
+                data = json.dump(data, data_file)
+
+    except Exception as exc:
+        print exc
+
+    '''
+    with open('homes_U.json', 'w') as data_file:
+        data = json.dump(data, data_file)
 
     try:
         # Overwriting the file with new array (one less element)
-        with open('home_U.json', 'w') as data_file:
+        with open('homes_U.json', 'w') as data_file:
             data = json.dump(data, data_file)
 
     except IOError as e:
         print 'Unable to open write file'
         return
+    '''
 
     print 'BatteryReadRemove: u_batt = ', u_batt
     return u_batt
@@ -176,9 +202,9 @@ def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, 
     return Qfinal, Ufinal, boundsFlag
 
 
-def LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umax, umin, qmax, qmin):
+def LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umax, umin, qmax, qmin, number_of_houses):
     # New variables -> pre-computed
-    house_numbers = np.array([1,3])
+    house_numbers = np.arange(number_of_houses+1)[1:]
     #house_numbers = np.array([0])
     nS = house_numbers.size      # # of houses
     T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns

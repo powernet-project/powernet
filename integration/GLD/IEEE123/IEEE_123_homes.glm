@@ -1,0 +1,1991 @@
+module residential {
+	implicit_enduses NONE;
+}
+
+module climate;
+
+module tape;
+
+module generators;
+
+object climate {
+	name tmy_file;
+	tmyfile "724940TYA.tmy3";
+	interpolate LINEAR;
+}
+
+//Line, conductor, and transformer configurations
+
+//Line and conductor configurations
+
+object triplex_line_conductor {
+	name "c1/0 AA triplex";
+	resistance 0.97;
+	geometric_mean_radius 0.0111;
+}
+
+object triplex_line_configuration {
+	name triplex_line_config;
+	conductor_1 "c1/0 AA triplex";
+	conductor_2 "c1/0 AA triplex";
+	conductor_N "c1/0 AA triplex";
+	insulation_thickness 0.08;
+	diameter 0.368;
+}
+
+object transformer_configuration {
+	name house_transformer;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type PADMOUNT;
+	primary_voltage 2401.7771 V;
+	secondary_voltage 124 V;
+	power_rating 250;
+	impedance 0.015+0.0675j;
+}
+
+class player {
+	double value;
+}
+
+object player {
+	name player_0;
+	file ps_1450_2015.player;
+}
+
+object player {
+	name player_1;
+	file ps_1524_2015.player;
+}
+
+object player {
+	name player_2;
+	file ps_1731_2015.player;
+}
+
+object player {
+	name player_3;
+	file ps_203_2015.player;
+}
+
+object player {
+	name player_4;
+	file ps_2606_2015.player;
+}
+
+object player {
+	name player_5;
+	file ps_3864_2015.player;
+}
+
+object player {
+	name player_6;
+	file ps_3938_2015.player;
+}
+
+object player {
+	name player_7;
+	file ps_4495_2015.player;
+}
+
+object player {
+	name player_8;
+	file ps_4934_2015.player;
+}
+
+object player {
+	name player_9;
+	file ps_5938_2015.player;
+}
+
+object player {
+	name player_10;
+	file ps_7114_2015.player;
+}
+
+object player {
+	name player_11;
+	file ps_8061_2015.player;
+}
+
+object player {
+	name player_12;
+	file ps_8342_2015.player;
+}
+
+object player {
+	name player_13;
+	file ps_9775_2015.player;
+}
+
+object triplex_node {
+	name node_41_C;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object transformer {
+	name house_trans_41_C;
+	phases CS;
+	from meter_41;
+	to node_41_C;
+	configuration house_transformer;
+}
+
+object triplex_node {
+	name node_42_A;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object transformer {
+	name house_trans_42_A;
+	phases AS;
+	from meter_42;
+	to node_42_A;
+	configuration house_transformer;
+}
+
+// -----Triplex line, triplex meter, and house objects
+
+// House/meter objects GLD_0001
+
+object triplex_meter {
+	name meter_GLD_0001;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object house {
+	name GLD_0001;
+	number_of_stories 2;
+	cooling_setpoint 71;
+	heating_setpoint 66;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 3329;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.32;
+	parent meter_GLD_0001;
+}
+
+object ZIPload {
+	parent GLD_0001;
+	name zip_GLD_0001;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_4.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0001;
+	from node_42_A;
+	to meter_GLD_0001;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0002
+
+object triplex_meter {
+	name meter_GLD_0002;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object house {
+	name GLD_0002;
+	number_of_stories 2;
+	cooling_setpoint 74;
+	heating_setpoint 69;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 2227;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.76;
+	parent meter_GLD_0002;
+}
+
+object ZIPload {
+	parent GLD_0002;
+	name zip_GLD_0002;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0002;
+	from node_42_A;
+	to meter_GLD_0002;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0003
+
+object triplex_meter {
+	name meter_GLD_0003;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0003;
+	number_of_stories 2;
+	cooling_setpoint 81;
+	heating_setpoint 76;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 2460;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.47;
+	parent meter_GLD_0003;
+}
+
+object ZIPload {
+	parent GLD_0003;
+	name zip_GLD_0003;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_5.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0003;
+	from node_41_C;
+	to meter_GLD_0003;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	name rec_GLD_0003_power;
+	parent meter_GLD_0003;
+	property measured_real_power;
+	file GLD_0003_power.csv;
+	interval 60;
+}
+
+// House/meter objects GLD_0004
+
+object triplex_meter {
+	name meter_GLD_0004;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object house {
+	name GLD_0004;
+	number_of_stories 2;
+	cooling_setpoint 74;
+	heating_setpoint 69;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	floor_area 3550;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.32;
+	parent meter_GLD_0004;
+}
+
+object ZIPload {
+	parent GLD_0004;
+	name zip_GLD_0004;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_10.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0004;
+	from node_42_A;
+	to meter_GLD_0004;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0005
+
+object triplex_meter {
+	name meter_GLD_0005;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0005;
+	number_of_stories 1;
+	cooling_setpoint 74;
+	heating_setpoint 69;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 1081;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.7;
+	parent meter_GLD_0005;
+}
+
+object ZIPload {
+	parent GLD_0005;
+	name zip_GLD_0005;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_0.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0005;
+	from node_41_C;
+	to meter_GLD_0005;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0006
+
+object triplex_meter {
+	name meter_GLD_0006;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object house {
+	name GLD_0006;
+	number_of_stories 2;
+	cooling_setpoint 76;
+	heating_setpoint 71;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 2065;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.7;
+	parent meter_GLD_0006;
+}
+
+object ZIPload {
+	parent GLD_0006;
+	name zip_GLD_0006;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_10.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0006;
+	from node_42_A;
+	to meter_GLD_0006;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0007
+
+object triplex_meter {
+	name meter_GLD_0007;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object house {
+	name GLD_0007;
+	number_of_stories 1;
+	cooling_setpoint 76;
+	heating_setpoint 71;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 1667;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.76;
+	parent meter_GLD_0007;
+}
+
+object ZIPload {
+	parent GLD_0007;
+	name zip_GLD_0007;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_5.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0007;
+	from node_42_A;
+	to meter_GLD_0007;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0008
+
+object triplex_meter {
+	name meter_GLD_0008;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0008;
+	number_of_stories 1;
+	cooling_setpoint 69;
+	heating_setpoint 64;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 2737;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.41;
+	parent meter_GLD_0008;
+}
+
+object ZIPload {
+	parent GLD_0008;
+	name zip_GLD_0008;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_3.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0008;
+	from node_41_C;
+	to meter_GLD_0008;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0009
+
+object triplex_meter {
+	name meter_GLD_0009;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object house {
+	name GLD_0009;
+	number_of_stories 2;
+	cooling_setpoint 72;
+	heating_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 1397;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.76;
+	parent meter_GLD_0009;
+}
+
+object ZIPload {
+	parent GLD_0009;
+	name zip_GLD_0009;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_11.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0009;
+	from node_42_A;
+	to meter_GLD_0009;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0010
+
+object triplex_meter {
+	name meter_GLD_0010;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object house {
+	name GLD_0010;
+	number_of_stories 2;
+	cooling_setpoint 68;
+	heating_setpoint 63;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 2155;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.32;
+	parent meter_GLD_0010;
+}
+
+object ZIPload {
+	parent GLD_0010;
+	name zip_GLD_0010;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_12.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0010;
+	from node_42_A;
+	to meter_GLD_0010;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0011
+
+object triplex_meter {
+	name meter_GLD_0011;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0011;
+	number_of_stories 1;
+	cooling_setpoint 67;
+	heating_setpoint 62;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	floor_area 1160;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.58;
+	parent meter_GLD_0011;
+}
+
+object ZIPload {
+	parent GLD_0011;
+	name zip_GLD_0011;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_8.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0011;
+	from node_41_C;
+	to meter_GLD_0011;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0012
+
+object triplex_meter {
+	name meter_GLD_0012;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0012;
+	number_of_stories 2;
+	cooling_setpoint 74;
+	heating_setpoint 69;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	floor_area 3487;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.15;
+	parent meter_GLD_0012;
+}
+
+object ZIPload {
+	parent GLD_0012;
+	name zip_GLD_0012;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_13.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0012;
+	from node_41_C;
+	to meter_GLD_0012;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0013
+
+object triplex_meter {
+	name meter_GLD_0013;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0013;
+	number_of_stories 2;
+	cooling_setpoint 73;
+	heating_setpoint 68;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 2406;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.2;
+	parent meter_GLD_0013;
+}
+
+object ZIPload {
+	parent GLD_0013;
+	name zip_GLD_0013;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0013;
+	from node_41_C;
+	to meter_GLD_0013;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// House/meter objects GLD_0014
+
+object triplex_meter {
+	name meter_GLD_0014;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0014;
+	number_of_stories 1;
+	cooling_setpoint 70;
+	heating_setpoint 65;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 2183;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.7;
+	parent meter_GLD_0014;
+}
+
+object ZIPload {
+	parent GLD_0014;
+	name zip_GLD_0014;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power player_13.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0014;
+	from node_41_C;
+	to meter_GLD_0014;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+// PV objects (triplex line, triplex meter, inverter, solar)
+
+object triplex_line {
+	name PV_line_1;
+	from node_42_A;
+	to PV_meter_1;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_1;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name PV_inverter_1;
+	phases AS;
+	parent PV_meter_1;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_1;
+	phases AS;
+	parent PV_inverter_1;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_2;
+	from node_41_C;
+	to PV_meter_2;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_2;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_2;
+	phases CS;
+	parent PV_meter_2;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_2;
+	phases CS;
+	parent PV_inverter_2;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_3;
+	from node_42_A;
+	to PV_meter_3;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_3;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name PV_inverter_3;
+	phases AS;
+	parent PV_meter_3;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_3;
+	phases AS;
+	parent PV_inverter_3;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_4;
+	from node_41_C;
+	to PV_meter_4;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_4;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_4;
+	phases CS;
+	parent PV_meter_4;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_4;
+	phases CS;
+	parent PV_inverter_4;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_5;
+	from node_42_A;
+	to PV_meter_5;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_5;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name PV_inverter_5;
+	phases AS;
+	parent PV_meter_5;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_5;
+	phases AS;
+	parent PV_inverter_5;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_6;
+	from node_41_C;
+	to PV_meter_6;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_6;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_6;
+	phases CS;
+	parent PV_meter_6;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_6;
+	phases CS;
+	parent PV_inverter_6;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_7;
+	from node_41_C;
+	to PV_meter_7;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_7;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_7;
+	phases CS;
+	parent PV_meter_7;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_7;
+	phases CS;
+	parent PV_inverter_7;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_8;
+	from node_41_C;
+	to PV_meter_8;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_8;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_8;
+	phases CS;
+	parent PV_meter_8;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_8;
+	phases CS;
+	parent PV_inverter_8;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_9;
+	from node_42_A;
+	to PV_meter_9;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_9;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name PV_inverter_9;
+	phases AS;
+	parent PV_meter_9;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_9;
+	phases AS;
+	parent PV_inverter_9;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_10;
+	from node_41_C;
+	to PV_meter_10;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_10;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_10;
+	phases CS;
+	parent PV_meter_10;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_10;
+	phases CS;
+	parent PV_inverter_10;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_11;
+	from node_41_C;
+	to PV_meter_11;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_11;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_11;
+	phases CS;
+	parent PV_meter_11;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_11;
+	phases CS;
+	parent PV_inverter_11;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_12;
+	from node_42_A;
+	to PV_meter_12;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_12;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name PV_inverter_12;
+	phases AS;
+	parent PV_meter_12;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_12;
+	phases AS;
+	parent PV_inverter_12;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_13;
+	from node_42_A;
+	to PV_meter_13;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_13;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name PV_inverter_13;
+	phases AS;
+	parent PV_meter_13;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_13;
+	phases AS;
+	parent PV_inverter_13;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_14;
+	from node_42_A;
+	to PV_meter_14;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_14;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name PV_inverter_14;
+	phases AS;
+	parent PV_meter_14;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_14;
+	phases AS;
+	parent PV_inverter_14;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 270 ft^2;
+	tilt_angle 47.0;
+	efficiency 0.135;
+	orientation_azimuth 180;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+// Battery objects (triplex line, triplex meter, inverter, battery)
+
+object triplex_line {
+	name Bat_line_1;
+	from node_41_C;
+	to Bat_meter_1;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_1;
+	nominal_voltage 124.00;
+	phases CS;
+	object recorder {
+	interval 60;
+  property measured_real_power;
+  file Batt_GLD0001.csv;
+			 };
+}
+
+object inverter {
+	name Bat_inverter_1;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_1;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_1;
+	parent Bat_inverter_1;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+	object recorder {
+		property state_of_charge;
+		interval 60;
+		file Batt_SOC_GLD0001.csv;
+					};
+}
+
+object triplex_line {
+	name Bat_line_2;
+	from node_41_C;
+	to Bat_meter_2;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_2;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_2;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_2;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_2;
+	parent Bat_inverter_2;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_3;
+	from node_41_C;
+	to Bat_meter_3;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_3;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_3;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_3;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_3;
+	parent Bat_inverter_3;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_4;
+	from node_42_A;
+	to Bat_meter_4;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_4;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name Bat_inverter_4;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_4;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_4;
+	parent Bat_inverter_4;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_5;
+	from node_41_C;
+	to Bat_meter_5;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_5;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_5;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_5;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_5;
+	parent Bat_inverter_5;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_6;
+	from node_42_A;
+	to Bat_meter_6;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_6;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name Bat_inverter_6;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_6;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_6;
+	parent Bat_inverter_6;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_7;
+	from node_42_A;
+	to Bat_meter_7;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_7;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name Bat_inverter_7;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_7;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_7;
+	parent Bat_inverter_7;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_8;
+	from node_41_C;
+	to Bat_meter_8;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_8;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_8;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_8;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_8;
+	parent Bat_inverter_8;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_9;
+	from node_42_A;
+	to Bat_meter_9;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_9;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name Bat_inverter_9;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_9;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_9;
+	parent Bat_inverter_9;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_10;
+	from node_42_A;
+	to Bat_meter_10;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_10;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name Bat_inverter_10;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_10;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_10;
+	parent Bat_inverter_10;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_11;
+	from node_41_C;
+	to Bat_meter_11;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_11;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_11;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_11;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_11;
+	parent Bat_inverter_11;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_12;
+	from node_42_A;
+	to Bat_meter_12;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_12;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name Bat_inverter_12;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_12;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_12;
+	parent Bat_inverter_12;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_13;
+	from node_42_A;
+	to Bat_meter_13;
+	phases AS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_13;
+	nominal_voltage 124.00;
+	phases AS;
+}
+
+object inverter {
+	name Bat_inverter_13;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_13;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_13;
+	parent Bat_inverter_13;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object triplex_line {
+	name Bat_line_14;
+	from node_41_C;
+	to Bat_meter_14;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_14;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_14;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_14;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_14;
+	parent Bat_inverter_14;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.5;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+// Recorders
+// House meters
+object multi_recorder {
+	interval 60;
+	property meter_GLD_0001:measured_real_power,meter_GLD_0002:measured_real_power,meter_GLD_0003:measured_real_power,meter_GLD_0004:measured_real_power,meter_GLD_0005:measured_real_power,meter_GLD_0006:measured_real_power,meter_GLD_0007:measured_real_power,meter_GLD_0008:measured_real_power,meter_GLD_0009:measured_real_power,meter_GLD_0010:measured_real_power,meter_GLD_0011:measured_real_power,meter_GLD_0012:measured_real_power,meter_GLD_0013:measured_real_power,meter_GLD_0014:measured_real_power;
+	file Multi_Meter_Recorder.csv;
+}
+
+// Battery meters
+object multi_recorder {
+	interval 60;
+	property Bat_meter_1:measured_real_power,Bat_meter_2:measured_real_power,Bat_meter_3:measured_real_power,Bat_meter_4:measured_real_power,Bat_meter_5:measured_real_power,Bat_meter_6:measured_real_power,Bat_meter_7:measured_real_power,Bat_meter_8:measured_real_power,Bat_meter_9:measured_real_power,Bat_meter_10:measured_real_power,Bat_meter_11:measured_real_power,Bat_meter_12:measured_real_power,Bat_meter_13:measured_real_power,Bat_meter_14:measured_real_power;
+	file Multi_BattMeter_Recorder.csv;
+}
+
+// Solar meters
+object multi_recorder {
+	interval 60;
+	property PV_meter_1:measured_real_power,PV_meter_2:measured_real_power,PV_meter_3:measured_real_power,PV_meter_4:measured_real_power,PV_meter_5:measured_real_power,PV_meter_6:measured_real_power,PV_meter_7:measured_real_power,PV_meter_8:measured_real_power,PV_meter_9:measured_real_power,PV_meter_10:measured_real_power,PV_meter_11:measured_real_power,PV_meter_12:measured_real_power,PV_meter_13:measured_real_power,PV_meter_14:measured_real_power;
+	file Multi_SolarMeter_Recorder.csv;
+}
+
+// Battery SOC
+object multi_recorder {
+	interval 60;
+	property Battery_1:state_of_charge,Battery_2:state_of_charge,Battery_3:state_of_charge,Battery_4:state_of_charge,Battery_5:state_of_charge,Battery_6:state_of_charge,Battery_7:state_of_charge,Battery_8:state_of_charge,Battery_9:state_of_charge,Battery_10:state_of_charge,Battery_11:state_of_charge,Battery_12:state_of_charge,Battery_13:state_of_charge,Battery_14:state_of_charge;
+	file Multi_SOC_Recorder.csv;
+}

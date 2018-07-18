@@ -36,7 +36,10 @@ class HardwareRPi:
         #self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1"]
         self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF","OFF"] # Battery included
         self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF", "OFF"]  # Battery included
-        self.input_sources_statesDB = {'AC1': [3,22], 'SE1': [4,23], 'RF1':[6,25], 'DW1':[7,28],'WM1':[8,29], 'CW1': [9,24], 'PW2':[10,25]}
+        # input_sources_statesDB TEST
+        #self.input_sources_statesDB = {'AC1': [3,22], 'SE1': [4,23], 'RF1':[6,25], 'DW1':[7,28],'WM1':[8,29], 'CW1': [9,24], 'PW2':[10,25]}
+        # input_sources_statesDB LAB
+        self.input_sources_statesDB = {'AC1': [3,5], 'SE1': [4,12], 'RF1':[6,10], 'DW1':[7,14],'WM1':[8,29], 'CW1': [9,13], 'PW2':[10,19]}
         self.sourcesDBID = [self.input_sources_statesDB['AC1'][0],self.input_sources_statesDB['SE1'][0],self.input_sources_statesDB['RF1'][0],self.input_sources_statesDB['CW1'][0],self.input_sources_statesDB['DW1'][0],self.input_sources_statesDB['WM1'][0],self.input_sources_statesDB['PW2'][0]]
         self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
 
@@ -218,25 +221,25 @@ class HardwareRPi:
         self.logger.info('Consumer AI called')
         template = [
             {
-                "sensor_id": 22, #AC
+                "sensor_id": self.input_sources_statesDB['AC1'][1], #AC
                 "samples": []
             }, {
-                "sensor_id": 23, #SE
+                "sensor_id": self.input_sources_statesDB['SE1'][1], #SE
                 "samples": []
             }, {
-                "sensor_id": 24, #CW
+                "sensor_id": self.input_sources_statesDB['CW1'][1], #CW
                 "samples": []
             }, {
-                "sensor_id": 25, #RF
+                "sensor_id": self.input_sources_statesDB['RF1'][1], #RF
                 "samples": []
             },  {
-                "sensor_id": 26, # Range_1 leg
+                "sensor_id": 3, # Range_1 leg
                 "samples": []
             }, {
-                "sensor_id": 27, # Range_2 leg
+                "sensor_id": 4, # Range_2 leg
                 "samples": []
             }, {
-                "sensor_id": 28, #DW
+                "sensor_id": self.input_sources_statesDB['DW1'][1], #DW
                 "samples": []
             }, {
                 "sensor_id": 29, #Nothing connected so far
