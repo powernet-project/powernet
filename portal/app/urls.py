@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth import views as auth_views
 from app.core.views import base, auth
 from django.conf.urls import include, url
 
@@ -6,7 +7,8 @@ urlpatterns = [
     url(r'^$', base.index, name='Powernet Home'),
     url(r'^admin/', admin.site.urls),
 
-    url(r'^login/', auth.login, name='Powernet Login'),
+
+    url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name='Powernet Login'),
     url(r'^logout/', auth.logout, name='Powernet Logout'),
 
     url(r'^weather/', base.weather, name='Weather Information'),
