@@ -345,6 +345,8 @@ class HardwareRPi:
                 cosphi_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['cosphi']
 
                 self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_WM1]
+                print 'app_new_status: ', self.app_new_status
+                print 'battery status: ', status_PW2
 
                 for i in range(len(self.app_new_status)):
                     if self.app_new_status[i] != self.app_orig_states[i]:
