@@ -86,6 +86,7 @@ class Storage:
             print "phi: ", phi
         else:
             battStatus = state
+            print 'battery status: ', battStatus
 
         if (battStatus == "DISCHARGE"):
             command_mode = 4
