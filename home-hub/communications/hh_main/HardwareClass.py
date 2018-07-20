@@ -24,7 +24,7 @@ client = Client(SENTRY_DSN)
 battery_fct = StorageClass.Storage(timeBatt=5)
 
 class HardwareRPi:
-    def __init__(self, gpio_map = None, N_SAMPLES = 100, adc_Vin = 5.11):
+    def __init__(self, gpio_map = None, N_SAMPLES = 100):
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
         self.CT20 = 20   # 20A/1V
@@ -64,7 +64,7 @@ class HardwareRPi:
 
 
         self.N_SAMPLES = N_SAMPLES
-        self.adc_Vin = adc_Vin
+        self.adc_Vin = 3.3
         self.delay = 0.002
 
         if gpio_map == None:
@@ -162,24 +162,25 @@ class HardwareRPi:
         # The size of sum_i is the size of the AIN ports
         sum_i = [0, 0, 0, 0, 0, 0, 0, 0]
         for val in data:
-            sum_i[0] += math.pow((val[0]), 2)
-            sum_i[1] += math.pow((val[1]), 2)
-            sum_i[2] += math.pow((val[2]), 2)
-            sum_i[3] += math.pow((val[3]), 2)
-            sum_i[4] += math.pow((val[4]), 2)
-            sum_i[5] += math.pow((val[5]), 2)
-            sum_i[6] += math.pow((val[6]), 2)
-            sum_i[7] += math.pow((val[7]), 2)
+            sum_i[0] += math.pow((val[0]-self.adc_Vin/2), 2)
+            #sum_i[0] += math.pow((x-1.6 for x in val[0]), 2)
+            sum_i[1] += math.pow((val[1]-self.adc_Vin/2), 2)
+            sum_i[2] += math.pow((val[2]-self.adc_Vin/2), 2)
+            sum_i[3] += math.pow((val[3]-self.adc_Vin/2), 2)
+            sum_i[4] += math.pow((val[4]-self.adc_Vin/2), 2)
+            sum_i[5] += math.pow((val[5]-self.adc_Vin/2), 2)
+            sum_i[6] += math.pow((val[6]-self.adc_Vin/2), 2)
+            sum_i[7] += math.pow((val[7]-self.adc_Vin/2), 2)
 
         # NEED TO INCLUDE CONVERSION FROM CT
-        rms_a0 = math.sqrt(sum_i[0] / self.N_SAMPLES)
-        rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)
-        rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)
-        rms_a3 = math.sqrt(sum_i[3] / self.N_SAMPLES)
-        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)
-        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)
-        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)
-        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)
+        rms_a0 = math.sqrt(sum_i[0] / self.N_SAMPLES)*self.CT10
+        rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)*self.CT10
+        rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)*self.CT10
+        rms_a3 = math.sqrt(sum_i[3] / self.N_SAMPLES)*self.CT10
+        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)*self.CT10
+        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)*self.CT10
+        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)*self.CT10
+        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)*self.CT10
 
         return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
@@ -257,6 +258,7 @@ class HardwareRPi:
                     temp_date = temp_cons[1]
 
                     i_rms = self.RMS(temp_ai)
+                    print 'i_rms: ', i_rms
 
                     # Writing data to db:
                     for i in range(len(i_rms)):
