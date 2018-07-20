@@ -163,6 +163,7 @@ class Storage:
                 if batt == -1:
                     try:
                         batt = self.urlBased(19, state, battval, cosphi)
+                        print 'Storage fcn state: ', state
                     except Exception as exc:
                         self.logger.exception(exc)
                         client.captureException()
@@ -220,7 +221,7 @@ class Storage:
             return -9   # cannot be -1 as cosPhi can be thos number
 
     def writeCosPhi(self, valCosPhi=1.0, test=False):
-        self.logger.info('writeCosPhi called')
+        #self.logger.info('writeCosPhi called')
         addr = 61706    # Modbus address of FixedCosPhi
         if test:        # Check to see if this function is going to be used for testing or just writing to register
             if self.tcpClient.is_open():
