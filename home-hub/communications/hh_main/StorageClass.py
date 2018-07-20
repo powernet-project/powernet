@@ -86,7 +86,7 @@ class Storage:
             print "phi: ", phi
         else:
             battStatus = state
-            #print 'battery status: ', battStatus
+            print 'battery status: ', battStatus
 
         if (battStatus == "DISCHARGE"):
             command_mode = 4
@@ -100,7 +100,7 @@ class Storage:
         #powerFloat = utils.encode_ieee(power) # Converting power to ieee float32
 
         if self.tcpClient.is_open():
-            print 'TCP battery Opened!'
+            #print 'TCP battery Opened!'
             # Setting time
             self.tcpClient.write_multiple_registers(self.addr_time, [self.timeBatt & 0xffff, (self.timeBatt & 0xffff0000) >> 16])
 

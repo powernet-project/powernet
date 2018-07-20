@@ -256,9 +256,7 @@ class HardwareRPi:
                     temp_cons = q_ai.get(True,2)
                     temp_ai = temp_cons[0]
                     temp_date = temp_cons[1]
-
                     i_rms = self.RMS(temp_ai)
-                    print 'i_rms: ', i_rms
 
                     # Writing data to db:
                     for i in range(len(i_rms)):
@@ -345,8 +343,8 @@ class HardwareRPi:
                 cosphi_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['cosphi']
 
                 self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_WM1]
-                print 'app_new_status: ', self.app_new_status
-                print 'battery status: ', status_PW2
+                #print 'app_new_status: ', self.app_new_status
+                #print 'battery status: ', status_PW2
 
                 for i in range(len(self.app_new_status)):
                     if self.app_new_status[i] != self.app_orig_states[i]:
@@ -354,8 +352,10 @@ class HardwareRPi:
                         try:
                             if self.appliance_lst[i] == 'PW2':
                                 temp_q_batt = [status_PW2, "url", power_PW2, cosphi_PW2]
+                                print 'q_batt: ', temp_q_batt
                                 try:
                                     q_batt.put(temp_q_batt)
+                                    print 'Success q_batt put'
                                 except Exception as exc:
                                     self.logger.exception(exc)
                                     client.captureException()
