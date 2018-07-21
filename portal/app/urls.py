@@ -7,7 +7,6 @@ urlpatterns = [
     url(r'^$', base.index, name='Powernet Home'),
     url(r'^admin/', admin.site.urls),
 
-
     url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name='Powernet Login'),
     url(r'^logout/', auth.logout, name='Powernet Logout'),
 
