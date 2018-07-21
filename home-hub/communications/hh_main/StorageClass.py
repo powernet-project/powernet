@@ -86,7 +86,6 @@ class Storage:
             print "phi: ", phi
         else:
             battStatus = state
-            print 'battery status: ', battStatus
 
         if (battStatus == "DISCHARGE"):
             command_mode = 4
@@ -163,7 +162,6 @@ class Storage:
                 if batt == -1:
                     try:
                         batt = self.urlBased(19, state, battval, cosphi)
-                        print 'Storage fcn state: ', state
                     except Exception as exc:
                         self.logger.exception(exc)
                         client.captureException()

@@ -352,10 +352,10 @@ class HardwareRPi:
                         try:
                             if self.appliance_lst[i] == 'PW2':
                                 temp_q_batt = [status_PW2, "url", power_PW2, cosphi_PW2]
-                                print 'q_batt: ', temp_q_batt
+                                #print 'q_batt: ', temp_q_batt
                                 try:
                                     q_batt.put(temp_q_batt)
-                                    print 'Success q_batt put'
+                                    #print 'Success q_batt put'
                                 except Exception as exc:
                                     self.logger.exception(exc)
                                     client.captureException()
