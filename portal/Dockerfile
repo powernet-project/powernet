@@ -28,6 +28,13 @@ RUN cp /app/mosek.lic ~/mosek/
 # Add the application source code.
 ADD . /app/
 
+RUN mkdir /data && chown redis:redis /data
+VOLUME /data
+WORKDIR /data
+
+# redis needs to talk on this port
+EXPOSE 6379
+
 # Run a WSGI server to serve the application. gunicorn must be declared as
 # a dependency in requirements.txt.
 CMD redis-server & celery -A app worker -l info & gunicorn -b :$PORT -t 60 app.wsgi
