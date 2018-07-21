@@ -7,6 +7,7 @@ from app.api.v1.endpoint.hue_states import HueStatesViewSet
 from app.api.v1.endpoint.powernet_user import PowernetUserViewSet
 from app.api.v1.endpoint.home import HomeViewSet, HomeDataViewSet
 from app.api.v1.endpoint.appliance_data import ApplianceJsonDataViewSet
+from app.api.v1.endpoint.gc_algorithm import run_gc, gc_results
 
 # register the default and nested routes
 router = routers.SimpleRouter()
@@ -20,5 +21,7 @@ router.register(r'home_data', HomeDataViewSet, base_name='Home Data')
 router.register(r'powernet_user', PowernetUserViewSet, base_name='Powernet User')
 
 urlpatterns = [
-    url(r'^', include(router.urls))
+    url(r'^', include(router.urls)),
+    url(r'^run_gc/', run_gc),
+    url(r'^gc_results/', gc_results),
 ]
