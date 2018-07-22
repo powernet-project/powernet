@@ -28,10 +28,6 @@ RUN cp /app/mosek.lic ~/mosek/
 # Add the application source code.
 ADD . /app/
 
-RUN mkdir /data && chown redis:redis /data
-VOLUME /data
-WORKDIR /data
-
 # redis needs to talk on this port
 EXPOSE 6379
 
