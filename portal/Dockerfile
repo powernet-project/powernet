@@ -2,9 +2,6 @@ FROM gcr.io/google-appengine/python
 
 LABEL python_version=python
 
-# Install redis
-#RUN wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make
-
 # Create a virtualenv for dependencies. This isolates these packages from
 # system-level packages.
 RUN virtualenv --no-download /env -p python
@@ -28,11 +25,6 @@ RUN cp /app/mosek.lic ~/mosek/
 # Add the application source code.
 ADD . /app/
 
-# # redis needs to talk on this port
-# EXPOSE 6379
-# RUN redis-server
-
 # Run a WSGI server to serve the application. gunicorn must be declared as
 # a dependency in requirements.txt.
-CMD gunicorn -b :$PORT -t 60 app.wsgi 
-#&& celery -A app worker -l info
+CMD gunicorn -b :$PORT -t 60 app.wsgi && celery -A app worker -l info
