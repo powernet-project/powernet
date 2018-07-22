@@ -7,3 +7,8 @@ from app.core.views.global_controller.gc_main import *
 def run_global_controller():
     arb = run_gc()
     return arb
+
+
+@shared_task
+def wtf():
+    return 100 * 6546 + 8
