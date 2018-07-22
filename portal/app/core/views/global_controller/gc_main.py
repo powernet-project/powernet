@@ -3,6 +3,7 @@ import pickle
 from data_processing_cost_min import *
 from combined_cost_min import *
 from multiprocessing.dummy import Pool
+from case_123 import *
 
 
 def run_gc():
@@ -21,7 +22,9 @@ def run_gc():
     parser.add_argument('--solarPen', default=3, help='solar penetration percentage')
     # parser.add_argument('--V_weight', default=500, help='voltage soft constraint weight')
     FLAGS, unparsed = parser.parse_known_args()
-    print 'running with arguments: ({})'.format(FLAGS)
+
+    #print 'running with arguments: ({})'.format(FLAGS)
+
     storagePen = float(FLAGS.storagePen) / 10
     solarPen = float(FLAGS.solarPen) / 10
     seed = int(FLAGS.seed)
@@ -40,16 +43,13 @@ def run_gc():
     NLweight = 400  # Try NLweight = price approximately 400
     GCscens = 1  # Try just 1 scenario...
     nodesPen = max(solarPen, storagePen)  # .11 gets 3 nodes # percentage of load nodes in network with storage/solar
-    print 'seed ', seed
-    print 'nodesPen: ', nodesPen
-    print 'storage and solar pen:', storagePen, solarPen
+    # print 'seed ', seed
+    # print 'nodesPen: ', nodesPen
+    # print 'storage and solar pen:', storagePen, solarPen
 
     # Load Network and load data
     Vmin = .95
     Vmax = 1.05
-
-    # Case 123 start comment here
-    from case_123 import *
 
     loadMod = 1
     rootIdx = 0
@@ -67,7 +67,9 @@ def run_gc():
                                                                                                storagePen, solarPen,
                                                                                                nodesPen, rootIdx)
     q0 = np.matrix(np.zeros(qmax.shape))  # set initial q0 to be 0
-    print 'Number of storage nodes: ', len(nodesStorage), nodesStorage
+
+    # print 'Number of storage nodes: ', len(nodesStorage), nodesStorage
+
     # Load Global Forecast for all nodes
     ForecastDict = loadmat('ForecastData123.mat')
     pForecastFull1 = loadMod * np.matrix(ForecastDict['pForecastAll1'])
@@ -107,14 +109,7 @@ def run_gc():
     Qall = np.zeros((len(nodesStorage), GCtime * GCstepsTotal))
     Uall = np.zeros((len(nodesStorage), GCtime * GCstepsTotal))
 
-    # Make parallel pool
-    print 'Number of GC scenarios:', GCscens
-    PPstart = time.time()
-    print "Making parallel pool"
     pool = Pool()
-    print 'Number of Workers: ', pool._processes
-    PPend = time.time()
-    print 'Parallel Pool comp time: ', PPend - PPstart
 
     # This loop repeats daily
     for GCiter in range(GCstepsTotal):
@@ -198,14 +193,19 @@ def run_gc():
         Uall[:, GCiter * GCtime:(GCiter + 1) * GCtime] = U
 
         # Calculate arbitrage profits
-        ARBtotal += pricesCurrent[:, 0:GCtime] * np.sum(U, 0).T
+        #ARBtotal += pricesCurrent[:, 0:GCtime] * np.sum(U, 0).T
 
-    Allend = time.time()
-    AllTime = Allend - Allstart
-    print "Total time: ", AllTime
-    print 'ARBtotal', ARBtotal
+    #Allend = time.time()
+    #AllTime = Allend - Allstart
+    #print "Total time: ", AllTime
+    #print 'ARBtotal', ARBtotal
+    print realS
 
-    return pickle.dumps(ARBtotal, protocol=0)
+    pickled_value = pickle.dumps(realS, protocol=0)
+
+    print 'WTF:', pickle.loads(pickled_value)
+
+    return pickled_value
 
 
 
