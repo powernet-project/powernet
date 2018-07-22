@@ -34,7 +34,7 @@ def run_gc():
     V_weight = 1000
     Vtol = .005
     GCtime = 8
-    GCstepsTotal = 2  # 30 = 30 days when GCtime = 24 hours
+    GCstepsTotal = 1  # 30 = 30 days when GCtime = 24 hours
     lookAheadTime = 24
     LCscens = 1
     NLweight = 400  # Try NLweight = price approximately 400
