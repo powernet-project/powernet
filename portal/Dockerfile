@@ -3,8 +3,6 @@ FROM gcr.io/google-appengine/python
 LABEL python_version=python
 
 # Install redis
-# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-RUN addgroup -S redis && adduser -S -G redis redis
 
 # grab su-exec for easy step-down from root
 RUN apk add --no-cache 'su-exec>=0.2'
@@ -54,11 +52,6 @@ RUN set -ex; \
 	apk del .build-deps; \
 	\
 	redis-server --version
-
-RUN mkdir /data && chown redis:redis /data
-VOLUME /data
-WORKDIR /data
-
 
 # Create a virtualenv for dependencies. This isolates these packages from
 # system-level packages.
