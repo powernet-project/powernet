@@ -47,11 +47,3 @@ def charts(request):
 @login_required
 def charts_no_control(request):
     return render(request, 'partials/chart_plots_no_control.html')
-
-
-@login_required
-def run_gc_algo(request):
-    from global_controller.gc_main import *
-    arb = run_gc()
-
-    return render(request, 'partials/gc_algo.html', {'arb_total': arb})

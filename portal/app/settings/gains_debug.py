@@ -11,3 +11,5 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
