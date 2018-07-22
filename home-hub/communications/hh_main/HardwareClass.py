@@ -28,6 +28,7 @@ class HardwareRPi:
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
         self.CT20 = 20   # 20A/1V
+        self.CT100 = 100 # 100A/1V
         self.REQUEST_TIMEOUT = 10
         self.PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -39,7 +40,7 @@ class HardwareRPi:
         # input_sources_statesDB TEST
         #self.input_sources_statesDB = {'AC1': [3,22], 'SE1': [4,23], 'RF1':[6,25], 'DW1':[7,28],'WM1':[8,29], 'CW1': [9,24], 'PW2':[10,25]}
         # input_sources_statesDB LAB
-        self.input_sources_statesDB = {'AC1': [3,5], 'SE1': [4,12], 'RF1':[6,10], 'DW1':[7,14],'WM1':[8,29], 'CW1': [9,13], 'PW2':[10,19]}
+        self.input_sources_statesDB = {'AC1': [3,5], 'SE1': [4,12], 'RF1':[6,10], 'DW1':[7,14],'WM1':[8,29], 'CW1': [9,13], 'PW2':[10,19], 'PV':[11,30], 'Mains1': [12,31], 'Mains2': [13,32]}
         self.sourcesDBID = [self.input_sources_statesDB['AC1'][0],self.input_sources_statesDB['SE1'][0],self.input_sources_statesDB['RF1'][0],self.input_sources_statesDB['CW1'][0],self.input_sources_statesDB['DW1'][0],self.input_sources_statesDB['WM1'][0],self.input_sources_statesDB['PW2'][0]]
         self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
 
@@ -115,10 +116,10 @@ class HardwareRPi:
         self.logger.info('Producer AI called')
         while(True):
             dts = []  # date/time stamp for each start of analog read
-            #AC id:5
+            #SE - Stove Exhaust id:12
             dts.append(str(datetime.now()))
             ai0 = self.ReadChannel(0)
-            #SE - Stove Exhaust id:12
+            #AC id:5
             dts.append(str(datetime.now()))
             ai1 = self.ReadChannel(1)
             #RF id:10
@@ -127,16 +128,16 @@ class HardwareRPi:
             #CW id:13
             dts.append(str(datetime.now()))
             ai3 = self.ReadChannel(3)
-            #RA - 1
+            #BATT: phase 1 (black)
             dts.append(str(datetime.now()))
             ai4 = self.ReadChannel(4)
-            #RA - 2
+            #Solar: phase 1 (black)
             dts.append(str(datetime.now()))
             ai5 = self.ReadChannel(5)
-            #DW id:14
+            #MAINS: phase 1 (red)
             dts.append(str(datetime.now()))
             ai6 = self.ReadChannel(6)
-
+            #MAINS: phase 2 (black)
             dts.append(str(datetime.now()))
             ai7 = self.ReadChannel(7)
 
@@ -177,10 +178,10 @@ class HardwareRPi:
         rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)*self.CT10
         rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)*self.CT10
         rms_a3 = math.sqrt(sum_i[3] / self.N_SAMPLES)*self.CT10
-        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)*self.CT10
-        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)*self.CT10
-        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)*self.CT10
-        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)*self.CT10
+        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)*self.CT100
+        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)*self.CT100
+        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)*self.CT100
+        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)*self.CT100
 
         return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
@@ -222,28 +223,28 @@ class HardwareRPi:
         self.logger.info('Consumer AI called')
         template = [
             {
-                "sensor_id": self.input_sources_statesDB['AC1'][1], #AC
-                "samples": []
-            }, {
                 "sensor_id": self.input_sources_statesDB['SE1'][1], #SE
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['CW1'][1], #CW
+                "sensor_id": self.input_sources_statesDB['AC1'][1], #AC
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['RF1'][1], #RF
+                "sensor_id": self.input_sources_statesDB['RF1'][1], #CW
+                "samples": []
+            }, {
+                "sensor_id": self.input_sources_statesDB['CW1'][1], #RF
                 "samples": []
             },  {
-                "sensor_id": 3, # Range_1 leg
+                "sensor_id": self.input_sources_statesDB['PW2'][1], # Battery phase 1
                 "samples": []
             }, {
-                "sensor_id": 4, # Range_2 leg
+                "sensor_id": self.input_sources_statesDB['PV'][1], # Solar phase 1
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['DW1'][1], #DW
+                "sensor_id": self.input_sources_statesDB['Mains1'][1], #MAINS phase 1 -> Red
                 "samples": []
             }, {
-                "sensor_id": 29, #Nothing connected so far
+                "sensor_id": self.input_sources_statesDB['Mains2'][1], #MAINS phase 2 -> Black
                 "samples": []
             }
         ]
@@ -275,14 +276,14 @@ class HardwareRPi:
 
 
                     # Adding analog reads, sID and Date to lists for db upload
-                    d_fb[0].get("samples").append({"RMS": i_rms[0], "date_time": temp_date[0]})
-                    d_fb[1].get("samples").append({"RMS": i_rms[1], "date_time": temp_date[1]})
-                    d_fb[2].get("samples").append({"RMS": i_rms[2], "date_time": temp_date[2]})
-                    d_fb[3].get("samples").append({"RMS": i_rms[3], "date_time": temp_date[3]})
-                    d_fb[4].get("samples").append({"RMS": i_rms[4], "date_time": temp_date[4]})
-                    d_fb[5].get("samples").append({"RMS": i_rms[5], "date_time": temp_date[5]})
-                    d_fb[6].get("samples").append({"RMS": i_rms[6], "date_time": temp_date[6]})
-                    d_fb[7].get("samples").append({"RMS": i_rms[7], "date_time": temp_date[7]})
+                    d_fb[0].get("samples").append({"RMS": i_rms[0], "date_time": temp_date[0]}) #SE1
+                    d_fb[1].get("samples").append({"RMS": i_rms[1], "date_time": temp_date[1]}) #AC1
+                    d_fb[2].get("samples").append({"RMS": i_rms[2], "date_time": temp_date[2]}) #RF1
+                    d_fb[3].get("samples").append({"RMS": i_rms[3], "date_time": temp_date[3]}) #CW1
+                    d_fb[4].get("samples").append({"RMS": i_rms[4], "date_time": temp_date[4]}) #PW2
+                    d_fb[5].get("samples").append({"RMS": i_rms[5], "date_time": temp_date[5]}) #PV
+                    d_fb[6].get("samples").append({"RMS": i_rms[6], "date_time": temp_date[6]}) #Mains1 - Red
+                    d_fb[7].get("samples").append({"RMS": i_rms[7], "date_time": temp_date[7]}) #Mains2 - Black
 
                     # Queue is done processing the element
                     q_ai.task_done()
