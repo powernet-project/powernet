@@ -33,4 +33,4 @@ EXPOSE 6379
 
 # Run a WSGI server to serve the application. gunicorn must be declared as
 # a dependency in requirements.txt.
-CMD redis-server & celery -A app worker -l info & gunicorn -b :$PORT -t 60 app.wsgi
+CMD redis-server && celery -A app worker -l info && gunicorn -b :$PORT -t 60 app.wsgi
