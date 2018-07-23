@@ -13,7 +13,14 @@ def run_gc(request):
 
 @api_view(['GET'])
 def gc_results(request):
-    task = TaskResult.objects.get(task_id=request.query_params.get('task_id'))
+    t_id = request.query_params.get('task_id', -999)
+    if t_id == -999:
+        return Response({'result': 'Please supply a task id to lookup'}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        task = TaskResult.objects.get(task_id=t_id)
+    except TaskResult.DoesNotExist:
+        return Response({'result': 'The given id doesn\'t exist. The task may have not finished or the id is invalid.'},
+                        status=status.HTTP_200_OK)
     return Response({'result': task.result}, status=status.HTTP_200_OK)
 
 
