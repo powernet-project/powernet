@@ -20,7 +20,7 @@ def gc_results(request):
         task = TaskResult.objects.get(task_id=t_id)
     except TaskResult.DoesNotExist:
         return Response({'result': 'The given id doesn\'t exist. The task may have not finished or the id is invalid.'},
-                        status=status.HTTP_200_OK)
+                        status=status.HTTP_204_NO_CONTENT)
     return Response({'result': task.result}, status=status.HTTP_200_OK)
 
 

@@ -199,11 +199,11 @@ def run_gc():
     #AllTime = Allend - Allstart
     #print "Total time: ", AllTime
     #print 'ARBtotal', ARBtotal
-    print realS
+    #print realS.shape
 
     pickled_value = pickle.dumps(realS, protocol=0)
 
-    print 'WTF:', pickle.loads(pickled_value)
+    #print 'WTF:', pickle.loads(pickled_value)
 
     return pickled_value
 
