@@ -68,7 +68,8 @@ def run_gc():
                                                                                                nodesPen, rootIdx)
     q0 = np.matrix(np.zeros(qmax.shape))  # set initial q0 to be 0
 
-    # print 'Number of storage nodes: ', len(nodesStorage), nodesStorage
+
+    print 'Number of storage nodes: ', nodesStorage, len(nodesStorage), type(nodesStorage)
 
     # Load Global Forecast for all nodes
     ForecastDict = loadmat('ForecastData123.mat')
@@ -76,9 +77,11 @@ def run_gc():
     rForecastFull1 = loadMod * np.matrix(ForecastDict['rForecastAll1'])
     pForecastFull2 = loadMod * np.matrix(ForecastDict['pForecastAll2'])
     rForecastFull2 = loadMod * np.matrix(ForecastDict['rForecastAll2'])
+
     # Add solar part
     pForecastFull1[nodesStorage, :] = pForecastFull1[nodesStorage, :] - sGenFull
     pForecastFull2[nodesStorage, :] = pForecastFull2[nodesStorage, :] - sGenFull
+
     # Load Residual Means and Covariance Dictionaries
     ResidualDict = loadmat('ResidualData123.mat')
     pMeans = ResidualDict['pMeans'][0, 0]
@@ -127,6 +130,7 @@ def run_gc():
             rForecast = rForecastFull1[:,
                         (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
 
+        print pForecast, pForecast.shape
         pricesCurrent = prices[:, (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
 
         # Give LC real data to make scenarios with since we have no local forecasts

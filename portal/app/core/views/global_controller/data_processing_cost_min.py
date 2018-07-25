@@ -255,6 +255,8 @@ def setStorageSolar(pDemandFull, sNormFull, storagePen, solarPen, nodesPen, root
         nodesLoad = np.delete(nodesLoad, np.argwhere(nodesLoad == rootIdx))  # remove substation node
     nodesStorage = np.random.choice(nodesLoad, int(np.rint(len(nodesLoad) * nodesPen)), replace=False)
     nodesStorage = np.sort(nodesStorage)
+    # Added nodesStorage to match GLD
+    nodesStorage = [5, 11]
 
     # Assign solar
     loadSNodes = np.mean(pDemandFull[nodesStorage, :], 1)
