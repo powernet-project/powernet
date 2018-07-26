@@ -4,11 +4,6 @@ from app.core.views.global_controller.gc_main import *
 
 
 @shared_task
-def run_global_controller():
-    arb = run_gc()
+def run_global_controller(p_forecast, r_forecast, q_zero):
+    arb = run_gc(p_forecast, r_forecast, q_zero)
     return arb
-
-
-@shared_task
-def wtf():
-    return 100 * 6546 + 8

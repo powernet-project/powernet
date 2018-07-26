@@ -6,12 +6,12 @@ from multiprocessing.dummy import Pool
 from case_123 import *
 
 
-def run_gc():
+def run_gc(p_forecast, r_forecast, q_zero):
     # run this for testing purposes
     # This part is all one time initialization
+    import time
     import argparse
     from scipy.io import loadmat
-    import time
 
     Allstart = time.time()
     Prepstart = time.time()
@@ -38,7 +38,7 @@ def run_gc():
     Vtol = .005
     GCtime = 8
     GCstepsTotal = 1  # 30 = 30 days when GCtime = 24 hours
-    lookAheadTime = 24
+    lookAheadTime = 0
     LCscens = 1
     NLweight = 400  # Try NLweight = price approximately 400
     GCscens = 1  # Try just 1 scenario...
@@ -55,7 +55,7 @@ def run_gc():
     rootIdx = 0
     ppc = case123()
     Ybus = GetYbus(ppc)
-    presampleIdx = 168;  # first week as presample data
+    presampleIdx = 168  # first week as presample data
     startIdx = presampleIdx + 1  # starting index for the load dataset
     DataDict = loadmat('loadData123Ag.mat')
     pDemandFull = loadMod * np.matrix(DataDict['pDemand'])
@@ -66,10 +66,8 @@ def run_gc():
     netDemandFull, sGenFull, nodesLode, nodesStorage, qmin, qmax, umin, umax = setStorageSolar(pDemandFull, sNormFull,
                                                                                                storagePen, solarPen,
                                                                                                nodesPen, rootIdx)
-    q0 = np.matrix(np.zeros(qmax.shape))  # set initial q0 to be 0
-
-
-    print 'Number of storage nodes: ', nodesStorage, len(nodesStorage), type(nodesStorage)
+    ###q0 = np.matrix(np.zeros(qmax.shape))  # set initial q0 to be 0
+    q0 = q_zero
 
     # Load Global Forecast for all nodes
     ForecastDict = loadmat('ForecastData123.mat')
@@ -91,10 +89,10 @@ def run_gc():
     # End comment here
 
     # Print information
-    print 'load Mod: ', loadMod
+    #print 'load Mod: ', loadMod
     nodesNum, timeTotal = pDemandFull.shape
-    print 'Number of Nodes:', nodesNum, '\n', 'Total Timesteps:', GCtime * GCstepsTotal
-    print 'Selling Factor: ', sellFactor
+    #print 'Number of Nodes:', nodesNum, '\n', 'Total Timesteps:', GCtime * GCstepsTotal
+    #print 'Selling Factor: ', sellFactor
 
     # Load Prices
     prices = np.matrix(np.hstack((250 * np.ones((1, 16)), 350 * np.ones((1, 5)), 250 * np.ones((1, 3)))))
@@ -104,7 +102,7 @@ def run_gc():
     tnetwork = Network(Ybus, rootIdx, nodesStorage, qmin, qmax, umin, umax, Vmin, Vmax, Vtol)
 
     Prepend = time.time()
-    print "Prep comp time: ", Prepend - Prepstart
+    #print "Prep comp time: ", Prepend - Prepstart
 
     # Initialize results arrays
     ARBtotal = 0
@@ -116,21 +114,16 @@ def run_gc():
 
     # This loop repeats daily
     for GCiter in range(GCstepsTotal):
-        print '\nIteration #: ', GCiter
+        #print '\nIteration #: ', GCiter
         # Get forecasts and prices for current run
 
         if GCiter % 2:
-            pForecast = pForecastFull2[:,
-                        (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
-            rForecast = rForecastFull2[:,
-                        (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
+            pForecast = pForecastFull2[:, (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
+            rForecast = rForecastFull2[:, (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
         else:
-            pForecast = pForecastFull1[:,
-                        (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
-            rForecast = rForecastFull1[:,
-                        (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
+            pForecast = pForecastFull1[:, (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
+            rForecast = rForecastFull1[:, (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
 
-        print pForecast, pForecast.shape
         pricesCurrent = prices[:, (GCiter * GCtime + startIdx):((GCiter + 1) * GCtime + lookAheadTime + startIdx)]
 
         # Give LC real data to make scenarios with since we have no local forecasts
@@ -152,11 +145,16 @@ def run_gc():
         # Run GC outer loop
         OPFstart = time.time()
 
+
+        ### RESETTING P & R FORECAST
+        pForecast = p_forecast
+        rForecast = rForecast
+
         realS, rootV2, WnNLFC, WreNLFC, WieNLFC = GC_NLFC_Out(tnetwork, sScenarios, pForecast, rForecast, q0,
                                                               pricesCurrent, sellFactor, GCscens, pool, V_weight)
 
         OPFend = time.time()
-        print "GC comp time: ", OPFend - OPFstart
+        #print "GC comp time: ", OPFend - OPFstart
 
         # Calculate Bounds
         """
@@ -176,7 +174,7 @@ def run_gc():
                                                  tnetwork.qmin, nodesStorage, pMeans, pCovs)
 
         LCend = time.time()
-        print "LC comp time: ", LCend - LCstart
+        #print "LC comp time: ", LCend - LCstart
 
         PFstart = time.time()
 
