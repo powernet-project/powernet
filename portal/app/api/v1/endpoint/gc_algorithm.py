@@ -1,5 +1,6 @@
 import json
 import pickle
+import numpy
 from rest_framework import status
 from app.tasks import run_global_controller
 from rest_framework.response import Response
@@ -22,9 +23,7 @@ def run_gc(request):
     if q_zero is None:
         return Response({'result': 'Missing the q0 required param'}, status=status.HTTP_400_BAD_REQUEST)
 
-    t = run_global_controller.delay(pickle.loads(json.loads(p_forecast)),
-                                    pickle.loads(json.loads(r_forecast)),
-                                    pickle.loads(json.loads(q_zero)))
+    t = run_global_controller.delay(p_forecast, r_forecast, q_zero)
 
     return Response({'task_id': t.id}, status=status.HTTP_200_OK)
 

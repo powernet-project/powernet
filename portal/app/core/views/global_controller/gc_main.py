@@ -13,6 +13,8 @@ def run_gc(p_forecast, r_forecast, q_zero):
     import argparse
     from scipy.io import loadmat
 
+
+
     Allstart = time.time()
     Prepstart = time.time()
 
@@ -66,7 +68,10 @@ def run_gc(p_forecast, r_forecast, q_zero):
     netDemandFull, sGenFull, nodesLode, nodesStorage, qmin, qmax, umin, umax = setStorageSolar(pDemandFull, sNormFull,
                                                                                                storagePen, solarPen,
                                                                                                nodesPen, rootIdx)
-    ###q0 = np.matrix(np.zeros(qmax.shape))  # set initial q0 to be 0
+    #q0 = np.matrix(np.zeros(qmax.shape))  # set initial q0 to be 0
+
+    q_zero = np.matrix(q_zero)
+    q_zero = q_zero.T
     q0 = q_zero
 
     # Load Global Forecast for all nodes
@@ -145,10 +150,9 @@ def run_gc(p_forecast, r_forecast, q_zero):
         # Run GC outer loop
         OPFstart = time.time()
 
-
         ### RESETTING P & R FORECAST
-        pForecast = p_forecast
-        rForecast = rForecast
+        pForecast[nodesStorage, :] = np.array(p_forecast)
+        rForecast[nodesStorage, :] = np.array(r_forecast)
 
         realS, rootV2, WnNLFC, WreNLFC, WieNLFC = GC_NLFC_Out(tnetwork, sScenarios, pForecast, rForecast, q0,
                                                               pricesCurrent, sellFactor, GCscens, pool, V_weight)
