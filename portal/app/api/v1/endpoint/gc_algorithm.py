@@ -9,9 +9,9 @@ from django_celery_results.models import TaskResult
 
 @api_view(['POST'])
 def run_gc(request):
-    p_forecast = request.query_params.get('pForecast', None)
-    r_forecast = request.query_params.get('rForecast', None)
-    q_zero = request.query_params.get('q0', None)
+    p_forecast = request.data.get('pForecast', None)
+    r_forecast = request.data.get('rForecast', None)
+    q_zero = request.data.get('q0', None)
 
     if p_forecast is None:
         return Response({'result': 'Missing the pForecast required param'}, status=status.HTTP_400_BAD_REQUEST)
