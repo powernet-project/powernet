@@ -1,5 +1,7 @@
 from app.models import ApplianceJsonData
 from rest_framework.response import Response
+from rest_framework.authentication import BasicAuthentication
+from app.api.v1 import CsrfExemptAuth
 from rest_framework.decorators import list_route
 from rest_framework import (viewsets, serializers, status)
 
@@ -11,6 +13,7 @@ class ApplianceJsonDataSerializer(serializers.ModelSerializer):
 
 
 class ApplianceJsonDataViewSet(viewsets.ModelViewSet):
+    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
     serializer_class = ApplianceJsonDataSerializer
     queryset = ApplianceJsonData.objects.all().order_by('-id')
 
