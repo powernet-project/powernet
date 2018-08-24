@@ -3,6 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6  
+    working_directory: /tmp
     steps:      
       - checkout            
       - run: 
@@ -18,8 +19,8 @@ jobs:
           name: I don't know where i live
           command: pwd && ls
       - persist_to_workspace:
-          root: project
-          paths: project/*
+          root: /tmp
+          paths: /tmp/*
           
   
   deploy:
@@ -27,7 +28,7 @@ jobs:
       - image: google/cloud-sdk
     steps:
       - attach_workspace:          
-          at: ~/   
+          at: /tmp   
       - run:
           name: Please tell me about life
           command: pwd && ls
