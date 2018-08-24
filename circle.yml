@@ -10,8 +10,8 @@ jobs:
           command: |
             apk add --no-cache \
               py-pip=9.0.0-r1
-            sudo apt-get update
-            sudo apt-get install python3.6
+            apt-get update
+            apt-get install python3.6
       - run:
           name: Make sure python is available
           command: docker pull python
