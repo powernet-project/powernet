@@ -15,7 +15,16 @@ jobs:
           name: Collectstatic
           command: sudo python portal/manage.py collectstatic --no-input
       - run:
-          name: Download and install gcloud
+          name: Set the cloud sdk env var
+          command: export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+      - run:
+          name: Add the Cloud SDK distribution URI as a package source
+          command: echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+      - run:
+          name: Import public key
+          command: curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+      - run:
+          name: Install gcloud
           command: sudo apt-get update && sudo apt-get install google-cloud-sdk
       - run: |
           gcloud --quiet components update app
