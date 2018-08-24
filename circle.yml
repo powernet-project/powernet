@@ -11,6 +11,9 @@ jobs:
             apk add --no-cache \
               py-pip=9.0.0-r1
       - run:
+          name: Make sure python is available
+          command: docker pull python
+      - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
       - run: 
@@ -19,12 +22,6 @@ jobs:
       - run:
           name: Collectstatic
           command: sudo python portal/manage.py collectstatic --no-input
-      # - run:
-      #     name: Download gcloud
-      #     command: curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
-      # - run:
-      #     name: Unzip gcloud
-      #     command: unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
       - run: |
           gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
