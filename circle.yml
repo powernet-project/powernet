@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6      
+      - image: circleci/python:3.6  
     steps:      
       - checkout            
       - run: 
@@ -10,33 +10,33 @@ jobs:
           command: sudo pip install -r portal/build-requirements.txt
       - run:
           name: Collectstatic
-          command: sudo python portal/manage.py collectstatic --no-input
-      - run:
-          name: Create the directory where the key will saved in
-          command: mkdir -p ~/temp      
+          command: sudo python portal/manage.py collectstatic --no-input      
       - run:
           name: Store Service Account
-          command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ~/temp/gcloud-service-key.json
-      - save_cache: 
-          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
-          paths:
-            - ~/temp
+          command: echo $GCLOUD_SERVICE_KEY | base64 --decode > gcloud-service-key.json
+      - run:
+          name: I don't know where i live
+          command: pwd && ls &&  
+      - persist_to_workspace:
+          root: ~/
+          paths: ~/*
+          
   
   deploy:
     docker:
       - image: google/cloud-sdk
     steps:
-      - restore_cache: 
-          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}      
+      - attach_workspace:          
+          at: ~/   
       - run:
-          name: I don't know where i live
-          command: ls /home/circleci/temp      
+          name: Please tell me about life
+          command: pwd && ls
       - run: |
-          gcloud auth activate-service-account --key-file=/home/circleci/temp/gcloud-service-key.json
+          gcloud auth activate-service-account --key-file=~/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
-          gcloud -q app deploy /home/circleci/temp/portal/app.yaml --promote --version=5 --log-http --verbosity=info        
+          gcloud -q app deploy ~/portal/app.yaml --promote --version=5 --log-http --verbosity=info        
           gsutil defacl set public-read gs://powernet-app-assets
-          gsutil -m rsync -r /home/circleci/temp/portal/app/staticfiles gs://powernet-app-assets/
+          gsutil -m rsync -r ~/portal/app/staticfiles gs://powernet-app-assets/
 
 workflows:
   version: 2
