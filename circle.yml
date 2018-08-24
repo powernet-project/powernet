@@ -12,6 +12,9 @@ jobs:
           name: Collectstatic
           command: sudo python portal/manage.py collectstatic --no-input
       - run:
+          name: Create the directory where the key will saved in
+          command: mkdir -p ~/temp      
+      - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ~/temp/gcloud-service-key.json
       - save_cache: 
