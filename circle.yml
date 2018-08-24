@@ -6,8 +6,11 @@ jobs:
     steps:
       - checkout
       - run:
-          name: check
+          name: Update
           command: sudo apt-get update
+      - run:
+          name: Install
+          command: sudo apt-get install google-cloud-sdk
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
