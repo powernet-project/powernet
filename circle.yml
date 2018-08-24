@@ -1,38 +1,36 @@
 version: 2
 jobs:
   build:
+    # chosen path to do our build
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.6  
     steps:      
+      # git convenience method
       - checkout            
       - run: 
-          name: Install build requirements
+          name: Install python's build requirements
           command: sudo pip install -r portal/build-requirements.txt
       - run:
-          name: Collectstatic
+          name: Collect Statics assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input      
       - run:
-          name: Store Service Account
+          name: Store gcloud Service Account Key
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
-      - run:
-          name: I don't know where i live
-          command: pwd && ls && ls portal/
+      # persist the build we just made/verified
       - persist_to_workspace:
           root: .
           paths: portal/*
           
-  
   deploy:
+    # chosen path where we'll do our deploy from - same as build for convenience
     working_directory: ~/powernet
     docker:
       - image: google/cloud-sdk
     steps:
+      # load the persisted workspace from the build job
       - attach_workspace:          
-          at: ~/powernet
-      - run:
-          name: Please tell me about life
-          command: ls portal/
+          at: ~/powernet      
       - run: |
           gcloud auth activate-service-account --key-file=portal/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
