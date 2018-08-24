@@ -2,20 +2,20 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.6
-      - image: google/cloud-sdk
+      - image: circleci/python:3.6      
     steps:
-      - checkout      
-      - run:
-          name: Store Service Account
-          command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
+      - checkout            
       - run: 
           name: Install build requirements
           command: sudo pip install -r portal/build-requirements.txt
       - run:
           name: Collectstatic
           command: sudo python portal/manage.py collectstatic --no-input
-      - run: |
+      - run:
+          name: Store Service Account
+          command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
+      - deploy: 
+          name: Publish to GCP
           gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
