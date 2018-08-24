@@ -28,6 +28,15 @@ jobs:
     steps:
       - restore_cache: 
           key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}      
+      - run:
+          name: I don't know where i live
+          command: pwd
+      - run:
+          name: I don't know where i live 2
+          command: echo ~/
+      - run:
+          name: I don't know where i live 2
+          command: ls ~/
       - run: |
           gcloud auth activate-service-account --key-file=gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
