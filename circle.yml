@@ -3,7 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6  
-    working_directory: /tmp
+    working_directory: /tmp/build
     steps:      
       - checkout            
       - run: 
@@ -20,7 +20,7 @@ jobs:
           command: pwd && ls
       - persist_to_workspace:
           root: /tmp
-          paths: /tmp/*
+          paths: build/*
           
   
   deploy:
