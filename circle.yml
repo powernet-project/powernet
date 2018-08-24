@@ -6,6 +6,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: check
+          command: sudo apt-get update
+      - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
       - run: 
@@ -14,15 +17,6 @@ jobs:
       - run:
           name: Collectstatic
           command: sudo python portal/manage.py collectstatic --no-input
-      - run:
-          name: Update
-          command: curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
-      - run:
-          name: Install
-          command: unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
-      - run:
-          name: check
-          command: sudo /opt/google-cloud-sdk/bin/gcloud --version
       - run: |
           gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
