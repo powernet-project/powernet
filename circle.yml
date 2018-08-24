@@ -13,7 +13,7 @@ jobs:
             curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
       - run:
           name: Install
-          command: sudo apt-get update && sudo apt-get install google-cloud-sdk
+          command: sudo apt-get update && sudo apt-get install google-cloud-sdk-app-engine-python
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
