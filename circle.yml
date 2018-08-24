@@ -1,9 +1,9 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/powernet
     docker:
       - image: circleci/python:3.6  
-    working_directory: /tmp/build
     steps:      
       - checkout            
       - run: 
@@ -14,30 +14,31 @@ jobs:
           command: sudo python portal/manage.py collectstatic --no-input      
       - run:
           name: Store Service Account
-          command: echo $GCLOUD_SERVICE_KEY | base64 --decode > gcloud-service-key.json
+          command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
       - run:
           name: I don't know where i live
-          command: pwd && ls
+          command: pwd && ls && ls portal/
       - persist_to_workspace:
-          root: /tmp
-          paths: build/*
+          root: .
+          paths: portal/*
           
   
   deploy:
+    working_directory: ~/powernet
     docker:
       - image: google/cloud-sdk
     steps:
       - attach_workspace:          
-          at: /tmp/build   
+          at: ~/powernet
       - run:
           name: Please tell me about life
-          command: ls /tmp/build
+          command: pwd && ls
       - run: |
-          gcloud auth activate-service-account --key-file=/tmp/build/gcloud-service-key.json
+          gcloud auth activate-service-account --key-file=gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
-          gcloud -q app deploy /tmp/build/portal/app.yaml --promote --version=5 --log-http --verbosity=info        
+          gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
           gsutil defacl set public-read gs://powernet-app-assets
-          gsutil -m rsync -r /tmp/build/portal/app/staticfiles gs://powernet-app-assets/
+          gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
 
 workflows:
   version: 2
