@@ -10,10 +10,10 @@ jobs:
           command: |
             export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
             echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-            curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+            curl http://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
       - run:
           name: Install
-          command: sudo apt-get update && sudo apt-get install google-cloud-sdk-app-engine-python
+          command: sudo apt-get update && sudo apt-get install google-cloud-sdk
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
