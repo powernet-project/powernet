@@ -33,11 +33,11 @@ jobs:
           name: Please tell me about life
           command: pwd && ls
       - run: |
-          gcloud auth activate-service-account --key-file=gcloud-service-key.json
+          gcloud auth activate-service-account --key-file=/tmp/build/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
-          gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
+          gcloud -q app deploy /tmp/build/portal/app.yaml --promote --version=5 --log-http --verbosity=info        
           gsutil defacl set public-read gs://powernet-app-assets
-          gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
+          gsutil -m rsync -r /tmp/build/portal/app/staticfiles gs://powernet-app-assets/
 
 workflows:
   version: 2
