@@ -8,13 +8,13 @@ jobs:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
       - run: |
-          sudo gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-          sudo gcloud --quiet config set project pwrnet-158117
-          sudo pip install -r portal/build-requirements.txt# Collecstatic
-          sudo python portal/manage.py collectstatic --no-input
-          sudo gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
-          sudo gsutil defacl set public-read gs://powernet-app-assets
-          sudo gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
+          gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+          gcloud --quiet config set project pwrnet-158117
+          pip install -r portal/build-requirements.txt# Collecstatic
+          python portal/manage.py collectstatic --no-input
+          gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
+          gsutil defacl set public-read gs://powernet-app-assets
+          gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
 
 
 
