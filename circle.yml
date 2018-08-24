@@ -3,7 +3,7 @@ jobs:
   build:
     working_directory: /portal
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: circleci/python:3.6
     steps:
       - checkout
       - run:
