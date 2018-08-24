@@ -1,23 +1,36 @@
 version: 2
 jobs:
   build:
+    steps:
+      - checkout
+      - run: |
+          pip install -r portal/build-requirements.txt
+          python portal/manage.py collectstatic --no-input
+  deploy:
     docker:
       - image: google/cloud-sdk
     steps:
-      - checkout
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
       - run: |
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
-          pip install -r portal/build-requirements.txt# Collecstatic
-          python portal/manage.py collectstatic --no-input
           gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
           gsutil defacl set public-read gs://powernet-app-assets
           gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
 
-
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 
 
 
