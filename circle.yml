@@ -6,8 +6,8 @@ jobs:
     steps:
       - checkout
       - run: |
-          pip install -r portal/build-requirements.txt
-          python portal/manage.py collectstatic --no-input
+          sudo pip install -r portal/build-requirements.txt
+          sudo python portal/manage.py collectstatic --no-input
   deploy:
     docker:
       - image: google/cloud-sdk
