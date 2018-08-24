@@ -6,7 +6,7 @@ jobs:
     steps:
       - run:
           name: Store Service Account
-          command: echo $GCLOUD_SERVICE_KEY > ${HOME}/gcloud-service-key.json
+          command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
       - run: |
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
