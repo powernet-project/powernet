@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: google/cloud-sdk
+      - image: circleci/python:3.6.4
     steps:
       - checkout
       - run:
@@ -12,11 +12,16 @@ jobs:
           sudo pip install -r portal/build-requirements.txt
           sudo python portal/manage.py collectstatic --no-input
       - run: |
+          curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
+          unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
+          gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
           gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
           gsutil defacl set public-read gs://powernet-app-assets
           gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
+  
+  
   # deploy:
   #   docker:
   #     - image: google/cloud-sdk
