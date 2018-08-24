@@ -2,19 +2,9 @@ version: 2
 jobs:
   build:
     docker:
-      - image: docker:17.05.0-ce-git
+      - image: circleci/python:3.6
     steps:
       - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --no-cache \
-              py-pip=9.0.0-r1
-            apt-get update
-            apt-get install python3.6
-      - run:
-          name: Make sure python is available
-          command: docker pull python
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
@@ -24,6 +14,9 @@ jobs:
       - run:
           name: Collectstatic
           command: sudo python portal/manage.py collectstatic --no-input
+      - run:
+          name: Download and install gcloud
+          command: sudo apt-get update && sudo apt-get install google-cloud-sdk
       - run: |
           gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
