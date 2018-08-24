@@ -31,7 +31,7 @@ jobs:
           at: /tmp/build   
       - run:
           name: Please tell me about life
-          command: pwd && ls
+          command: ls /tmp/build
       - run: |
           gcloud auth activate-service-account --key-file=/tmp/build/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
