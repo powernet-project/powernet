@@ -3,17 +3,9 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6
+      - image: google/cloud-sdk
     steps:
-      - checkout
-      - run:
-          name: Pull
-          command: |
-            export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
-            echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-            curl http://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-      - run:
-          name: Install
-          command: sudo apt-get update && sudo apt-get install google-cloud-sdk
+      - checkout      
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
