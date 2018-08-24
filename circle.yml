@@ -18,8 +18,8 @@ jobs:
           name: I don't know where i live
           command: pwd && ls &&  
       - persist_to_workspace:
-          root: ~/
-          paths: ~/*
+          root: project
+          paths: project/*
           
   
   deploy:
