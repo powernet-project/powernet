@@ -20,13 +20,16 @@ jobs:
       - run:
           name: Install
           command: unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
+      - run:
+          name: check
+          command: gcloud --version
       - run: |
-          $HOME/gcloud --quiet components update app
-          $HOME/gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
-          $HOME/gcloud --quiet config set project pwrnet-158117
-          $HOME/gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
-          $HOME/gsutil defacl set public-read gs://powernet-app-assets
-          $HOME/gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
+          gcloud --quiet components update app
+          gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
+          gcloud --quiet config set project pwrnet-158117
+          gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
+          gsutil defacl set public-read gs://powernet-app-assets
+          gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
   
   
   # deploy:
