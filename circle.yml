@@ -1,25 +1,27 @@
 version: 2
 jobs:
   build:
+    working_directory: /portal
     docker:
-      - image: circleci/python:3.6.4
+      - image: docker:17.05.0-ce-git
     steps:
       - checkout
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
+      - run: 
+          name: Install build requirements
+          command: sudo pip install -r build-requirements.txt
+      - run:
+          name: Collectstatic
+          command: sudo python manage.py collectstatic --no-input
       - run: |
-          sudo pip install -r portal/build-requirements.txt
-          sudo python portal/manage.py collectstatic --no-input
-      - run: |
-          curl -o $HOME/google_appengine_1.9.40.zip https://storage.googleapis.com/appengine-sdks/featured/google_appengine_1.9.40.zip
-          unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
           gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
-          gcloud -q app deploy portal/app.yaml --promote --version=5 --log-http --verbosity=info        
+          gcloud -q app deploy app.yaml --promote --version=5 --log-http --verbosity=info        
           gsutil defacl set public-read gs://powernet-app-assets
-          gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
+          gsutil -m rsync -r app/staticfiles gs://powernet-app-assets/
   
   
   # deploy:
