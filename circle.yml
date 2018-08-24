@@ -9,6 +9,9 @@ jobs:
           name: Update
           command: sudo apt-get update
       - run:
+          name: Pull
+          command: curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+      - run:
           name: Install
           command: sudo apt-get install google-cloud-sdk
       - run:
