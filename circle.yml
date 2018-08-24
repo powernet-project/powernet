@@ -32,17 +32,17 @@ jobs:
           gsutil defacl set public-read gs://powernet-app-assets
           gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
 
-# workflows:
-#   version: 2
-#   build-deploy:
-#     jobs:
-#       - build
-#       - deploy:
-#           requires:
-#             - build
-#           filters:
-#             branches:
-#               only: master
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
 
 
 
