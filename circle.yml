@@ -24,8 +24,11 @@ jobs:
           name: Import public key
           command: curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
       - run:
-          name: Install gcloud
-          command: sudo apt-get update && sudo apt-get install google-cloud-sdk
+          name: Update
+          command: sudo apt-get update
+      - run:
+          name: Install
+          command: sudo apt-get install google-cloud-sdk
       - run: |
           gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
