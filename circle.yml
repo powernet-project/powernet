@@ -16,7 +16,7 @@ jobs:
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > gcloud-service-key.json
       - run:
           name: I don't know where i live
-          command: pwd && ls &&  
+          command: pwd && ls
       - persist_to_workspace:
           root: project
           paths: project/*
