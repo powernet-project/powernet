@@ -22,7 +22,7 @@ jobs:
           command: unzip -q -d $HOME $HOME/google_appengine_1.9.40.zip
       - run:
           name: check
-          command: gcloud --version
+          command: sudo /opt/google-cloud-sdk/bin/gcloud --version
       - run: |
           gcloud --quiet components update app
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
