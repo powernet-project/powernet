@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: google/cloud-sdk
     steps:
+      - checkout
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
