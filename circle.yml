@@ -3,12 +3,7 @@ jobs:
   build:
     docker:
       - image: circleci/python:3.6      
-    steps:
-      - run: mkdir -p workspace
-      - persist_to_workspace:
-          root: workspace
-          paths:
-            - app-directory
+    steps:      
       - checkout            
       - run: 
           name: Install build requirements
@@ -19,13 +14,17 @@ jobs:
       - run:
           name: Store Service Account
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > ${HOME}/gcloud-service-key.json
+      - save_cache: 
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - ~/temp
   
   deploy:
     docker:
       - image: google/cloud-sdk
     steps:
-      - attach_workspace:        
-          at: /tmp/workspace/app-directory      
+      - restore_cache: 
+          key: v1-repo-{{ .Environment.CIRCLE_SHA1 }}      
       - run: |
           gcloud auth activate-service-account --key-file=${HOME}/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
