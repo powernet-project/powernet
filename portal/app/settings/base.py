@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'app.api',
     'app.core',
     'django_celery_results',
+    'rest_framework_swagger'
 ]
 
 MIDDLEWARE_CLASSES = [

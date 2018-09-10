@@ -8,6 +8,9 @@ from app.api.v1.endpoint.powernet_user import PowernetUserViewSet
 from app.api.v1.endpoint.home import HomeViewSet, HomeDataViewSet
 from app.api.v1.endpoint.appliance_data import ApplianceJsonDataViewSet
 from app.api.v1.endpoint.gc_algorithm import run_gc, gc_results
+from rest_framework_swagger.views import get_swagger_view
+
+schema_view = get_swagger_view(title='Powernet API')
 
 # register the default and nested routes
 router = routers.SimpleRouter()
@@ -24,4 +27,5 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^run_gc/', run_gc),
     url(r'^gc_results/', gc_results),
+    url(r'^$', schema_view)
 ]
