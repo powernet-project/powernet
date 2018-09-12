@@ -1964,28 +1964,32 @@ object battery {
 // Recorders
 // House meters
 object multi_recorder {
-	interval 60;
+	//interval 60;
+	interval 3600;
 	property meter_GLD_0001:measured_real_power,meter_GLD_0002:measured_real_power,meter_GLD_0003:measured_real_power,meter_GLD_0004:measured_real_power,meter_GLD_0005:measured_real_power,meter_GLD_0006:measured_real_power,meter_GLD_0007:measured_real_power,meter_GLD_0008:measured_real_power,meter_GLD_0009:measured_real_power,meter_GLD_0010:measured_real_power,meter_GLD_0011:measured_real_power,meter_GLD_0012:measured_real_power,meter_GLD_0013:measured_real_power,meter_GLD_0014:measured_real_power;
 	file Multi_Meter_Recorder.csv;
 }
 
 // Battery meters
 object multi_recorder {
-	interval 60;
+  //interval 60;
+  interval 3600;
 	property Bat_meter_1:measured_real_power,Bat_meter_2:measured_real_power,Bat_meter_3:measured_real_power,Bat_meter_4:measured_real_power,Bat_meter_5:measured_real_power,Bat_meter_6:measured_real_power,Bat_meter_7:measured_real_power,Bat_meter_8:measured_real_power,Bat_meter_9:measured_real_power,Bat_meter_10:measured_real_power,Bat_meter_11:measured_real_power,Bat_meter_12:measured_real_power,Bat_meter_13:measured_real_power,Bat_meter_14:measured_real_power;
 	file Multi_BattMeter_Recorder.csv;
 }
 
 // Solar meters
 object multi_recorder {
-	interval 60;
+	//interval 60;
+	interval 3600;
 	property PV_meter_1:measured_real_power,PV_meter_2:measured_real_power,PV_meter_3:measured_real_power,PV_meter_4:measured_real_power,PV_meter_5:measured_real_power,PV_meter_6:measured_real_power,PV_meter_7:measured_real_power,PV_meter_8:measured_real_power,PV_meter_9:measured_real_power,PV_meter_10:measured_real_power,PV_meter_11:measured_real_power,PV_meter_12:measured_real_power,PV_meter_13:measured_real_power,PV_meter_14:measured_real_power;
 	file Multi_SolarMeter_Recorder.csv;
 }
 
 // Battery SOC
 object multi_recorder {
-	interval 60;
+	//interval 60;
+	interval 3600;
 	property Battery_1:state_of_charge,Battery_2:state_of_charge,Battery_3:state_of_charge,Battery_4:state_of_charge,Battery_5:state_of_charge,Battery_6:state_of_charge,Battery_7:state_of_charge,Battery_8:state_of_charge,Battery_9:state_of_charge,Battery_10:state_of_charge,Battery_11:state_of_charge,Battery_12:state_of_charge,Battery_13:state_of_charge,Battery_14:state_of_charge;
 	file Multi_SOC_Recorder.csv;
 }

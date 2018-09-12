@@ -26,19 +26,16 @@
 
 //#set profiler=1
 //#set pauseatexit=1
-#set minimum_timestep=10
 #set iteration_limit=100000;
-
-//gl_global_setvar(“minimum_timestep”, “10”);
 
 clock {
 //	timezone PST+8PDT;		//Put timezone first so timestamp in local (not UTC)
 //	timestamp '2000-01-01 0:00:00';
 	timezone EST+5EDT;
-	starttime '2015-07-01 00:00:00';
-	stoptime '2015-07-01 23:59:00';
 	//starttime '2015-07-01 14:00:00';
-	//stoptime '2015-07-01 18:59:00';
+	//stoptime '2015-07-01 14:59:00';
+  starttime '2015-07-01 00:00:00';
+	stoptime '2015-07-01 23:59:00';
 }
 
 module powerflow{
@@ -47,7 +44,7 @@ module powerflow{
 
 
 
-#include "IEEE_123_homes.glm";
+#include "IEEE_123_homes30P20B.glm";
 
 //==============================
 // Conductor Types
@@ -368,7 +365,7 @@ object overhead_line:  {
 	phases "CN";
 	name "ohl_3_4";
 	from "node_3";
-	to "load_4";
+	to "meter_4";
 	length 200;
 	configuration "oh_line_config_11_CN";
 }
@@ -404,7 +401,7 @@ object overhead_line:  {
 	phases "BN";
 	name "ohl_8_12";
 	from "node_8";
-	to "load_12";
+	to "meter_12";
 	length 225;
 	configuration "oh_line_config_10_BN";
 }
@@ -692,7 +689,7 @@ object overhead_line:  {
 	phases "CN";
 	name "ohl_40_41";
 	from "node_40";
-	to "meter_41";
+	to "load_41";
 	length 325;
 	configuration "oh_line_config_11_CN";
 }
@@ -701,7 +698,7 @@ object overhead_line:  {
 	phases "ABCN";
 	name "ohl_40_42";
 	from "node_40";
-	to "meter_42";
+	to "load_42";
 	length 250;
 	configuration "oh_line_config_01_ABCN";
 }
@@ -709,7 +706,7 @@ object overhead_line:  {
 object overhead_line:  {
 	phases "BN";
 	name "ohl_42_43";
-	from "meter_42";
+	from "load_42";
 	to "load_43";
 	length 500;
 	configuration "oh_line_config_10_BN";
@@ -718,7 +715,7 @@ object overhead_line:  {
 object overhead_line:  {
 	phases "ABCN";
 	name "ohl_42_44";
-	from "meter_42";
+	from "load_42";
 	to "node_44";
 	length 200;
 	configuration "oh_line_config_01_ABCN";
@@ -1742,10 +1739,9 @@ object load {
 	nominal_voltage 2401.7771;
 }
 
-object load {
-	name "load_4";
+object meter {
+	name "meter_4";
 	phases "CN";
-	constant_power_C 40000+20000j;
 	nominal_voltage 2401.7771;
 }
 
@@ -1791,10 +1787,9 @@ object load {
 	nominal_voltage 2401.7771;
 }
 
-object load {
-	name "load_12";
+object meter {
+	name "meter_12";
 	phases "BN";
-	constant_power_B 20000+10000j;
 	nominal_voltage 2401.7771;
 }
 
@@ -1917,15 +1912,17 @@ object load {
 	nominal_voltage 2401.7771;
 }
 
-object meter {
-	name "meter_41";
+object load {
+	name "load_41";
 	phases "CN";
+	constant_power_C 20000+10000j;
 	nominal_voltage 2401.7771;
 }
 
-object meter {
-	name "meter_42";
+object load {
+	name "load_42";
 	phases "ABCN";
+	constant_power_A 20000+10000j;
 	nominal_voltage 2401.7771;
 }
 
@@ -2534,8 +2531,8 @@ object transformer {
 object regulator_configuration {
 	name "reg_config_1";
 	connect_type 1;
-	band_center 120.000;
-	band_width 2.0;
+	band_center 2400.000;
+	band_width 100.0;
 	time_delay 30.0;
 	raise_taps 16;
 	lower_taps 16;
@@ -2658,8 +2655,37 @@ object regulator {
 	configuration "reg_config_4";
 }
 
-//script export clock;
+// Recorders
+object recorder {
+	name rec_power_meter_4;
+	parent meter_4;
+	property measured_real_power;
+	file rec_power_M4.csv;
+	interval 3600;
+}
 
-//script on_init python ./gld_init_IEEE123_BP_2bus.py;
+object recorder {
+	name rec_power_meter_12;
+	parent meter_12;
+	property measured_real_power;
+	file rec_power_M12.csv;
+	interval 3600;
+}
 
-//script on_precommit python ./gld_precommit_IEEE123_BP_2bus.py;
+object power_filter {
+	b4 delay(meter_4:measured_real_power);
+	b12 delay(meter_12:measured_real_power);
+
+	object recorder {
+		property b4, b12;
+		interval 60;
+		# THIS IS WHERE WE CALL MYSQL FUNCTION TO SAVE INTO THE DATABASE
+		file out_power_meter_filter_B.csv;
+	};
+}
+
+script export clock;
+
+script on_init python ./gld_init_IEEE123_BP_2bus.py;
+
+script on_precommit python ./gld_precommit_IEEE123_BP_2bus.py;

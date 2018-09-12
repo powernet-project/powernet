@@ -290,3 +290,175 @@ def LC_Combined_No_Bounds_MultiHome(NLweight, prices, sellFactor, q0, LCscens, G
         Ufinal[:,t] = U[:,0].value
 
     return Qfinal, Ufinal, boundsFlag
+
+
+def LC_Combined_No_Bounds_SingleHome(NLweight, prices, sellFactor, q0, LCscens, GCtime, umaxo, umino, qmaxo, qmino):
+    # New variables -> pre-computed
+    #house_numbers = np.array([0,2])
+    house_numbers = np.array([0])
+    nS = house_numbers.size      # # of houses
+    T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
+
+    Qfinal = np.zeros((nS,GCtime+1))     # Variable to hold state of charge of the house
+    Ufinal = np.zeros((nS,GCtime+1))     # Variable to hold batery charging power of the house
+    boundsFlag = np.zeros((1,GCtime))
+    Qfinal[:,0] = q0                    # Intializing battery state of charge
+
+    # Ideally won't need this function -> all the data should come from CC
+    #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0) The 0 here means we are taking the first home
+    realS = DataPreLoaded_NetPower("realS1.csv",house_numbers)[0]   # net power profile to be followed by the home
+
+    # This loops through the 24hrs of the global controller updates -> calculating all 24hrs at a time
+    for t in range(GCtime):
+
+        umin = np.tile(umino, (1,T-t))
+        umax = np.tile(umaxo, (1,T-t))
+        qmax = np.tile(qmaxo, (1,T-t+1))
+        qmin = np.tile(qmino, (1,T-t+1))
+        #pricesCurrent = np.tile(prices[:,t:], LCscens) -> LCscens means how many scenarios we are leveraging for the optimization
+        pricesCurrent = np.tile(prices[t:],(nS,LCscens))
+        # Ideally won't need this function -> all the data should come from CC
+        homeForecast = DataPreLoaded_Forecast("ScenarioGen1.csv",t*26+house_numbers)
+        LCforecasts = homeForecast
+        #print 'LCforecasts: ', LCforecasts[0]
+        #print 't: ', t
+
+
+		# initialize variables
+        Y = Variable(nS,(T-t)*LCscens)
+        U = Variable(nS,T-t)
+        Q = Variable(nS,T-t+1)
+
+		# Battery Constraints
+        constraints = [Q[0] == q0,
+					Q[1:T-t+1] == Q[0:T-t] + U,
+					U <= umax,
+					U >= umin,
+					Q <= qmax,
+					Q >= qmin
+					]
+
+        for i in range(LCscens):
+            # Demand and battery action constraints
+            constraints.append( Y[(i*(T-t)):((i+1)*(T-t))] == -LCforecasts[0][i] - U )
+            #print "LCforecast[i]: ", LCforecasts[i]
+
+        if sellFactor == 0:
+            obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
+        else:
+			obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, -Y)) + NLweight*norm(Y - np.tile(realS[t:], (1,LCscens)), 'fro') )
+
+        if sellFactor == 3:
+			constraints.append( Y <= 0) # nodes cannot sell
+
+        prob = Problem(obj, constraints)
+        prob.solve(solver = MOSEK)
+        if prob.status != "optimal":
+			print 'LC status is: ', prob.status
+        Qfinal[:,t+1] = Q[:,1].value
+        q0 = Q[:,1].value
+        if np.any(np.less(q0, qmino)): # Correct for computational inaccuracies
+			q0 += .00001
+        elif np.any(np.greater(q0, qmaxo)):
+			q0 += -.00001
+        Ufinal[:,t] = U[:,0].value
+
+    return Qfinal, Ufinal, boundsFlag
+
+############ New Optimization #################
+def LC_Combined_No_Bounds_MultiHome_IEEE(NLweight, prices, sellFactor, q0, LCscens, GCtime, umax, umin, qmax, qmin, number_of_houses, realS, homeForecast):
+    # New variables -> pre-computed
+    #number_of_houses = 27
+    house_numbers = np.arange(number_of_houses+1)[1:]
+    #house_numbers = np.array([0])
+    nS = house_numbers.size      # # of houses
+    #T = 48      # Time horizon 24hrs, 48hrs etc -> This should be same as realS # of columns
+    T = 2
+    umaxo = []
+    umino = []
+    qmaxo = []
+    qmino = []
+    for i in house_numbers:
+        umaxo.append([umax])
+        umino.append([umin])
+        qmaxo.append([qmax])
+        qmino.append([qmin])
+
+    umaxo = np.asarray(umaxo)
+    umino = np.asarray(umino)
+    qmaxo = np.asarray(qmaxo)
+    qmino = np.asarray(qmino)
+
+    Qfinal = np.matrix(np.zeros((nS,GCtime+1)))     # Variable to hold state of charge of the house
+    Ufinal = np.matrix(np.zeros((nS,GCtime+1)))     # Variable to hold batery charging power of the house
+    boundsFlag = np.zeros((1,GCtime))
+    Qfinal[:,0] = q0                    # Intializing battery state of charge
+
+    # Ideally won't need this function -> all the data should come from CC
+    #homeForecast = DataPreLoaded("ScenarioGen1_Last.csv",0) The 0 here means we are taking the first home
+
+    #realS_list = DataPreLoaded_NetPower("realS1.csv",house_numbers)   # net power profile to be followed by the home
+    #realS = np.asarray(realS_list)
+
+    #print 'realS: ', realS
+
+    # This loops through the 24hrs of the global controller updates -> calculating all 24hrs at a time
+    #for t in range(GCtime):
+    for t in range(GCtime-1):
+        #print 't: ', t
+
+        umin = np.tile(umino, (1,T-t))
+        umax = np.tile(umaxo, (1,T-t))
+        qmax = np.tile(qmaxo, (1,T-t+1))
+        qmin = np.tile(qmino, (1,T-t+1))
+        #pricesCurrent = np.tile(prices[:,t:], LCscens) -> LCscens means how many scenarios we are leveraging for the optimization
+        pricesCurrent = np.tile(prices[t:],(nS,LCscens))
+        # Ideally won't need this function -> all the data should come from CC
+        #homeForecast = DataPreLoaded_Forecast("ScenarioGen1.csv",t*26+house_numbers)
+        #homeForecast = [[0.7,0.8],[0.8,0.8]]
+        LCforecasts = np.asarray(homeForecast)
+        print 'LCforecasts: ', LCforecasts.shape
+
+        #print 'LCforecasts: ', LCforecasts
+        #print 't: ', t
+
+
+		# initialize variables
+        Y = Variable(nS,(T-t)*LCscens)
+        U = Variable(nS,T-t)
+        Q = Variable(nS,T-t+1)
+
+		# Battery Constraints
+        constraints = [Q[:,0] == q0,
+					Q[:,1:T-t+1] == Q[:,0:T-t] + U,
+					U <= umax,
+					U >= umin,
+					Q <= qmax,
+					Q >= qmin
+					]
+
+        for i in range(LCscens):
+            # Demand and battery action constraints
+            constraints.append( Y[:,(i*(T-t)):((i+1)*(T-t))] == -LCforecasts - U )
+
+        if sellFactor == 0:
+            obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, neg(Y))) + NLweight*norm(Y - np.tile(realS[:,t:], (1,LCscens)), 'fro') )
+        else:
+			obj = Minimize( sum_entries(mul_elemwise(pricesCurrent, -Y)) + NLweight*norm(Y - np.tile(realS[:, t:], (1,LCscens)), 'fro') )
+
+        if sellFactor == 3:
+			constraints.append( Y <= 0) # nodes cannot sell
+
+        prob = Problem(obj, constraints)
+        prob.solve(solver = MOSEK)
+        if prob.status != "optimal":
+			print 'LC status is: ', prob.status
+        Qfinal[:,t+1] = Q[:,1].value
+        q0 = Q[:,1].value
+        if np.any(np.less(q0, qmino)): # Correct for computational inaccuracies
+			q0 += .00001
+        elif np.any(np.greater(q0, qmaxo)):
+			q0 += -.00001
+        Ufinal[:,t] = U[:,0].value
+
+    return Qfinal, Ufinal, boundsFlag
