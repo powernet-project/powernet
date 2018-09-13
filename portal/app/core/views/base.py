@@ -1,7 +1,8 @@
 import json
-import requests
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from app.models import Home, Device
+from app.api.v1.endpoint.device import DeviceSerializer
 
 
 @login_required
@@ -31,7 +32,16 @@ def home_two(request):
 
 @login_required
 def opf(request):
-    return render(request, 'visualization/Demo2/index.html')
+    # get the homes this user has
+    homes = Home.objects.filter(owner=request.user.powernetuser)
+
+    # for now, even the user has multiple homes, we'll just assume they want the first one
+    devices = Device.objects.filter(home=homes[0])
+
+    # serialize the device list and return it in the context
+    ser_devices = json.dumps(DeviceSerializer(devices, many=True).data)
+
+    return render(request, 'visualization/Demo2/index.html', {"devices": ser_devices, "userId": request.user.id})
 
 
 @login_required

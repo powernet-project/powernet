@@ -39,29 +39,6 @@ class DeviceType(Enum):
     STOVE_OVEN_EXHAUST = 'STOVE_OVEN_EXHAUST'
 
 
-class Device(models.Model):
-
-    class Meta:
-        db_table = 'device'
-
-    name = models.CharField(max_length=200)
-    type = EnumField(DeviceType, max_length=40)
-    status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN, max_length=40)
-    value = models.IntegerField(default=0)
-    cosphi = models.FloatField(default=1.0)
-
-
-class DeviceState(models.Model):
-
-    class Meta:
-        db_table = 'device_state'
-
-    device = models.ForeignKey(Device)
-    watt_consumption = models.FloatField()
-    measurement_timestamp = models.DateTimeField(null=False, blank=False)
-    additional_information = JSONField(null=True, blank=True)
-
-
 class ApplianceJsonData(models.Model):
 
     class Meta:
@@ -127,3 +104,27 @@ class HomeData(models.Model):
     real_power = models.FloatField(default=0)
     state_of_charge = models.FloatField(default=0)
     dt_stamp = models.DateTimeField(default=timezone.now)
+
+
+class Device(models.Model):
+
+    class Meta:
+        db_table = 'device'
+
+    home = models.ForeignKey(Home)
+    name = models.CharField(max_length=200)
+    type = EnumField(DeviceType, max_length=40)
+    status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN, max_length=40)
+    value = models.IntegerField(default=0)
+    cosphi = models.FloatField(default=1.0)
+
+
+class DeviceState(models.Model):
+
+    class Meta:
+        db_table = 'device_state'
+
+    device = models.ForeignKey(Device)
+    watt_consumption = models.FloatField()
+    measurement_timestamp = models.DateTimeField(null=False, blank=False)
+    additional_information = JSONField(null=True, blank=True)
