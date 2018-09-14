@@ -27,9 +27,15 @@ $(document).ready(function(ns) {
             ns.toggleApplianceState(13, 'C_Washer_1', 'CLOTHES_WASHER', 'OFF');
             ns.toggleApplianceState(14, 'Dish_Washer', 'DISH_WASHER', 'OFF');
         } else {
-            for(var i = 0; i < deviceList.length; i++) {
-                ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'OFF');
-            }
+            // for(var i = 0; i < deviceList.length; i++) {
+            //     ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'OFF');
+            // }
+            ns.toggleApplianceState(34, 'Fan_SLAC_H1', 'AIR_CONDITIONER', 'OFF');
+            ns.toggleApplianceState(35, 'Lights_SLAC_H1', 'CLOTHES_DRYER', 'OFF');
+            ns.toggleApplianceState(36, 'Computer_SLAC_H1', 'MICROWAVE', 'OFF');
+            ns.toggleApplianceState(37, 'Fan_SLAC_H2', 'AIR_CONDITIONER', 'OFF');
+            ns.toggleApplianceState(38, 'Lights_SLAC_H2', 'CLOTHES_DRYER', 'OFF');
+            ns.toggleApplianceState(39, 'Computer_SLAC_H2', 'MICROWAVE', 'OFF');
         }
 
     };
@@ -44,9 +50,15 @@ $(document).ready(function(ns) {
             ns.toggleApplianceState(14, 'Dish_Washer', 'DISH_WASHER', 'ON');
             ns.toggleApplianceState(19, 'PW2', 'STORAGE', 'CHARGE');
         } else {
-            for(var i = 0; i < deviceList.length; i++) {
-                ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'ON');
-            }
+            // for(var i = 0; i < deviceList.length; i++) {
+            //     ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'ON');
+            // }
+            ns.toggleApplianceState(34, 'Fan_SLAC_H1', 'AIR_CONDITIONER', 'ON');
+            ns.toggleApplianceState(35, 'Lights_SLAC_H1', 'CLOTHES_DRYER', 'ON');
+            ns.toggleApplianceState(36, 'Computer_SLAC_H1', 'MICROWAVE', 'ON');
+            ns.toggleApplianceState(37, 'Fan_SLAC_H2', 'AIR_CONDITIONER', 'ON');
+            ns.toggleApplianceState(38, 'Lights_SLAC_H2', 'CLOTHES_DRYER', 'ON');
+            ns.toggleApplianceState(39, 'Computer_SLAC_H2', 'MICROWAVE', 'ON');
         }
     };
 
@@ -60,9 +72,15 @@ $(document).ready(function(ns) {
             ns.toggleApplianceState(14, 'Dish_Washer', 'DISH_WASHER', 'ON');
             ns.toggleApplianceState(19, 'PW2', 'STORAGE', 'DISCHARGE');
         } else {
-            for(var i = 0; i < deviceList.length; i++) {
-                ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'ON');
-            }
+            // for(var i = 0; i < deviceList.length; i++) {
+            //     ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'ON');
+            // }
+            ns.toggleApplianceState(34, 'Fan_SLAC_H1', 'AIR_CONDITIONER', 'OFF');
+            ns.toggleApplianceState(35, 'Lights_SLAC_H1', 'CLOTHES_DRYER', 'OFF');
+            ns.toggleApplianceState(36, 'Computer_SLAC_H1', 'MICROWAVE', 'OFF');
+            ns.toggleApplianceState(37, 'Fan_SLAC_H2', 'AIR_CONDITIONER', 'ON');
+            ns.toggleApplianceState(38, 'Lights_SLAC_H2', 'CLOTHES_DRYER', 'ON');
+            ns.toggleApplianceState(39, 'Computer_SLAC_H2', 'MICROWAVE', 'OFF');
         }
     };
 
@@ -75,9 +93,15 @@ $(document).ready(function(ns) {
             ns.toggleApplianceState(13, 'C_Washer_1', 'CLOTHES_WASHER', 'OFF');
             ns.toggleApplianceState(14, 'Dish_Washer', 'DISH_WASHER', 'OFF');
         } else {
-            for(var i = 0; i < deviceList.length; i++) {
-                ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'OFF');
-            }
+            // for(var i = 0; i < deviceList.length; i++) {
+            //     ns.toggleApplianceState(deviceList[i].id, deviceList[i].name, deviceList[i].type, 'OFF');
+            // }
+            ns.toggleApplianceState(34, 'Fan_SLAC_H1', 'AIR_CONDITIONER', 'OFF');
+            ns.toggleApplianceState(35, 'Lights_SLAC_H1', 'CLOTHES_DRYER', 'OFF');
+            ns.toggleApplianceState(36, 'Computer_SLAC_H1', 'MICROWAVE', 'OFF');
+            ns.toggleApplianceState(37, 'Fan_SLAC_H2', 'AIR_CONDITIONER', 'OFF');
+            ns.toggleApplianceState(38, 'Lights_SLAC_H2', 'CLOTHES_DRYER', 'OFF');
+            ns.toggleApplianceState(39, 'Computer_SLAC_H2', 'MICROWAVE', 'OFF');
         }
     };
 
