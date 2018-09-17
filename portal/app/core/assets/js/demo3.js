@@ -15,7 +15,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'ON', name: 'Stove_Oven_Exhaust_1', type: 'STOVE_OVEN_EXHAUST'})
+                data: JSON.stringify({status: 'ON', name: 'Stove_Oven_Exhaust_1', type: 'STOVE_OVEN_EXHAUST', home: 1})
             });
         });
         $('#gwd-taparea_oven-OFF').on('click', function() {
@@ -24,7 +24,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'OFF', name: 'Stove_Oven_Exhaust_1', type: 'STOVE_OVEN_EXHAUST'})
+                data: JSON.stringify({status: 'OFF', name: 'Stove_Oven_Exhaust_1', type: 'STOVE_OVEN_EXHAUST', home: 1})
             });
         });
         $('#gwd-taparea_fridge-ON').on('click', function() {
@@ -33,7 +33,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'ON', name: 'Refrigerator_1', type: 'REFRIGERATOR'})
+                data: JSON.stringify({status: 'ON', name: 'Refrigerator_1', type: 'REFRIGERATOR', home: 1})
             });
         });
         $('#gwd-taparea_fridge-OFF').on('click', function() {
@@ -42,7 +42,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'OFF', name: 'Refrigerator_1', type: 'REFRIGERATOR'})
+                data: JSON.stringify({status: 'OFF', name: 'Refrigerator_1', type: 'REFRIGERATOR', home: 1})
             });
         });
         $('#gwd-taparea_washer-ON').on('click', function() {
@@ -51,7 +51,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'ON', name: 'C_Washer_1', type: 'CLOTHES_WASHER'})
+                data: JSON.stringify({status: 'ON', name: 'C_Washer_1', type: 'CLOTHES_WASHER', home: 1})
             });
         });
         $('#gwd-taparea_washer-OFF').on('click', function() {
@@ -60,7 +60,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'OFF', name: 'C_Washer_1', type: 'CLOTHES_WASHER'})
+                data: JSON.stringify({status: 'OFF', name: 'C_Washer_1', type: 'CLOTHES_WASHER', home: 1})
             });
         });
         $('#gwd-taparea_dish-ON').on('click', function() {
@@ -69,7 +69,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'ON', name: 'Dish_Washer', type: 'DISH_WASHER'})
+                data: JSON.stringify({status: 'ON', name: 'Dish_Washer', type: 'DISH_WASHER', home: 1})
             });
         });
         $('#gwd-taparea_dish-OFF').on('click', function() {
@@ -78,7 +78,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'OFF', name: 'Dish_Washer', type: 'DISH_WASHER'})
+                data: JSON.stringify({status: 'OFF', name: 'Dish_Washer', type: 'DISH_WASHER', home: 1})
             });
         });
 
@@ -89,7 +89,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'OFF', name: 'AC_1', type: 'AIR_CONDITIONER'})
+                data: JSON.stringify({status: 'OFF', name: 'AC_1', type: 'AIR_CONDITIONER', home: 1})
             });
         });
         $('#gwd-taparea_ac-OFF').on('click', function() {
@@ -98,7 +98,7 @@ $(document).ready(function(ns) {
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'PUT',
-                data: JSON.stringify({status: 'ON', name: 'AC_1', type: 'AIR_CONDITIONER'})
+                data: JSON.stringify({status: 'ON', name: 'AC_1', type: 'AIR_CONDITIONER', home: 1})
             });
         });
 
