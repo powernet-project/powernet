@@ -170,7 +170,9 @@ def run_gc(p_forecast, r_forecast, q_zero):
     t_idx = 0 # set controller t_idx to something non zero after this if wanted
     GC = Global_Controller(network, forecaster, GCtime, lookAheadTime, GCscens, sellFactor, V_weight, Vtol, ramp_weight)
     q0 = np.matrix(np.zeros(qmax.shape)) #set initial q0 to be 0
-    #LCs = Local_Controllers(network, forecaster, GCtime+lookAheadTime, LCscens, NLweight, sellFactor, ramp_weight, nodesStorage, q0)
+
+    if q_zero != 0:
+        q0 = q_zero
 
     # Initialize values to save
     Qall = np.matrix(np.zeros((storageNum,GCtime*GCstepsTotal+1)))
