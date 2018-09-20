@@ -3,7 +3,7 @@ import os
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings.base')  # CHANGE this to gains_debug to run locally
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.settings.gains_debug')  # CHANGE this to gains_debug to run locally
 
 app = Celery('app')
 
