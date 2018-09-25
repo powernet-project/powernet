@@ -39,9 +39,9 @@ def run_gc(p_forecast, r_forecast, q_zero):
 
     #Initialize simulation parameters
     nodesPen = np.maximum(solarPen,storagePen)
-    GCtime = 2
-    lookAheadTime = 0
-    GCstepsTotal = 1
+    GCtime = 24
+    lookAheadTime = 24
+    GCstepsTotal = 30
     sellFactor = 1
     GCscens = 1
     LCscens = 1
