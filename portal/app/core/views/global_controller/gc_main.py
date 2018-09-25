@@ -39,9 +39,9 @@ def run_gc(p_forecast, r_forecast, q_zero):
 
     #Initialize simulation parameters
     nodesPen = np.maximum(solarPen,storagePen)
-    GCtime = 24
-    lookAheadTime = 24
-    GCstepsTotal = 30
+    GCtime = 2
+    lookAheadTime = 0
+    GCstepsTotal = 1
     sellFactor = 1
     GCscens = 1
     LCscens = 1
@@ -60,7 +60,7 @@ def run_gc(p_forecast, r_forecast, q_zero):
     # IEEE 123 bus case PG&E data
     network_data = np.load('network_data.npz')
     loadMod = 1
-    presampleIdx = 168; # first week as presample data
+    presampleIdx = 168 # first week as presample data
     startIdx = presampleIdx + 1 # starting index for the load dataset
     DataDict = loadmat('loadData123Ag.mat')
     pDemandFull = loadMod*np.matrix(DataDict['pDemand'])
