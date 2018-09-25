@@ -171,7 +171,9 @@ def run_gc(p_forecast, r_forecast, q_zero):
     GC = Global_Controller(network, forecaster, GCtime, lookAheadTime, GCscens, sellFactor, V_weight, Vtol, ramp_weight)
     q0 = np.matrix(np.zeros(qmax.shape)) #set initial q0 to be 0
 
-    if q_zero != 0:
+    if q_zero:
+        q_zero = np.matrix(q_zero)
+        q_zero = q_zero.T
         q0 = q_zero
 
     # Initialize values to save
