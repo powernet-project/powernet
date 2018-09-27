@@ -171,6 +171,10 @@ def run_gc(p_forecast, r_forecast, q_zero):
     GC = Global_Controller(network, forecaster, GCtime, lookAheadTime, GCscens, sellFactor, V_weight, Vtol, ramp_weight)
     q0 = np.matrix(np.zeros(qmax.shape)) #set initial q0 to be 0
 
+    print('MY OG Q0')
+    print(q0)
+    print(np.matrix(np.zeros(qmax.shape)))
+
     if q_zero:
         q_zero = np.matrix(q_zero)
         q_zero = q_zero.T
@@ -183,7 +187,7 @@ def run_gc(p_forecast, r_forecast, q_zero):
 
     ### Run Global Controller ###
     print('Running time:', t_idx)
-    realS, pricesCurrent, LCtime, rampFlag, RstartList, QiList, RsignList, ramp_next = GC.runStep(q0, t_idx)
+    realS, pricesCurrent, LCtime, rampFlag, RstartList, QiList, RsignList, ramp_next, ubound_min, ubound_max = GC.runStep(q0, t_idx)
 
     print('THESE ARE MY RESULTS!')
     print(realS)
@@ -203,7 +207,9 @@ def run_gc(p_forecast, r_forecast, q_zero):
         'RstartList': pickle.dumps(RstartList, protocol=0),
         'QiList': pickle.dumps(QiList, protocol=0),
         'RsignList': pickle.dumps(RsignList, protocol=0),
-        'ramp_next': ramp_next
+        'ramp_next': ramp_next,
+        'uboundMin': pickle.dumps(ubound_min, protocol=0),
+        'uboundMax': pickle.dumps(ubound_max, protocol=0)
     }
 
     return result

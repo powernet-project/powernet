@@ -998,7 +998,7 @@ class Global_Controller(object):
             ramp_next = ramp_curr[0]
         LCtime = GC_nextTime - t_idx  # time until next GC run
 
-        return realS, pricesCurrent, LCtime, rampFlag, RstartList, QiList, RsignList, ramp_next
+        return realS, pricesCurrent, LCtime, rampFlag, RstartList, QiList, RsignList, ramp_next, self.Ubound_min, self.Ubound_max
 
     def disaggregateRampSignal(self, t_idx, q0, ramp_next):
         # After receiving a ramp signal, disaggregate the ramp accross the storage nodes
