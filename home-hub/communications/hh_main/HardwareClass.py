@@ -48,15 +48,15 @@ class HardwareRPi:
 
         #################### DONE
         # input_sources_statesDB LAB
-        # self.input_sources_statesDB = {'AC1': [3,5], 'SE1': [4,12], 'RF1':[6,10], 'DW1':[7,14],'WM1':[8,29], 'CW1': [9,13], 'PW2':[10,19], 'PV':[11,30], 'Mains1': [12,31], 'Mains2': [13,32]}
-        # self.sourcesDBID = [self.input_sources_statesDB['AC1'][0],self.input_sources_statesDB['SE1'][0],self.input_sources_statesDB['RF1'][0],self.input_sources_statesDB['CW1'][0],self.input_sources_statesDB['DW1'][0],self.input_sources_statesDB['WM1'][0],self.input_sources_statesDB['PW2'][0]]
-        self.input_sources_statesDB = {'Fan_SLAC_H2': [14,37], 'Lights_SLAC_H2': [15,38], 'Computer_SLAC_H2':[16,39]}
-        self.sourcesDBID = [self.input_sources_statesDB['Fan_SLAC_H2'][0],self.input_sources_statesDB['Lights_SLAC_H2'][0],self.input_sources_statesDB['Computer_SLAC_H2'][0]]
+        self.input_sources_statesDB = {'DW_GC': [3,40], 'RF_GC': [4,41], 'LT_GC':[6,42], 'MW_GC':[7,43],'DR1_GC':[8,44], 'DR2_GC': [9,45], 'Range1_GC':[10,46], 'Range2_GC':[11,47]}
+        self.sourcesDBID = [self.input_sources_statesDB['DW_GC'][0],self.input_sources_statesDB['RF_GC'][0],self.input_sources_statesDB['LT_GC'][0],self.input_sources_statesDB['MW_GC'][0],self.input_sources_statesDB['DR1_GC'][0],self.input_sources_statesDB['DR2_GC'][0],self.input_sources_statesDB['Range1_GC'][0],self.input_sources_statesDB['Range2_GC'][0]]
+        # self.input_sources_statesDB = {'Fan_SLAC_H2': [14,37], 'Lights_SLAC_H2': [15,38], 'Computer_SLAC_H2':[16,39]}
+        # self.sourcesDBID = [self.input_sources_statesDB['Fan_SLAC_H2'][0],self.input_sources_statesDB['Lights_SLAC_H2'][0],self.input_sources_statesDB['Computer_SLAC_H2'][0]]
         ####################
 
         #################### DONE
         #self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
-        self.appliance_lst = ["Fan_SLAC_H2", "Lights_SLAC_H2", "Computer_SLAC_H2"]
+        self.appliance_lst = ["DW_GC", "RF_GC", "LT_GC", "MW_GC", "DR1_GC", "DR2_GC", "Range1_GC", "Range2_GC"]
         ####################
 
 
