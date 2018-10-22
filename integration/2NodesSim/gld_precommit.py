@@ -33,12 +33,12 @@ if(int(sim_time[14:16]) == 59):
 		uBatt4 = -df['power'][0]/len(battInv['node_4'])*1000000
 		for idx, b in enumerate(battery_GLD4):
 			gridlabd_functions.set(b,'P_Out',uBatt4)
-			# print 'b: ', b
-			# print 'uBatt4: ', uBatt4
+			print 'b: ', b
+			print 'uBatt4PC: ', uBatt4
 
 		# setting battery inverter nodes 4:
 		uBatt12 = -df['power'][1]/len(battInv['node_12'])*1000000
 		for idx, b in enumerate(battery_GLD12):
 			gridlabd_functions.set(b,'P_Out',uBatt12)
-			# print 'b: ', b
-			# print 'uBatt12: ', uBatt12
+			print 'b: ', b
+			print 'uBatt12PC: ', uBatt12

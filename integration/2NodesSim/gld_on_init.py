@@ -105,13 +105,13 @@ uBatt12 = -df12['power'][0]/len(battInv['node_12'])*1000000
 
 for idx, b in enumerate(battery_GLD4):
 	gridlabd_functions.set(b,'P_Out',uBatt4)
-	# print 'b: ', b
-	# print 'uBatt4: ', uBatt4
+	print 'b: ', b
+	print 'uBatt4: ', uBatt4
 
 for idx, b in enumerate(battery_GLD12):
 	gridlabd_functions.set(b,'P_Out',uBatt12)
-	# print 'b: ', b
-	# print 'uBatt12: ', uBatt12
+	print 'b: ', b
+	print 'uBatt12: ', uBatt12
 
 
 

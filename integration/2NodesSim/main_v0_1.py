@@ -182,6 +182,7 @@ print 'rampFlag: ', rampFlag
 print 'RstartList: ', RstartList
 print 'QiList: ', QiList
 print 'RsignList: ', RsignList
+print 'Pdemand: ', pdat/1000000
 
 
 ### Run Local Controllers ###
@@ -243,6 +244,7 @@ if (t_idx%100) < 20:
 	# Save Data
 	np.savez('ramp_1day-2',Qall=Qall,Uall=Uall,t_idx=t_idx, Ubounds_vio=GC.Ubounds_vio, rampSkips=GC.rampSkips, rampUAll=rampUAll_orig)
 	print('SAVED')
+np.savetxt("Uall.csv", Uall, delimiter=",")
 
 
 #print Uall
