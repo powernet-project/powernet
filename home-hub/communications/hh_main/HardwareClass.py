@@ -102,6 +102,9 @@ class HardwareRPi:
         self.spi.open(0,0)
         self.spi.max_speed_hz=1000000
 
+        # Creating database if does not exist already
+        
+
 
     # Function to convert data to voltage level,
     # rounded to specified number of decimal places.
