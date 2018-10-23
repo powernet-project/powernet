@@ -15,6 +15,7 @@ from datetime import datetime
 import spidev
 import numpy as np
 import sqlite3
+from sqlite3 import Error
 #from main import logger
 
 
@@ -28,30 +29,21 @@ class HardwareRPi:
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
         self.CT20 = 20   # 20A/1V
+        self.CT50 = 50   # 50A/1V
         self.CT100 = 100 # 100A/1V
         self.REQUEST_TIMEOUT = 10
         self.PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
-        #self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
-        #self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
-        #self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1"]
 
         #################### DONE
-        # self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF","OFF"] # Battery included
-        # self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF", "OFF"]  # Battery included
         self.app_orig_states = ["OFF", "OFF", "OFF"]
         self.app_new_status = ["OFF", "OFF", "OFF"]
         ####################
 
-        # input_sources_statesDB TEST
-        #self.input_sources_statesDB = {'AC1': [3,22], 'SE1': [4,23], 'RF1':[6,25], 'DW1':[7,28],'WM1':[8,29], 'CW1': [9,24], 'PW2':[10,25]}
-
         #################### DONE
-        # input_sources_statesDB LAB
-        self.input_sources_statesDB = {'DW_GC': [3,40], 'RF_GC': [4,41], 'LT_GC':[6,42], 'MW_GC':[7,43],'DR1_GC':[8,44], 'DR2_GC': [9,45], 'Range1_GC':[10,46], 'Range2_GC':[11,47]}
-        self.sourcesDBID = [self.input_sources_statesDB['DW_GC'][0],self.input_sources_statesDB['RF_GC'][0],self.input_sources_statesDB['LT_GC'][0],self.input_sources_statesDB['MW_GC'][0],self.input_sources_statesDB['DR1_GC'][0],self.input_sources_statesDB['DR2_GC'][0],self.input_sources_statesDB['Range1_GC'][0],self.input_sources_statesDB['Range2_GC'][0]]
-        # self.input_sources_statesDB = {'Fan_SLAC_H2': [14,37], 'Lights_SLAC_H2': [15,38], 'Computer_SLAC_H2':[16,39]}
-        # self.sourcesDBID = [self.input_sources_statesDB['Fan_SLAC_H2'][0],self.input_sources_statesDB['Lights_SLAC_H2'][0],self.input_sources_statesDB['Computer_SLAC_H2'][0]]
+        # input_sources_statesDB GC -> 'api_appliance_name':[db_id,api_id]
+        self.input_sources_statesDB = {'DW_GC': [3,40], 'RF_GC': [4,41], 'LT_GC':[5,42], 'MW_GC':[6,43],'WD1_GC':[7,44], 'WD2_GC': [8,45], 'Range1_GC':[9,46], 'Range2_GC':[10,47]}
+        self.sourcesDBID = [self.input_sources_statesDB['DW_GC'][0],self.input_sources_statesDB['RF_GC'][0],self.input_sources_statesDB['LT_GC'][0],self.input_sources_statesDB['MW_GC'][0],self.input_sources_statesDB['WD1_GC'][0],self.input_sources_statesDB['WD2_GC'][0],self.input_sources_statesDB['Range1_GC'][0],self.input_sources_statesDB['Range2_GC'][0]]
         ####################
 
         #################### DONE
@@ -103,7 +95,7 @@ class HardwareRPi:
         self.spi.max_speed_hz=1000000
 
         # Creating database if does not exist already
-        
+        self.createDB()
 
 
     # Function to convert data to voltage level,
@@ -135,28 +127,28 @@ class HardwareRPi:
         self.logger.info('Producer AI called')
         while(True):
             dts = []  # date/time stamp for each start of analog read
-            #SE - Stove Exhaust id:12
+            #DW
             dts.append(str(datetime.now()))
             ai0 = self.ReadChannel(0)
-            #AC id:5
+            #RF
             dts.append(str(datetime.now()))
             ai1 = self.ReadChannel(1)
-            #RF id:10
+            #LT
             dts.append(str(datetime.now()))
             ai2 = self.ReadChannel(2)
-            #CW id:13
+            #MW
             dts.append(str(datetime.now()))
             ai3 = self.ReadChannel(3)
-            #BATT: phase 1 (black)
+            #WD1
             dts.append(str(datetime.now()))
             ai4 = self.ReadChannel(4)
-            #Solar: phase 1 (black)
+            #WD2
             dts.append(str(datetime.now()))
             ai5 = self.ReadChannel(5)
-            #MAINS: phase 1 (red)
+            #Range1
             dts.append(str(datetime.now()))
             ai6 = self.ReadChannel(6)
-            #MAINS: phase 2 (black)
+            #Range2
             dts.append(str(datetime.now()))
             ai7 = self.ReadChannel(7)
 
@@ -197,10 +189,10 @@ class HardwareRPi:
         rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)*self.CT10
         rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)*self.CT10
         rms_a3 = math.sqrt(sum_i[3] / self.N_SAMPLES)*self.CT10
-        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)*self.CT100
-        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)*self.CT100
-        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)*self.CT100
-        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)*self.CT100
+        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)*self.CT50
+        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)*self.CT50
+        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)*self.CT50
+        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)*self.CT50
 
         return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
@@ -210,7 +202,7 @@ class HardwareRPi:
           #print 'connecting'
           conn = sqlite3.connect('homehubDB.db')
           c = conn.cursor()
-          #print vals
+          #print 'measurements: ', vals
           c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
       except sqlite3.IntegrityError:
           print 'error connecting to db'
@@ -242,28 +234,28 @@ class HardwareRPi:
         self.logger.info('Consumer AI called')
         template = [
             {
-                "sensor_id": self.input_sources_statesDB['SE1'][1], #SE
+                "sensor_id": self.input_sources_statesDB['DW_GC'][1],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['AC1'][1], #AC
+                "sensor_id": self.input_sources_statesDB['RF_GC'][1],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['RF1'][1], #CW
+                "sensor_id": self.input_sources_statesDB['LT_GC'][1],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['CW1'][1], #RF
+                "sensor_id": self.input_sources_statesDB['MW_GC'][1],
                 "samples": []
             },  {
-                "sensor_id": self.input_sources_statesDB['PW2'][1], # Battery phase 1
+                "sensor_id": self.input_sources_statesDB['WD1_GC'][1],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['PV'][1], # Solar phase 1
+                "sensor_id": self.input_sources_statesDB['WD2_GC'][1],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['Mains1'][1], #MAINS phase 1 -> Red
+                "sensor_id": self.input_sources_statesDB['Range1_GC'][1],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['Mains2'][1], #MAINS phase 2 -> Black
+                "sensor_id": self.input_sources_statesDB['Range2_GC'][1],
                 "samples": []
             }
         ]
@@ -295,14 +287,14 @@ class HardwareRPi:
 
 
                     # Adding analog reads, sID and Date to lists for db upload
-                    d_fb[0].get("samples").append({"RMS": i_rms[0], "date_time": temp_date[0]}) #SE1
-                    d_fb[1].get("samples").append({"RMS": i_rms[1], "date_time": temp_date[1]}) #AC1
-                    d_fb[2].get("samples").append({"RMS": i_rms[2], "date_time": temp_date[2]}) #RF1
-                    d_fb[3].get("samples").append({"RMS": i_rms[3], "date_time": temp_date[3]}) #CW1
-                    d_fb[4].get("samples").append({"RMS": i_rms[4], "date_time": temp_date[4]}) #PW2
-                    d_fb[5].get("samples").append({"RMS": i_rms[5], "date_time": temp_date[5]}) #PV
-                    d_fb[6].get("samples").append({"RMS": i_rms[6], "date_time": temp_date[6]}) #Mains1 - Red
-                    d_fb[7].get("samples").append({"RMS": i_rms[7], "date_time": temp_date[7]}) #Mains2 - Black
+                    d_fb[0].get("samples").append({"RMS": i_rms[0], "date_time": temp_date[0]})
+                    d_fb[1].get("samples").append({"RMS": i_rms[1], "date_time": temp_date[1]})
+                    d_fb[2].get("samples").append({"RMS": i_rms[2], "date_time": temp_date[2]})
+                    d_fb[3].get("samples").append({"RMS": i_rms[3], "date_time": temp_date[3]})
+                    d_fb[4].get("samples").append({"RMS": i_rms[4], "date_time": temp_date[4]})
+                    d_fb[5].get("samples").append({"RMS": i_rms[5], "date_time": temp_date[5]})
+                    d_fb[6].get("samples").append({"RMS": i_rms[6], "date_time": temp_date[6]})
+                    d_fb[7].get("samples").append({"RMS": i_rms[7], "date_time": temp_date[7]})
 
                     # Queue is done processing the element
                     q_ai.task_done()
@@ -423,3 +415,24 @@ class HardwareRPi:
 
     def devices_act(self, device, state):
         GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
+
+    def createDB(self):
+        SQL_File_Name = 'table_schema.sql'
+        TableSchema=""
+        with open(SQL_File_Name, 'r') as SchemaFile:
+            TableSchema=SchemaFile.read().replace('\n','')
+
+        """ create a database connection to a SQLite database """
+        try:
+            conn = sqlite3.connect('homehubDB.db')
+            print(sqlite3.version)
+            c = conn.cursor()
+            c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='input_sources'")
+            if c.fetchone()[0]==0:
+                sqlite3.complete_statement(TableSchema)
+                c.executescript(TableSchema)
+        except Error as e:
+            print(e)
+        finally:
+            c.close()
+            conn.close()
