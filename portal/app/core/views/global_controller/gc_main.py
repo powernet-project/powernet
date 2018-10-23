@@ -1,9 +1,16 @@
-# Main file for integrated cost min
+import time
 import pickle
-from data_processing_cost_min import *
-from combined_cost_min import *
-from multiprocessing.dummy import Pool
+import argparse
+import numpy as np
+
+from network import *
 from case_123 import *
+from forecaster import *
+from algorithms import *
+from scipy.io import loadmat
+from combined_cost_min import *
+from data_processing_cost_min import *
+from multiprocessing.dummy import Pool
 
 
 def run_gc(p_forecast, r_forecast, q_zero):
@@ -13,24 +20,13 @@ def run_gc(p_forecast, r_forecast, q_zero):
 
         How to run powernet algorithm modules
     """
-
-    import numpy as np
-    import argparse
-    from scipy.io import loadmat
-    import time
-
-    from algorithms import *
-    from network import *
-    from forecaster import *
-
-
     parser = argparse.ArgumentParser(description='Simulate Control')
     parser.add_argument('--seed', default=0, help='random seed')
     parser.add_argument('--storagePen', default=2, help='storage penetration percentage')
     parser.add_argument('--solarPen', default=3, help='solar penetration percentage')
     #parser.add_argument('--V_weight', default=500, help='voltage soft constraint weight')
     FLAGS, unparsed = parser.parse_known_args()
-    print('running with arguments: ({})'.format(FLAGS))
+    #print('running with arguments: ({})'.format(FLAGS))
     storagePen = float(FLAGS.storagePen)/10
     solarPen = float(FLAGS.solarPen)/10
     seed = int(FLAGS.seed)
@@ -102,7 +98,7 @@ def run_gc(p_forecast, r_forecast, q_zero):
     ramp_curr = np.array(ramp_starts[ramp_starts >= (720)]) # remove ramps after 720 hours
     for ramp_key in ramp_curr:
         rampUAll.pop(ramp_key)
-    print('all ramp times', np.sort(rampUAll.keys()))
+    #print('all ramp times', np.sort(rampUAll.keys()))
 
     # initialize forecaster and network
     forecast_error = .1
@@ -147,7 +143,7 @@ def run_gc(p_forecast, r_forecast, q_zero):
     ramp_curr = np.array(ramp_starts[ramp_starts >= (720)]) # remove ramps after 720 hours
     for ramp_key in ramp_curr:
         rampUAll.pop(ramp_key)
-    print('all ramp times', np.sort(rampUAll.keys()))
+    #print('all ramp times', np.sort(rampUAll.keys()))
 
     rampUAll_orig = rampUAll.copy()
 
@@ -171,9 +167,9 @@ def run_gc(p_forecast, r_forecast, q_zero):
     GC = Global_Controller(network, forecaster, GCtime, lookAheadTime, GCscens, sellFactor, V_weight, Vtol, ramp_weight)
     q0 = np.matrix(np.zeros(qmax.shape)) #set initial q0 to be 0
 
-    print('MY OG Q0')
-    print(q0)
-    print(np.matrix(np.zeros(qmax.shape)))
+    # print('MY OG Q0')
+    # print(q0)
+    # print(np.matrix(np.zeros(qmax.shape)))
 
     if q_zero:
         q_zero = np.matrix(q_zero)
@@ -189,15 +185,15 @@ def run_gc(p_forecast, r_forecast, q_zero):
     print('Running time:', t_idx)
     realS, pricesCurrent, LCtime, rampFlag, RstartList, QiList, RsignList, ramp_next, ubound_min, ubound_max = GC.runStep(q0, t_idx)
 
-    print('THESE ARE MY RESULTS!')
-    print(realS)
-    print(pricesCurrent)
-    print(LCtime)
-    print(rampFlag)
-    print(RstartList)
-    print(QiList)
-    print(RsignList)
-    print(ramp_next)
+    # print('THESE ARE MY RESULTS!')
+    # print(realS)
+    # print(pricesCurrent)
+    # print(LCtime)
+    # print(rampFlag)
+    # print(RstartList)
+    # print(QiList)
+    # print(RsignList)
+    # print(ramp_next)
 
     result = {
         'realS': pickle.dumps(realS, protocol=0),
