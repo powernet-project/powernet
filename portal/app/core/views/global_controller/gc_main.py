@@ -1,13 +1,5 @@
-import time
 import pickle
-import argparse
-import numpy as np
-
-from network import *
 from case_123 import *
-from forecaster import *
-from algorithms import *
-from scipy.io import loadmat
 from combined_cost_min import *
 from data_processing_cost_min import *
 from multiprocessing.dummy import Pool
@@ -20,6 +12,14 @@ def run_gc(p_forecast, r_forecast, q_zero):
 
         How to run powernet algorithm modules
     """
+    import numpy as np
+    import argparse
+    from scipy.io import loadmat
+    import time
+    from algorithms import *
+    from network import *
+    from forecaster import *
+
     parser = argparse.ArgumentParser(description='Simulate Control')
     parser.add_argument('--seed', default=0, help='random seed')
     parser.add_argument('--storagePen', default=2, help='storage penetration percentage')
