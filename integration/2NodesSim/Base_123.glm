@@ -2477,4 +2477,5 @@ object regulator {
 
 script export clock;
 script on_init python ./gld_on_init.py;
+//script on_init python ./gld_on_init_FullOpt.py;
 script on_precommit python ./gld_precommit.py;

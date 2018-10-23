@@ -52,9 +52,10 @@ response_json = g.json()
 
 try:
     array_json = json.loads(response_json['result'])
-
 except:
     print 'A Key error was generated from trying to deserialize the numpy array'
+
+#print 'array: ',array_json
 
 pricesCurrent = pickle.loads(array_json['pricesCurrent'])
 #print pricesCurrent
