@@ -4,7 +4,7 @@ entrypoint: gunicorn -b :$PORT app.wsgi
 
 resources:
   cpu: 8
-  memory_gb: 2
+  memory_gb: 4
   disk_size_gb: 10
 
 automatic_scaling:
