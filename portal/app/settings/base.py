@@ -68,6 +68,8 @@ USE_TZ = True
 # If the user isn't logged, send them to the login page
 LOGIN_URL = '/login'
 
+LOGIN_REDIRECT_URL = '/'
+
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/' if DEBUG else 'https://storage.googleapis.com/powernet-app-assets/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

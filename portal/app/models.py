@@ -66,6 +66,9 @@ class HueStates(models.Model):
 
 class PowernetUser(models.Model):
 
+    def __unicode__(self):
+        return unicode(self.user.username)
+
     class Meta:
         db_table = 'powernet_user'
 
