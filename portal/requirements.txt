@@ -24,3 +24,4 @@ pathos==0.2.1
 celery[redis]
 django-celery-results==1.0.1
 django-rest-swagger
+google-cloud-pubsub
