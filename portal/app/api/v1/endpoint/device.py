@@ -44,6 +44,7 @@ def publish_device_change(sender, **kwargs):
     topic_path = publisher.topic_path('pwrnet-158117', 'home-hub-message')
 
     # publish the message
-    future = publisher.publish(topic_path, data=obj_ser.encode('utf-8'))
-    print('Published {} of message ID {}.'.format(obj_ser.data, future.result()))
+    publisher.publish(topic_path, data=obj_ser.encode('utf-8'))
+    print('Message published...')
+
 
