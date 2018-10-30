@@ -2,13 +2,17 @@ runtime: custom
 env: flex
 entrypoint: gunicorn -b :$PORT app.wsgi
 
-instance_class: F4_1G
+resources:
+  cpu: 4
+  memory_gb: 7.6
+  disk_size_gb: 20
+
 automatic_scaling:
   min_num_instances: 2
   max_num_instances: 6
   cool_down_period_sec: 100
   cpu_utilization:
-    target_utilization: 0.6
+    target_utilization: 0.8
 
 handlers:
 - url: /static

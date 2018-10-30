@@ -20,14 +20,17 @@ pip install -r requirements.txt
 redis-server
 ```
 
-- Get celery going (make sure the celery config is pointing to the proper settings file - see `app/celery.py`):
+- Get celery going (make sure the celery config is pointing to the proper settings file - see `app/celery.py`), 
+during debug, this should be `gains_debug`:
 ```
 celery -A app worker -l info
 ```
 
-- Boot the DB - simply launch pgadmin and connect to the DB. Look in the gains_debug settings file to view expected params. Also, once you connect to your local db for the very first time, run:
+- Make sure you have postgresql installed
+- Boot the DB (you can use pgadmin and connect to the DB.) Look in the gains_debug settings file to view expected params. 
+Also, once you connect to *your local* db for the very first time, run:
 ```
-python manage.py migrate
+python manage.py migrate  #please don't run this against the prod DB config
 ```
 
 - Lastly, run the django server:
