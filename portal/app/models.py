@@ -131,3 +131,15 @@ class DeviceState(models.Model):
     watt_consumption = models.FloatField()
     measurement_timestamp = models.DateTimeField(null=False, blank=False)
     additional_information = JSONField(null=True, blank=True)
+
+
+class MatlabFiles(models.Model):
+
+    class Meta:
+        db_table = 'matlab_files'
+
+    filename = models.CharField(max_length=200)
+    content = JSONField(null=True, blank=True)
+
+
+    
