@@ -1,0 +1,14 @@
+.navbar-custom {
+    background-color: #C09A69;
+}
+
+.navbar-custom .navbar-nav > li > a {
+	color: #fff;
+	font-weight: 600;
+}
+.navbar-custom .navbar-nav > li > a:focus, 
+.navbar-custom .navbar-nav > li > a:hover {
+    color: hsla(0,0%,100%,.75);
+    background-color: transparent;
+}
+
