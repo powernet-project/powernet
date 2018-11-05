@@ -1,20 +1,23 @@
 import requests
 import copy
+import json
 
 PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'
 REQUEST_TIMEOUT = 10
 
-json_dev = {
+device = {
     "status": None,
-    "name": "",
+    "name": None,
     "type": None,
     "value": None,
     "home": None,
     "cosphi": None
 }
 
+
 house_name = "HHLab"
 house_id = 2
+house_devstatus = 'OFF'
 
 def dev_init():
     # dev_info = {"id": 48, "name": "Test_Dev", "type": "AIR_CONDITIONER", "status": "OFF", "value": 0, "cosphi": 1.0, "home": 2}
@@ -33,11 +36,19 @@ def dev_init():
 
 def create_devices(number_of_devices):
     for i in range(number_of_devices+1)[1:]:
-        dev = copy.deepcopy(json_dev)
+        dev = copy.deepcopy(device)
         dev['name'] = house_name+str(house_id)+'_dev'+str(i)
         dev['home'] = house_id
-        print 'request: ', dev
-        r_post_rms = requests.post(PWRNET_API_BASE_URL + "device/", json=dev, timeout=REQUEST_TIMEOUT)
+        dev['status'] = house_devstatus
+        dev['type'] = "AIR_CONDITIONER"
+        dev['value'] = 0
+        dev['cosphi'] = 1.0
+        # headers = {"media-type": "application/json"}
+        json_dev = json.dumps(dev)
+        print 'dev: ', dev
+        # print json_dev
+        print 'json_dev: ', json_dev
+        r_post_rms = requests.post(url = PWRNET_API_BASE_URL + "device/", json=dev, timeout=REQUEST_TIMEOUT)
         print "status code", r_post_rms.status_code
         if r_post_rms.status_code == 201:
             print 'request was successful'
@@ -45,13 +56,6 @@ def create_devices(number_of_devices):
             print 'request not successful'
             print 
         
-    
-
-        
-        
-    
-
-
 if __name__=='__main__':
     try:
         dev_init()
