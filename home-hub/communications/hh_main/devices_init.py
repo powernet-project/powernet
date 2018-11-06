@@ -16,7 +16,7 @@ device = {
 
 
 house_name = "HHLab"
-house_id = 2
+house_id = 3
 house_devstatus = 'OFF'
 
 def dev_init():
@@ -32,7 +32,7 @@ def dev_init():
         print 'dont create devices'
     else:
         print 'create devices'
-        create_devices(1)
+        create_devices(8)
 
 def create_devices(number_of_devices):
     for i in range(number_of_devices+1)[1:]:
@@ -40,7 +40,7 @@ def create_devices(number_of_devices):
         dev['name'] = house_name+str(house_id)+'_dev'+str(i)
         dev['home'] = house_id
         dev['status'] = house_devstatus
-        dev['type'] = "AIR_CONDITIONER"
+        dev['type'] = "SDF"
         dev['value'] = 0
         dev['cosphi'] = 1.0
         # headers = {"media-type": "application/json"}
