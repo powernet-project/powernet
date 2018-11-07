@@ -432,7 +432,7 @@ class HardwareRPi:
         GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     def smart_switch_act(self, state):
-        call(["python", "change_switch_status.py", state])
+        call(["python3", "change_switch_status.py", state])
 
 
 
