@@ -1,4 +1,4 @@
-
+import homeassistant.remote as remote
 # Uncomment these two lines if using BBB
 #import beaglebone_pru_adc as adc
 #import Adafruit_BBIO.GPIO as GPIO
@@ -35,14 +35,14 @@ class HardwareRPi:
         #self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
         #self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
         #self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1"]
-        self.app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF","OFF"] # Battery included
-        self.app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF", "OFF"]  # Battery included
+        self.app_orig_states = ["OFF","OFF", "OFF", "ON", "OFF", "OFF", "OFF","OFF"] # Battery included, switch included
+        self.app_new_status = ["OFF","OFF", "OFF", "ON", "OFF", "OFF", "OFF", "OFF"]  # Battery included, switch included
         # input_sources_statesDB TEST
         #self.input_sources_statesDB = {'AC1': [3,22], 'SE1': [4,23], 'RF1':[6,25], 'DW1':[7,28],'WM1':[8,29], 'CW1': [9,24], 'PW2':[10,25]}
         # input_sources_statesDB LAB
         self.input_sources_statesDB = {'AC1': [3,5], 'SE1': [4,12], 'RF1':[6,10], 'DW1':[7,14],'WM1':[8,29], 'CW1': [9,13], 'PW2':[10,19], 'PV':[11,30], 'Mains1': [12,31], 'Mains2': [13,32]}
         self.sourcesDBID = [self.input_sources_statesDB['AC1'][0],self.input_sources_statesDB['SE1'][0],self.input_sources_statesDB['RF1'][0],self.input_sources_statesDB['CW1'][0],self.input_sources_statesDB['DW1'][0],self.input_sources_statesDB['WM1'][0],self.input_sources_statesDB['PW2'][0]]
-        self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
+        self.appliance_lst = ["SS1", "AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
@@ -332,18 +332,22 @@ class HardwareRPi:
             try:
                 dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT).json()["results"]
                 dts = str(datetime.now())
-                status_AC1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['AC1'][1]][0]['status']
-                status_SE1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['SE1'][1]][0]['status']
-                status_RF1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['RF1'][1]][0]['status']
-                status_CW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['CW1'][1]][0]['status']
-                status_DW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['DW1'][1]][0]['status']
-                status_WM1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['WM1'][1]][0]['status']
-                # Battery
-                status_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['status']
-                power_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['value']
-                cosphi_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['cosphi']
+                # status_AC1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['AC1'][1]][0]['status']
+                # status_SE1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['SE1'][1]][0]['status']
+                # status_RF1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['RF1'][1]][0]['status']
+                # status_CW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['CW1'][1]][0]['status']
+                # status_DW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['DW1'][1]][0]['status']
+                # status_WM1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['WM1'][1]][0]['status']
+                # # Battery
+                # status_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['status']
+                # power_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['value']
+                # cosphi_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['cosphi']
 
-                self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_WM1, status_PW2]
+                status_smart_switch = [v for v in dev_status if v['id']=='68'][0]['status']
+
+
+                #self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_WM1, status_PW2]
+                self.app_new_status = [status_smart_switch]
                 #print 'app_new_status: ', self.app_new_status
                 #print 'battery status: ', status_PW2
 
@@ -360,6 +364,8 @@ class HardwareRPi:
                                 except Exception as exc:
                                     self.logger.exception(exc)
                                     client.captureException()
+                            elif self.appliance_lst[i] == 'SS1':
+                                self.smart_switch_act(self.app_new_status[i])
                             else:
                                 self.devices_act(self.appliance_lst[i], self.app_new_status[i])
 
@@ -425,7 +431,15 @@ class HardwareRPi:
     def devices_act(self, device, state):
         GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
+    def smart_switch_act(self, state):
+        api = remote.API('192.168.1.3', 'homeRP')
 
+        domain = 'switch'
+        service = "turn_" + state.lower()
+        switch_name = 'switch.aeotec_zw096_smart_switch_6_switch'
+        service_data = {"entity_id": switch_name}
+
+        remote.call_service(api, domain, service, service_data)  #control switch
 
 
 
