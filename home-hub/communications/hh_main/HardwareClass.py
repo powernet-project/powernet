@@ -16,6 +16,7 @@ import spidev
 import numpy as np
 import sqlite3
 from sqlite3 import Error
+import json
 #from main import logger
 
 
@@ -25,7 +26,7 @@ client = Client(SENTRY_DSN)
 #battery_fct = StorageClass.Storage(timeBatt=5)
 
 class HardwareRPi:
-    def __init__(self, gpio_map = None, N_SAMPLES = 100):
+    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100):
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
         self.CT20 = 20   # 20A/1V
@@ -44,6 +45,8 @@ class HardwareRPi:
         # input_sources_statesDB GC -> 'api_appliance_name':[db_id,api_id]
         self.input_sources_statesDB = {'DW_GC': [3,40], 'RF_GC': [4,41], 'LT_GC':[5,42], 'MW_GC':[6,43],'WD1_GC':[7,44], 'WD2_GC': [8,45], 'Range1_GC':[9,46], 'Range2_GC':[10,47]}
         self.sourcesDBID = [self.input_sources_statesDB['DW_GC'][0],self.input_sources_statesDB['RF_GC'][0],self.input_sources_statesDB['LT_GC'][0],self.input_sources_statesDB['MW_GC'][0],self.input_sources_statesDB['WD1_GC'][0],self.input_sources_statesDB['WD2_GC'][0],self.input_sources_statesDB['Range1_GC'][0],self.input_sources_statesDB['Range2_GC'][0]]
+        ######
+        self.input_sources_measurements = []
         ####################
 
         #################### DONE
@@ -64,6 +67,10 @@ class HardwareRPi:
         self.prev = [-1,-1,-1,-1,-1,-1,-1,-1]
         self.dP = 0.3
         self.flag_state = 0
+        
+        # Creating home init variables:
+        self.house_name = "HHLab"
+        self.house_id = house_id                # This one changes depending on house number
 
         # Initializing GPIOs:
         GPIO.setmode(GPIO.BOARD)
@@ -94,8 +101,12 @@ class HardwareRPi:
         self.spi.open(0,0)
         self.spi.max_speed_hz=1000000
 
+        ####################
         # Creating database if does not exist already
-        self.createDB()
+        # self.createDB()
+        # Initializing devices and DB:
+        self.hh_devices_init(self.house_id, self.house_name)
+        
 
 
     # Function to convert data to voltage level,
@@ -234,28 +245,28 @@ class HardwareRPi:
         self.logger.info('Consumer AI called')
         template = [
             {
-                "sensor_id": self.input_sources_statesDB['DW_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][0],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['RF_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][1],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['LT_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][2],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['MW_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][3],
                 "samples": []
             },  {
-                "sensor_id": self.input_sources_statesDB['WD1_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][4],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['WD2_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][5],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['Range1_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][6],
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_statesDB['Range2_GC'][1],
+                "sensor_id": self.input_sources_measurements[1][7],
                 "samples": []
             }
         ]
@@ -416,6 +427,66 @@ class HardwareRPi:
     def devices_act(self, device, state):
         GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
+    
+    def hh_devices_init(self, house_id, house_name):
+        # dev_info = {"id": 48, "name": "Test_Dev", "type": "AIR_CONDITIONER", "status": "OFF", "value": 0, "cosphi": 1.0, "home": 2}
+        # Getting all device information from cloud
+        dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT).json()["results"]
+        home_devID = []
+
+        for h in dev_status:
+            if h['home'] == house_id:       # Checking if there is any device in house with house_id and include device id in list
+                home_devID.append(h['id'])
+        if home_devID:                      # If devices list is not empty (meaning that a house with devices is already created) dont create any dev
+            print home_devID
+            print 'dont create devices'
+            try:                            # Check if DB exists in HH
+                conn = sqlite3.connect('homehubDB.db')  
+                c = conn.cursor()
+                c.execute("SELECT * FROM 'input_sources'")
+            except Exception as exc:
+                print(exc)
+                print 'create DB...'
+                self.createDB()
+        else:                               # If device list is empty means it needs to create new devices in the server and local db
+            print 'create devices'
+            home_devID = self.create_devices(8)  # Create 8 devices -> there are 8 channels in the ADC and 8 relays
+            print 'home_devID: ', home_devID
+            if home_devID:
+                print 'call db function to create dev id in measurements table'
+                self.createDB()
+            else:
+                print 'problem in creating devices. Check POST request'
+        
+        self.input_sources_measurements.append(home_devID)           # Adding device ID
+        self.input_sources_measurements.append([1,2,3,4,5,6,7,8])    # Adding local DB ID
+        self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
+        print 'Input sources: ', self.input_sources_measurements
+
+    def create_devices(self, number_of_devices, house_devstatus = 'ON'):
+        device = { "status": None, "name": None, "type": None, "value": None, "home": None, "cosphi": None }
+        devID = []
+        for i in range(number_of_devices+1)[1:]:
+            dev = copy.deepcopy(device)
+            dev['name'] = self.house_name+str(self.house_id)+'_dev'+str(i)
+            dev['home'] = self.house_id
+            dev['status'] = house_devstatus
+            dev['type'] = "SDF"
+            dev['value'] = 0
+            dev['cosphi'] = 1.0
+            r_post_dev = requests.post(url = self.PWRNET_API_BASE_URL + "device/", json=dev, timeout=self.REQUEST_TIMEOUT)
+            print "status code", r_post_dev.status_code
+            if r_post_dev.status_code == 201:
+                print 'request was successful'
+                j = json.loads(r_post_dev.text)
+                devID.append(j['id'])
+
+            else:
+                print 'request not successful'
+        print 'devID: ', devID
+        return devID
+
+    
     def createDB(self):
         SQL_File_Name = 'table_schema.sql'
         TableSchema=""

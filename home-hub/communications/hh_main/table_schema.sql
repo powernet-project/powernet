@@ -2,13 +2,11 @@ CREATE TABLE input_sources (id integer primary key autoincrement, type TEXT, nam
 CREATE TABLE input_sources_state (id integer primary key, state TEXT, currentdate text, currenttime text, source_id integer not null, foreign key (source_id) references input_sources(id));
 CREATE TABLE measurements (id integer primary key, rms integer, currentdate text, currenttime text, source_id integer not null, foreign key (source_id) references input_sources(id));
 
-INSERT INTO input_sources (type, name) VALUES ("subcircuit", "mains1");
-INSERT INTO input_sources (type, name) VALUES ("subcircuit", "mains2");
-INSERT INTO input_sources (type, name) VALUES ("appliance", "DW");
-INSERT INTO input_sources (type, name) VALUES ("appliance", "RF");
-INSERT INTO input_sources (type, name) VALUES ("subcircuit", "LT");
-INSERT INTO input_sources (type, name) VALUES ("appliance", "MW");
-INSERT INTO input_sources (type, name) VALUES ("appliance", "WD1");
-INSERT INTO input_sources (type, name) VALUES ("appliance", "WD2");
-INSERT INTO input_sources (type, name) VALUES ("appliance", "Range1");
-INSERT INTO input_sources (type, name) VALUES ("appliance", "Range2");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch0");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch1");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch2");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch3");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch4");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch5");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch6");
+INSERT INTO input_sources (type, name) VALUES ("subcircuit", "ch7");

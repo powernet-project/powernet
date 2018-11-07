@@ -27,13 +27,12 @@ def main():
     #gpioMap = {"CW1": "P8_9", "DW1": "P8_10", "AC1": "P8_15", "RF1": "P8_14", "SE1": "P8_11"}
     #gpioMap = {"CW1": 29, "DW1": 31, "AC1": 33, "RF1": 35, "SE1": 37, "WM1": 38}
     gpioMap = {"Fan_SLAC_H2": 29, "Lights_SLAC_H2": 31, "Computer_SLAC_H2": 33}
-    rpi = HardwareClass.HardwareRPi(gpio_map=gpioMap)
+    rpi = HardwareClass.HardwareRPi(house_id = 3, gpio_map=gpioMap)
     batt = StorageClass.Storage()
     buffer_size = 8
     q_ai = Queue(buffer_size)
     q_batt = Queue(3)
 
-    # FIXME: Number of analog inputs -> Needs to be automated
     n_ai = 8
     format_ai = [i * 4 for i in range(n_ai)]
 
