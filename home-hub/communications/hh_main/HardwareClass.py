@@ -1,4 +1,4 @@
-import homeassistant.remote as remote
+from subprocess import call
 # Uncomment these two lines if using BBB
 #import beaglebone_pru_adc as adc
 #import Adafruit_BBIO.GPIO as GPIO
@@ -432,14 +432,7 @@ class HardwareRPi:
         GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     def smart_switch_act(self, state):
-        api = remote.API('192.168.1.3', 'homeRP')
-
-        domain = 'switch'
-        service = "turn_" + state.lower()
-        switch_name = 'switch.aeotec_zw096_smart_switch_6_switch'
-        service_data = {"entity_id": switch_name}
-
-        remote.call_service(api, domain, service, service_data)  #control switch
+        call(["python", "change_switch_status.py", state])
 
 
 
