@@ -15,6 +15,8 @@ from datetime import datetime
 import spidev
 import numpy as np
 import sqlite3
+from requests import get
+import json
 #from main import logger
 
 
@@ -40,8 +42,8 @@ class HardwareRPi:
         # input_sources_statesDB TEST
         #self.input_sources_statesDB = {'AC1': [3,22], 'SE1': [4,23], 'RF1':[6,25], 'DW1':[7,28],'WM1':[8,29], 'CW1': [9,24], 'PW2':[10,25]}
         # input_sources_statesDB LAB
-        self.input_sources_statesDB = {'AC1': [3,5], 'SE1': [4,12], 'RF1':[6,10], 'DW1':[7,14],'WM1':[8,29], 'CW1': [9,13], 'PW2':[10,19], 'PV':[11,30], 'Mains1': [12,31], 'Mains2': [13,32]}
-        self.sourcesDBID = [self.input_sources_statesDB['AC1'][0],self.input_sources_statesDB['SE1'][0],self.input_sources_statesDB['RF1'][0],self.input_sources_statesDB['CW1'][0],self.input_sources_statesDB['DW1'][0],self.input_sources_statesDB['WM1'][0],self.input_sources_statesDB['PW2'][0]]
+        self.input_sources_statesDB = {'AC1': [3,5], 'SE1': [4,12], 'RF1':[6,10], 'DW1':[7,14],'WM1':[8,29], 'CW1': [9,13], 'PW2':[10,19], 'PV':[11,30], 'Mains1': [12,31], 'Mains2': [13,32], 'Switch0':[9,68]}
+        self.sourcesDBID = [self.input_sources_statesDB['AC1'][0],self.input_sources_statesDB['SE1'][0],self.input_sources_statesDB['RF1'][0],self.input_sources_statesDB['CW1'][0],self.input_sources_statesDB['DW1'][0],self.input_sources_statesDB['WM1'][0],self.input_sources_statesDB['PW2'][0]] # zeyuan todo: add another entry?
         self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
 
         self.logger = logging.getLogger(__name__)
@@ -83,8 +85,8 @@ class HardwareRPi:
 
         # Initializing SPI
         self.spi = spidev.SpiDev()
-        self.spi.open(0,0)
-        self.spi.max_speed_hz=1000000
+        # self.spi.open(0,0) # zeyuan, uncomment
+        # self.spi.max_speed_hz=1000000
 
 
     # Function to convert data to voltage level,
@@ -108,6 +110,15 @@ class HardwareRPi:
 
       return self.ConvertVolts(data,2)
 
+    # function to get the RMS voltage from Smart Switch
+    def ReadSmartSwitch(self):
+        entity_id = "sensor.aeotec_zw096_smart_switch_6_voltage"
+        headers = {"X-HA-access": "homeRP"}
+        response = get('http://127.0.0.1:8123/api/states/' + entity_id, headers=headers)
+        voltage = float(response.json()['state'])
+        return voltage
+
+
     def producer_ai(self, q_ai):
         """
             Producer AI
@@ -115,35 +126,42 @@ class HardwareRPi:
 
         self.logger.info('Producer AI called')
         while(True):
+            temp_ai = [] # zeyuan todo: remove
+
             dts = []  # date/time stamp for each start of analog read
-            #SE - Stove Exhaust id:12
-            dts.append(str(datetime.now()))
-            ai0 = self.ReadChannel(0)
-            #AC id:5
-            dts.append(str(datetime.now()))
-            ai1 = self.ReadChannel(1)
-            #RF id:10
-            dts.append(str(datetime.now()))
-            ai2 = self.ReadChannel(2)
-            #CW id:13
-            dts.append(str(datetime.now()))
-            ai3 = self.ReadChannel(3)
-            #BATT: phase 1 (black)
-            dts.append(str(datetime.now()))
-            ai4 = self.ReadChannel(4)
-            #Solar: phase 1 (black)
-            dts.append(str(datetime.now()))
-            ai5 = self.ReadChannel(5)
-            #MAINS: phase 1 (red)
-            dts.append(str(datetime.now()))
-            ai6 = self.ReadChannel(6)
-            #MAINS: phase 2 (black)
-            dts.append(str(datetime.now()))
-            ai7 = self.ReadChannel(7)
+            # #SE - Stove Exhaust id:12
+            # dts.append(str(datetime.now()))
+            # ai0 = self.ReadChannel(0)
+            # #AC id:5
+            # dts.append(str(datetime.now()))
+            # ai1 = self.ReadChannel(1)
+            # #RF id:10
+            # dts.append(str(datetime.now()))
+            # ai2 = self.ReadChannel(2)
+            # #CW id:13
+            # dts.append(str(datetime.now()))
+            # ai3 = self.ReadChannel(3)
+            # #BATT: phase 1 (black)
+            # dts.append(str(datetime.now()))
+            # ai4 = self.ReadChannel(4)
+            # #Solar: phase 1 (black)
+            # dts.append(str(datetime.now()))
+            # ai5 = self.ReadChannel(5)
+            # #MAINS: phase 1 (red)
+            # dts.append(str(datetime.now()))
+            # ai6 = self.ReadChannel(6)
+            # #MAINS: phase 2 (black)
+            # dts.append(str(datetime.now()))
+            # ai7 = self.ReadChannel(7)
 
 
-            temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
-            temp_queue = [temp_ai, dts]
+            # temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
+
+            dts.append(str(datetime.now()))
+            di0 = self.ReadSmartSwitch()
+            temp_di = [di0]
+
+            temp_queue = [temp_ai, temp_di, dts]
 
             # logger('Adding AI to the queue')
 
@@ -246,6 +264,9 @@ class HardwareRPi:
             }, {
                 "sensor_id": self.input_sources_statesDB['Mains2'][1], #MAINS phase 2 -> Black
                 "samples": []
+            }, {
+                "sensor_id": self.input_sources_statesDB['Switch0'][1], # Zwave Smart Switch 6
+                "samples": []
             }
         ]
 
@@ -256,8 +277,14 @@ class HardwareRPi:
                 try:
                     temp_cons = q_ai.get(True,2)
                     temp_ai = temp_cons[0]
-                    temp_date = temp_cons[1]
+                    temp_di = temp_cons[1]
+                    temp_date = temp_cons[2]
                     i_rms = self.RMS(temp_ai)
+                    i_rms.extend(temp_di) # appending di rms at the end
+
+                    print("i_rms:", i_rms)
+
+                    
 
                     # Writing data to db:
                     for i in range(len(i_rms)):
@@ -273,6 +300,7 @@ class HardwareRPi:
                     if self.flag_db == 1:
                         self.prev = copy.deepcopy(i_rms)
                         self.flag_db = 0
+                    continue # zeyuan todo: remove
 
 
                     # Adding analog reads, sID and Date to lists for db upload
@@ -288,7 +316,8 @@ class HardwareRPi:
                     # Queue is done processing the element
                     q_ai.task_done()
                     #print "length: ", len(d_fb[1]["samples"])
-                    if len(d_fb[1]["samples"]) == 10:
+                    if len(d_fb[1]["samples"]) == 10 \
+                        and False: # zeyuan: stop posting to rms for now
                         try:
                             # send the request to the powernet site instead of firebase
                             r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=self.REQUEST_TIMEOUT)
