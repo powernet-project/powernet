@@ -15,7 +15,7 @@ from datetime import datetime
 import spidev
 import numpy as np
 import sqlite3
-from requests import get
+from requests import get, post
 import json
 #from main import logger
 
@@ -55,7 +55,7 @@ class HardwareRPi:
 
         # Database:
         self.flag_db = 0
-        self.prev = [-1,-1,-1,-1,-1,-1,-1,-1]
+        self.prev = [-1,-1,-1,-1,-1,-1,-1,-1,-1]
         self.dP = 0.3
         self.flag_state = 0
 
@@ -112,6 +112,14 @@ class HardwareRPi:
 
     # function to get the RMS voltage from Smart Switch
     def ReadSmartSwitch(self):
+        # refresh switch voltage reading manually
+        domain = 'zwave'
+        service = "refresh_node_value"
+        service_data = {"node_id": 2, "value_id": 72057594076496130}
+        headers = {"X-HA-access": "homeRP"}
+        post('http://127.0.0.1:8123/api/services/' + domain + '/' + service,
+        data=json.dumps(service_data), headers=headers)
+        # get the lateset reading
         entity_id = "sensor.aeotec_zw096_smart_switch_6_voltage"
         headers = {"X-HA-access": "homeRP"}
         response = get('http://127.0.0.1:8123/api/states/' + entity_id, headers=headers)
@@ -130,28 +138,28 @@ class HardwareRPi:
 
             dts = []  # date/time stamp for each start of analog read
             # #SE - Stove Exhaust id:12
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai0 = self.ReadChannel(0)
             # #AC id:5
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai1 = self.ReadChannel(1)
             # #RF id:10
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai2 = self.ReadChannel(2)
             # #CW id:13
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai3 = self.ReadChannel(3)
             # #BATT: phase 1 (black)
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai4 = self.ReadChannel(4)
             # #Solar: phase 1 (black)
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai5 = self.ReadChannel(5)
             # #MAINS: phase 1 (red)
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai6 = self.ReadChannel(6)
             # #MAINS: phase 2 (black)
-            # dts.append(str(datetime.now()))
+            dts.append(str(datetime.now()))
             # ai7 = self.ReadChannel(7)
 
 
@@ -282,8 +290,7 @@ class HardwareRPi:
                     i_rms = self.RMS(temp_ai)
                     i_rms.extend(temp_di) # appending di rms at the end
 
-                    print("i_rms:", i_rms)
-
+                    # print("i_rms:", i_rms) # zeyuan todo: remove
                     
 
                     # Writing data to db:
@@ -300,7 +307,6 @@ class HardwareRPi:
                     if self.flag_db == 1:
                         self.prev = copy.deepcopy(i_rms)
                         self.flag_db = 0
-                    continue # zeyuan todo: remove
 
 
                     # Adding analog reads, sID and Date to lists for db upload
@@ -312,13 +318,17 @@ class HardwareRPi:
                     d_fb[5].get("samples").append({"RMS": i_rms[5], "date_time": temp_date[5]}) #PV
                     d_fb[6].get("samples").append({"RMS": i_rms[6], "date_time": temp_date[6]}) #Mains1 - Red
                     d_fb[7].get("samples").append({"RMS": i_rms[7], "date_time": temp_date[7]}) #Mains2 - Black
+                    d_fb[8].get("samples").append({"RMS": i_rms[8], "date_time": temp_date[8]}) #Smart Switch 6, one sample only
 
                     # Queue is done processing the element
                     q_ai.task_done()
+
+
                     #print "length: ", len(d_fb[1]["samples"])
-                    if len(d_fb[1]["samples"]) == 10 \
-                        and False: # zeyuan: stop posting to rms for now
+                    if len(d_fb[1]["samples"]) == 10:
                         try:
+                            d_fb = d_fb[-1:] # zeyuan todo: remove
+
                             # send the request to the powernet site instead of firebase
                             r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=self.REQUEST_TIMEOUT)
 
@@ -328,7 +338,7 @@ class HardwareRPi:
                             else:
                                 self.logger.exception("Request failed")
                                 r_post_rms.raise_for_status()
-
+                            
                             d_fb[:]=[]
                             d_fb = None
                             d_fb = copy.deepcopy(template)
