@@ -1,4 +1,3 @@
-from subprocess import call
 # Uncomment these two lines if using BBB
 #import beaglebone_pru_adc as adc
 #import Adafruit_BBIO.GPIO as GPIO
@@ -16,7 +15,9 @@ import spidev
 import numpy as np
 import sqlite3
 #from main import logger
-
+from requests import post
+from json import dumps
+from sys import argv
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -82,9 +83,9 @@ class HardwareRPi:
                 GPIO.output(gpio_map[key], GPIO.HIGH)
 
         # Initializing SPI
-        self.spi = spidev.SpiDev()
-        self.spi.open(0,0)
-        self.spi.max_speed_hz=1000000
+        #self.spi = spidev.SpiDev()
+        #self.spi.open(0,0)
+        #self.spi.max_speed_hz=1000000
 
 
     # Function to convert data to voltage level,
@@ -343,7 +344,9 @@ class HardwareRPi:
                 # power_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['value']
                 # cosphi_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['cosphi']
 
-                status_smart_switch = [v for v in dev_status if v['id']=='68'][0]['status']
+                status_smart_switch = [v for v in dev_status if v['id']==68][0]['status']
+
+                print(status_smart_switch)
 
 
                 #self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_WM1, status_PW2]
@@ -371,14 +374,14 @@ class HardwareRPi:
 
                             self.dbWriteStates(temp_db)
                             self.flag_state = 1
-                            #print 'try flag: ', self.flag_state
+                            
                         except Exception as exc:
                             self.logger.exception(exc)
                             client.captureException()
                 if self.flag_state == 1:
-                    #print 'app_orig_states: ', self.app_orig_states
+                    print('app_orig_states: ', self.app_orig_states)
                     self.app_orig_states = copy.deepcopy(self.app_new_status)
-                    #print 'app_orig_states_new: ', self.app_orig_states
+                    print('app_orig_states_new: ', self.app_orig_states)
                     self.flag_state = 0
 
             except Exception as exc:
@@ -432,8 +435,14 @@ class HardwareRPi:
         GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     def smart_switch_act(self, state):
-        call(["python3", "change_switch_status.py", state])
+        domain = 'switch'
+        service = "turn_%s" % state.lower()
+        switch_name = 'switch.aeotec_zw096_smart_switch_6_switch'
+        service_data = {"entity_id": switch_name}
+        headers = {"X-HA-access": "homeRP"}
 
+        r = post('http://192.168.1.3:8123/api/services/' + domain + '/' + service,
+                 data=dumps(service_data), headers=headers)
 
 
 
