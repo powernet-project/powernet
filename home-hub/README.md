@@ -1,10 +1,6 @@
 # Home Hub
 
-## Setup - WIP
+## WIP - need to update the description here because we are now going to use Docker
 
-```bash
-virtualenv venv_hh
-source venv_hh/bin/activate
-pip install -r requirements.txt
-```
+
 
