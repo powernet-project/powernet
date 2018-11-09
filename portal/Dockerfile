@@ -27,4 +27,4 @@ ADD . /app/
 
 # Run a WSGI server to serve the application. gunicorn must be declared as
 # a dependency in requirements.txt.
-CMD celery -A app worker -l info & gunicorn -b :$PORT -t 60 app.wsgi
+CMD celery -A app worker -l info --purge --heartbeat-interval=60 --autoscale=10,3 & gunicorn -b :$PORT -t 100 app.wsgi

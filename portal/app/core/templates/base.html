@@ -36,6 +36,10 @@
 {#            <li class="disabled"><a onclick="return false;" href="/home/two/">Bits Lab 2</a></li>#}
 {#            <li class="disabled"><a onclick="return false;" href="/electricity/">Electricity</a></li>#}
             <li><a href="http://powernet.stanford.edu/our-team" target="_blank">Team</a></li>
+
+              {% if user %}
+              <li><a href="/logout">Logout</a></li>
+              {% endif %}
           </ul>
         </div>
       </div>

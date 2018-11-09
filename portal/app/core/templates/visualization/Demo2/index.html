@@ -137,6 +137,13 @@
     </div>
   </gwd-doubleclick>
   <script type="text/javascript" id="gwd-init-code">
+
+    var deviceList = {{ devices | safe }};
+    var userId = {{ userId | safe }};
+    console.warn(deviceList);
+    console.warn(userId);
+
+
     (function() {
       var gwdAd = document.getElementById('gwd-ad');
 
@@ -145,7 +152,7 @@
        * fired when the document has been completely loaded and parsed.
        */
       function handleDomContentLoaded(event) {
-        demo2.setupListeners();
+        demo2.setupListeners(deviceList, userId);
       }
 
       /**
