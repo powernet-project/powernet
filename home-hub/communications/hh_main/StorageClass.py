@@ -140,6 +140,7 @@ class Storage:
 
     def battery_thread(self, q_batt):
         self.logger.info('Battery Thread called')
+        print 'BATTERY THREAD...'
         state = "OFF"
         fct = "url"     # Which function to call, url or realtime
         battval = 0
@@ -173,6 +174,31 @@ class Storage:
                     except Exception as exc:
                         self.logger.exception(exc)
                         client.captureException()
+
+    def battery_act(self, q_batt):
+        self.logger.info('Battery Thread called')
+        print 'BATTERY THREAD...'
+        state = q_batt[0]
+        fct = q_batt[1]     # Which function to call, url or realtime
+        battval = q_batt[2]
+        cosphi = q_batt[3]
+        b_id = q_batt[4]
+        if fct == "url":
+            batt = self.urlBased(b_id, state, battval, cosphi)
+            if batt == -1:
+                try:
+                    batt = self.urlBased(b_id, state, battval, cosphi)
+                except Exception as exc:
+                    self.logger.exception(exc)
+                    client.captureException()
+        else:
+            batt = self.realtime(battval)
+            if batt == -1:
+                try:
+                    batt = self.realtime(battval)
+                except Exception as exc:
+                    self.logger.exception(exc)
+                    client.captureException()
 
     def readSOE(self,):
         self.logger.info('readSOE called')

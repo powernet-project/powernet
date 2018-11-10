@@ -17,7 +17,8 @@ import numpy as np
 import sqlite3
 from sqlite3 import Error
 import json
-#from main import logger
+from google.cloud import pubsub_v1
+import StorageClass
 
 
 # Global variables
@@ -36,12 +37,12 @@ class HardwareRPi:
         self.PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 
-        #################### DONE
+        ####################
         self.app_orig_states = ["OFF", "OFF", "OFF"]
         self.app_new_status = ["OFF", "OFF", "OFF"]
         ####################
 
-        #################### DONE
+        ####################
         # input_sources_statesDB GC -> 'api_appliance_name':[db_id,api_id]
         self.input_sources_statesDB = {'DW_GC': [3,40], 'RF_GC': [4,41], 'LT_GC':[5,42], 'MW_GC':[6,43],'WD1_GC':[7,44], 'WD2_GC': [8,45], 'Range1_GC':[9,46], 'Range2_GC':[10,47]}
         self.sourcesDBID = [self.input_sources_statesDB['DW_GC'][0],self.input_sources_statesDB['RF_GC'][0],self.input_sources_statesDB['LT_GC'][0],self.input_sources_statesDB['MW_GC'][0],self.input_sources_statesDB['WD1_GC'][0],self.input_sources_statesDB['WD2_GC'][0],self.input_sources_statesDB['Range1_GC'][0],self.input_sources_statesDB['Range2_GC'][0]]
@@ -49,7 +50,7 @@ class HardwareRPi:
         self.input_sources_measurements = []
         ####################
 
-        #################### DONE
+        ####################
         #self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
         self.appliance_lst = ["DW_GC", "RF_GC", "LT_GC", "MW_GC", "DR1_GC", "DR2_GC", "Range1_GC", "Range2_GC"]
         ####################
@@ -62,7 +63,7 @@ class HardwareRPi:
 
         self.logger.info('HardwareRPi class called')
 
-        # Database:
+        # Database variables:
         self.flag_db = 0
         self.prev = [-1,-1,-1,-1,-1,-1,-1,-1]
         self.dP = 0.3
@@ -79,22 +80,15 @@ class HardwareRPi:
         self.N_SAMPLES = N_SAMPLES
         self.adc_Vin = 3.3
         self.delay = 0.002
-
-        if gpio_map == None:
-            #################### DONE
-            # self.gpio_map = {"CW1": 29, "DW1": 31, "AC1": 33,
-            # "RF1": 35, "SE1": 37, "WM1": 38}
-            self.gpio_map = {"Fan_SLAC_H2": 29, "Lights_SLAC_H2": 31, "Computer_SLAC_H2": 33}
-            ####################
-        else:
-            self.gpio_map = gpio_map
-
-        for key in self.gpio_map:
-            GPIO.setup(gpio_map[key], GPIO.OUT)
-            if gpio_map[key] == 35:
-                GPIO.output(gpio_map[key], GPIO.LOW)
+        
+        gpio_map = [11,13,15,29,31,33,35,37]     
+        for i in gpio_map:
+            GPIO.setup(i, GPIO.OUT)
+            if i == 35:
+                GPIO.output(i, GPIO.LOW)
             else:
-                GPIO.output(gpio_map[key], GPIO.HIGH)
+                GPIO.output(i, GPIO.HIGH)
+
 
         # Initializing SPI
         self.spi = spidev.SpiDev()
@@ -102,10 +96,11 @@ class HardwareRPi:
         self.spi.max_speed_hz=1000000
 
         ####################
-        # Creating database if does not exist already
-        # self.createDB()
-        # Initializing devices and DB:
+        # Initializing devices and DB (create DB if does not exist already):
         self.hh_devices_init(self.house_id, self.house_name)
+
+        # Creating battery class:
+        self.batt = StorageClass.Storage()
         
 
 
@@ -127,7 +122,6 @@ class HardwareRPi:
           data[n]=((adc[1]&3) << 8) + adc[2]
           n+=1
           time.sleep(self.delay)
-
       return self.ConvertVolts(data,2)
 
     def producer_ai(self, q_ai):
@@ -195,7 +189,7 @@ class HardwareRPi:
             sum_i[6] += math.pow((val[6]-self.adc_Vin/2), 2)
             sum_i[7] += math.pow((val[7]-self.adc_Vin/2), 2)
 
-        # NEED TO INCLUDE CONVERSION FROM CT
+        # Computing RMS and converting to AMPS
         rms_a0 = math.sqrt(sum_i[0] / self.N_SAMPLES)*self.CT10
         rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)*self.CT10
         rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)*self.CT10
@@ -338,94 +332,60 @@ class HardwareRPi:
                     self.logger.exception(exc)
                     client.captureException()
 
-    def devices_th(self, q_batt):
+    def devices_th(self):
         """
             Devices Status
         """
         self.logger.info('Device Thread called')
-
-        #app_orig_states = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"] # Battery not included
-        #app_new_status = ["OFF", "OFF", "ON", "OFF", "OFF", "OFF"]  # Battery not included
-
-        ################### DONE
-        # status_PW2 = "OFF"
-        # power_PW2 = 0.0
-        # cosphi_PW2 = 1.0
-        ###################
+        # Google Pubsub -> To replace devices thread
+        try:
+            subscriber = pubsub_v1.SubscriberClient()
+            subscription_name = 'projects/{project_id}/subscriptions/{sub}'.format(
+            project_id='pwrnet-158117',
+            sub='HH_Test',  # Set this to something appropriate.
+            )
+            subscriber.subscribe(subscription_name, callback=self.callback)
+        except Exception as exc:
+            self.logger.exception(exc)
+            client.captureException()
+            print "Exception GCP: ", exc
 
         while True:
-            try:
-                dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT).json()["results"]
-                dts = str(datetime.now())
-                ################### DONE
-                # status_AC1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['AC1'][1]][0]['status']
-                # status_SE1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['SE1'][1]][0]['status']
-                # status_RF1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['RF1'][1]][0]['status']
-                # status_CW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['CW1'][1]][0]['status']
-                # status_DW1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['DW1'][1]][0]['status']
-                # status_WM1 = [v for v in dev_status if v['id']==self.input_sources_statesDB['WM1'][1]][0]['status']
-                # # Battery
-                # status_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['status']
-                # power_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['value']
-                # cosphi_PW2 = [v for v in dev_status if v['id']==self.input_sources_statesDB['PW2'][1]][0]['cosphi']
-
-                status_Fan = [v for v in dev_status if v['id']==self.input_sources_statesDB['Fan_SLAC_H2'][1]][0]['status']
-                status_Lights = [v for v in dev_status if v['id']==self.input_sources_statesDB['Lights_SLAC_H2'][1]][0]['status']
-                status_Computer = [v for v in dev_status if v['id']==self.input_sources_statesDB['Computer_SLAC_H2'][1]][0]['status']
-                ###################
-
-                ################### DONE
-                # self.app_new_status = [status_AC1, status_SE1, status_RF1, status_CW1, status_DW1, status_WM1, status_PW2]
-                self.app_new_status = [status_Fan, status_Lights, status_Computer]
-                print 'Devices new status: ', self.app_new_status
-                ###################
-                #print 'app_new_status: ', self.app_new_status
-                #print 'battery status: ', status_PW2
-
-                for i in range(len(self.app_new_status)):
-                    if self.app_new_status[i] != self.app_orig_states[i]:
-                        temp_db = [self.app_new_status[i], dts.split()[0], dts.split()[1], self.sourcesDBID[i]]
-                        ###################
-                        # try:
-                        #     if self.appliance_lst[i] == 'PW2':
-                        #         temp_q_batt = [status_PW2, "url", power_PW2, cosphi_PW2]
-                        #         #print 'q_batt: ', temp_q_batt
-                        #         try:
-                        #             q_batt.put(temp_q_batt)
-                        #             #print 'Success q_batt put'
-                        #         except Exception as exc:
-                        #             self.logger.exception(exc)
-                        #             client.captureException()
-                        #     else:
-                        #         self.devices_act(self.appliance_lst[i], self.app_new_status[i])
-                        try:
-                            self.devices_act(self.appliance_lst[i], self.app_new_status[i])
-                        ###################
-
-                            ################### DONE
-                            #self.dbWriteStates(temp_db)
-                            self.flag_state = 1
-                            ###################
-
-                            #print 'try flag: ', self.flag_state
-                        except Exception as exc:
-                            self.logger.exception(exc)
-                            client.captureException()
-                if self.flag_state == 1:
-                    #print 'app_orig_states: ', self.app_orig_states
-                    self.app_orig_states = copy.deepcopy(self.app_new_status)
-                    #print 'app_orig_states_new: ', self.app_orig_states
-                    self.flag_state = 0
-
-            except Exception as exc:
-                self.logger.exception(exc)
-                client.captureException()
-
             time.sleep(2)   # Delay between readings
 
 
     def devices_act(self, device, state):
-        GPIO.output(self.gpio_map[device], GPIO.LOW if state == 'ON' else GPIO.HIGH)
+        GPIO.output(self.input_sources_measurements[2][device-1],GPIO.LOW if state == 'ON' else GPIO.HIGH)
+
+    def callback(self, message):
+        # print 'Atributes: ', message.data
+        dts = str(datetime.now())
+        data = json.loads(message.data)
+        print 'data: ', data
+        load_state = data['status']
+        load_name = data['name']
+        load_type = data['type']
+        load_home = data['home']
+        load_id = data['id']
+        load_val = data['value']
+        load_cPhi = data['cosphi']
+
+        if load_home == self.house_id:                                      # Chekcing whether the change is in the home we are interested in
+            if load_type == 'SDF':                                          # Actuate in the relay controlled loads
+                self.devices_act(int(load_name[-1]), load_state)
+                # As of now just writing the relay devices states to db
+                self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])]])
+            elif load_type == 'STORAGE': 
+                # print 'Storage...'                                   # Actuate in the battery
+                try:
+                    # Comment the line below if no battery in range
+                    self.batt.battery_act([load_state, "url", load_val, load_cPhi,load_id])     # Still needs to figure timing issue modbus
+                except Exception as exc:
+                    self.logger.exception(exc)
+                    client.captureException()
+            else:                                                           # Actuate in any other load category
+                print "Other devices such as Z-Wave plugs"
+        
 
     
     def hh_devices_init(self, house_id, house_name):
@@ -438,25 +398,27 @@ class HardwareRPi:
             if h['home'] == house_id:       # Checking if there is any device in house with house_id and include device id in list
                 home_devID.append(h['id'])
         if home_devID:                      # If devices list is not empty (meaning that a house with devices is already created) dont create any dev
-            print home_devID
-            print 'dont create devices'
+            # print home_devID
+            # print 'dont create devices'
             try:                            # Check if DB exists in HH
                 conn = sqlite3.connect('homehubDB.db')  
                 c = conn.cursor()
                 c.execute("SELECT * FROM 'input_sources'")
             except Exception as exc:
-                print(exc)
-                print 'create DB...'
+                self.logger.exception(exc)
+                client.captureException()
+                # print 'create DB...'
                 self.createDB()
         else:                               # If device list is empty means it needs to create new devices in the server and local db
-            print 'create devices'
+            # print 'create devices'
             home_devID = self.create_devices(8)  # Create 8 devices -> there are 8 channels in the ADC and 8 relays
-            print 'home_devID: ', home_devID
+            # print 'home_devID: ', home_devID
             if home_devID:
-                print 'call db function to create dev id in measurements table'
+                # print 'call db function to create dev id in measurements table'
                 self.createDB()
             else:
                 print 'problem in creating devices. Check POST request'
+                pass
         
         self.input_sources_measurements.append(home_devID)           # Adding device ID
         self.input_sources_measurements.append([1,2,3,4,5,6,7,8])    # Adding local DB ID
@@ -475,15 +437,16 @@ class HardwareRPi:
             dev['value'] = 0
             dev['cosphi'] = 1.0
             r_post_dev = requests.post(url = self.PWRNET_API_BASE_URL + "device/", json=dev, timeout=self.REQUEST_TIMEOUT)
-            print "status code", r_post_dev.status_code
+            # print "status code", r_post_dev.status_code
             if r_post_dev.status_code == 201:
-                print 'request was successful'
+                # print 'request was successful'
                 j = json.loads(r_post_dev.text)
                 devID.append(j['id'])
 
             else:
                 print 'request not successful'
-        print 'devID: ', devID
+                pass
+        # print 'devID: ', devID
         return devID
 
     
@@ -496,13 +459,15 @@ class HardwareRPi:
         """ create a database connection to a SQLite database """
         try:
             conn = sqlite3.connect('homehubDB.db')
-            print(sqlite3.version)
+            # print(sqlite3.version)
             c = conn.cursor()
             c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='input_sources'")
             if c.fetchone()[0]==0:
                 sqlite3.complete_statement(TableSchema)
                 c.executescript(TableSchema)
         except Error as e:
+            self.logger.exception(e)
+            client.captureException()
             print(e)
         finally:
             c.close()
