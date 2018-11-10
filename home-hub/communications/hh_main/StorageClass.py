@@ -7,6 +7,7 @@ from pyModbusTCP.client import ModbusClient
 from pyModbusTCP import utils
 from raven import Client
 from datetime import datetime
+import csv
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -220,6 +221,33 @@ class Storage:
             self.tcpClient.open()
             return -1
 
+    def readDC(self,):
+        self.logger.info('readSOE called')
+        addrI = 62834    # Modbus address of I_DC
+        addrV = 62832    # Modbus address of V_DC
+        addrP = 62574    # Modbus address of P_DC
+        addrSOE = 62852    # Modbus address of SOE
+        addr = [addrI, addrV, addrP, addrSOE]
+        vals_dc = []
+        for i in addr:
+            if self.tcpClient.is_open():
+                try:
+                    resp = self.tcpClient.read_holding_registers(i, 2)   # Reading 2 registers, int16
+                    Lh = hex(resp[0])
+                    Mh = hex(resp[1])
+                    Sh = Mh[2:]+Lh[2:]
+                    val = struct.unpack('f',struct.pack('i',int(Sh,16)))    # Converting from hex to float
+                    vals_dc.append(val[0])
+
+                except Exception as exc:
+                    self.logger.exception(exc)
+                    client.captureException()
+            else:
+                self.tcpClient.open()
+                return -1
+        return vals_dc
+
+
     def readCosPhi(self):
         self.logger.info('readCosPhi called')
         addr = 61706    # Modbus address of FixedCosPhi
@@ -283,7 +311,7 @@ if __name__ == '__main__':
     battTime = 0.0
     deviceId = '19'
     soe = 0
-    funStor = raw_input("Which function to test: urlBased, storageRT, readSOE, readCosPhi, writeCosPhi: ")
+    funStor = raw_input("Which function to test: urlBased, storageRT, readSOE, readDC, readCosPhi, writeCosPhi: ")
 
     while True:
         if funStor == "storageRT":
@@ -307,6 +335,16 @@ if __name__ == '__main__':
                 soe = storage.readSOE()
             print "SOE: ", soe
             time.sleep(1)
+
+        elif funStor == "readDC":
+            t = 0
+            with open('battData', 'wb') as myfile:
+                wr = csv.writer(myfile, quoting=csv.QUOTE_ALL)
+                while(t<5):
+                    vals_dc = storage.readDC()
+                    wr.writerow(vals_dc)
+                    t=t+1
+                    time.sleep(5)
 
         elif funStor == "readCosPhi":
             cosPhi = storage.readCosPhi()
