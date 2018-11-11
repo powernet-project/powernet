@@ -333,12 +333,6 @@ if __name__ == '__main__':
                 battTime = storage.urlBased(deviceId)
             time.sleep(1)
 
-        elif funStor == "urlBased_Test":
-            battTime = storage.urlBased_Test(deviceId)
-            if battTime == -1:
-                battTime = storage.urlBased_Test(deviceId)
-            time.sleep(1)
-
         elif funStor == "readSOE":
             soe = storage.readSOE()
             if soe == -1:
@@ -359,12 +353,6 @@ if __name__ == '__main__':
                         f.write('\n')
                 t=t+1
                 time.sleep(5)
-            # while(t<5):
-            #         vals_dc = storage.readDC()
-            #         print vals_dc
-            #         # wr.writerow(vals_dc)
-            #         t=t+1
-            #         time.sleep(5)
 
         elif funStor == "readCosPhi":
             cosPhi = storage.readCosPhi()
