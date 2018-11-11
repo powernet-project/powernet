@@ -4,8 +4,11 @@
 
 .navbar-custom .navbar-nav > li > a {
 	color: #fff;
-	font-weight: 600;
+    font-weight: 600;
+    padding-right: 15px;
+    padding-left: 30px;
 }
+
 .navbar-custom .navbar-nav > li > a:focus, 
 .navbar-custom .navbar-nav > li > a:hover {
     color: hsla(0,0%,100%,.75);
@@ -44,33 +47,8 @@
     outline: 0;
     box-shadow: 0 0 1pt 1pt #A80532;
   } 
-   
-  /* .btn-custom:active, 
-  .btn-custom.active, 
-  .open .dropdown-toggle.btn-custom { 
-    background-image: none; 
-  } 
-   
-  .btn-custom.disabled, 
-  .btn-custom[disabled], 
-  fieldset[disabled] .btn-custom, 
-  .btn-custom.disabled:hover, 
-  .btn-custom[disabled]:hover, 
-  fieldset[disabled] .btn-custom:hover, 
-  .btn-custom.disabled:focus, 
-  .btn-custom[disabled]:focus, 
-  fieldset[disabled] .btn-custom:focus, 
-  .btn-custom.disabled:active, 
-  .btn-custom[disabled]:active, 
-  fieldset[disabled] .btn-custom:active, 
-  .btn-custom.disabled.active, 
-  .btn-custom[disabled].active, 
-  fieldset[disabled] .btn-custom.active { 
-    background-color: #A80532; 
-    border-color: #A80532; 
-  } 
-   
-  .btn-custom .badge { 
-    color: #A80532; 
-    background-color: #ffffff; 
-  } */
+
+  nav div div li + li {
+    background:url('../img/navbar/VertSpacer_PowerNet_Webpage_Creative.png') no-repeat top left;
+
+}
