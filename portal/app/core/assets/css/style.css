@@ -50,5 +50,9 @@
 
   nav div div li + li {
     background:url('../img/navbar/VertSpacer_PowerNet_Webpage_Creative.png') no-repeat top left;
+}
 
+.logout{
+    background:url('../img/loginbtn/Logout_PowerNet_Webpage_Creative.png');
+    width:10px;
 }

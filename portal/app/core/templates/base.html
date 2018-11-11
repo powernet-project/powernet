@@ -42,7 +42,12 @@
             <li><a href="http://powernet.stanford.edu/our-team" target="_blank">Team</a></li>
 
               {% if user %}
-              <li><a href="/logout">Logout</a></li>
+              <li>
+                <a href="/logout" style="padding-top: 10px; padding-bottom: 0px;">
+                  {% load static %}
+                  <img src="{% static "img/loginbtn/Logout_PowerNet_Webpage_Creative.png" %}"  alt="logoutBtn" width=83   height=30 >
+                </a>
+              </li>
               {% endif %}
           </ul>
         </div>
@@ -50,10 +55,11 @@
     </nav>
 
 
+
     <div class="container-fluid">
         {% block main-content %}{% endblock %}
     </div>
-
+    
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
