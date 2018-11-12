@@ -68,7 +68,7 @@ class HardwareRPi:
         self.prev = [-1,-1,-1,-1,-1,-1,-1,-1]
         self.dP = 0.3
         self.flag_state = 0
-        
+
         # Creating home init variables:
         self.house_name = "HHLab"
         self.house_id = house_id                # This one changes depending on house number
@@ -80,8 +80,8 @@ class HardwareRPi:
         self.N_SAMPLES = N_SAMPLES
         self.adc_Vin = 3.3
         self.delay = 0.002
-        
-        gpio_map = [11,13,15,29,31,33,35,37]     
+
+        gpio_map = [11,13,15,29,31,33,35,37]
         for i in gpio_map:
             GPIO.setup(i, GPIO.OUT)
             if i == 35:
@@ -101,7 +101,7 @@ class HardwareRPi:
 
         # Creating battery class:
         self.batt = StorageClass.Storage()
-        
+
 
 
     # Function to convert data to voltage level,
@@ -375,7 +375,7 @@ class HardwareRPi:
                 self.devices_act(int(load_name[-1]), load_state)
                 # As of now just writing the relay devices states to db
                 self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])]])
-            elif load_type == 'STORAGE': 
+            elif load_type == 'STORAGE':
                 # print 'Storage...'                                   # Actuate in the battery
                 try:
                     # Comment the line below if no battery in range
@@ -385,30 +385,67 @@ class HardwareRPi:
                     client.captureException()
             else:                                                           # Actuate in any other load category
                 print "Other devices such as Z-Wave plugs"
-        
 
-    
+
+
     def hh_devices_init(self, house_id, house_name):
         # dev_info = {"id": 48, "name": "Test_Dev", "type": "AIR_CONDITIONER", "status": "OFF", "value": 0, "cosphi": 1.0, "home": 2}
         # Getting all device information from cloud
         dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT).json()["results"]
         home_devID = []
-
+        name_devID = []
+        type_devID = []
         for h in dev_status:
             if h['home'] == house_id:       # Checking if there is any device in house with house_id and include device id in list
                 home_devID.append(h['id'])
+                type_devID.append(h['type'])
+                name_devID.append(h['name'])
         if home_devID:                      # If devices list is not empty (meaning that a house with devices is already created) dont create any dev
-            # print home_devID
-            # print 'dont create devices'
             try:                            # Check if DB exists in HH
-                conn = sqlite3.connect('homehubDB.db')  
+                conn = sqlite3.connect('homehubDB.db')
                 c = conn.cursor()
-                c.execute("SELECT * FROM 'input_sources'")
-            except Exception as exc:
+                lst_db = c.execute("SELECT * FROM 'input_sources'")  # HERE: If doesnt throw error need to check whether the number of rows in the list matches number of dev id. If different need to create additional ones based on the id's that are missing
+            except Exception as exc:        # DB does not exist
                 self.logger.exception(exc)
                 client.captureException()
-                # print 'create DB...'
-                self.createDB()
+                self.create_table(conn)                  # Creating tables
+                for d in range(len(home_devID)):    # Create rows for each dev in the home
+                    vals=[type_devID[d],name_devID[d],home_devID[d]]
+                    self.input_sources_insert(c,vals)
+                conn.commit()
+                conn.close()
+                self.input_sources_measurements.append(home_devID)           # Adding device ID
+                self.input_sources_measurements.append(range(len(home_devID)+1)[1:])    # Adding local DB ID
+                self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
+                # print 'input_sources_measurements',self.input_sources_measurements
+                return
+            # DB  table exists
+            db_is = lst_db.fetchall()       # retireve all input_source table data
+            print db_is
+            l_db_api_id = []
+            l_db_prm_key = []
+            if len(db_is):
+                for i in db_is:
+                    l_db_api_id.append(int(i[-1]))      # list with all api ids from db
+                    l_db_prm_key.append(i[0])           # list with all primary keys from db
+                diff_apidb = sorted(list(set(home_devID)-set(l_db_api_id)))     # Checking difference between get request and db (need to address difference between db and get as well)
+                # diff_apidb.append(71)       # test case
+                # diff_apidb.append(72)       # test case
+                print 'diff_apidb: ', diff_apidb
+                if diff_apidb:
+                    for i in diff_apidb:
+                        vals = [type_devID[home_devID.index(i)],name_devID[home_devID.index(i)],i]
+                        # vals = ['Test','TEST',i]    # test case
+                        print 'vals: ', vals
+                        self.input_sources_insert(c,vals)
+                        l_db_prm_key.append(c.lastrowid)
+                    conn.commit()
+                    conn.close()
+                    self.input_sources_measurements.append(home_devID)           # Adding device ID
+                    self.input_sources_measurements.append(l_db_prm_key)         # Adding local DB ID
+                    self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
+                    # print 'input_sources_measurements: ', self.input_sources_measurements
+
         else:                               # If device list is empty means it needs to create new devices in the server and local db
             # print 'create devices'
             home_devID = self.create_devices(8)  # Create 8 devices -> there are 8 channels in the ADC and 8 relays
@@ -419,7 +456,7 @@ class HardwareRPi:
             else:
                 print 'problem in creating devices. Check POST request'
                 pass
-        
+
         self.input_sources_measurements.append(home_devID)           # Adding device ID
         self.input_sources_measurements.append([1,2,3,4,5,6,7,8])    # Adding local DB ID
         self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
@@ -449,7 +486,7 @@ class HardwareRPi:
         # print 'devID: ', devID
         return devID
 
-    
+
     def createDB(self):
         SQL_File_Name = 'table_schema.sql'
         TableSchema=""
@@ -472,3 +509,18 @@ class HardwareRPi:
         finally:
             c.close()
             conn.close()
+
+    def create_table(self, conn):
+        SQL_File_Name = 'create_table_sql.sql'
+        TableSchema=""
+        with open(SQL_File_Name, 'r') as SchemaFile:
+            TableSchema=SchemaFile.read().replace('\n','')
+        try:
+            c = conn.cursor()
+            sqlite3.complete_statement(TableSchema)
+            c.executescript(TableSchema)
+        except Error as e:
+            print(e)
+
+    def input_sources_insert(self,c,vals):
+        c.execute("INSERT INTO input_sources (type, name, api_id) VALUES ((?), (?), (?))" , (vals[0], vals[1], vals[2]))
