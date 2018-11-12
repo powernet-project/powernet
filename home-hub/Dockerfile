@@ -8,7 +8,13 @@ WORKDIR /main
 COPY . /main
 
 # Install any needed packages specified in requirements.txt
-RUN pip install --trusted-host pypi.python.org -r requirements.txt
+RUN pip install numpy
+RUN pip install -r requirements.txt
+RUN pip install -f https://download.mosek.com/stable/wheel/index.html Mosek==8.1.43
+
+RUN mkdir ~/mosek/
+ADD mosek.lic /main/
+RUN cp /main/mosek.lic ~/mosek/
 
 # Make port 80 available to the world outside this container
 EXPOSE 80
