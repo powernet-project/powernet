@@ -9,7 +9,6 @@ import copy
 import requests
 import logging
 from logging.handlers import RotatingFileHandler
-#import StorageClass
 from raven import Client
 from datetime import datetime
 import spidev
