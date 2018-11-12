@@ -12,6 +12,7 @@ echo "Adding the Powernet remote (repo)"
 git remote add -f origin https://github.com/powernet-project/powernet.git
 echo "Pulling the latest from master"
 git pull origin master
+git branch --set-upstream-to=origin/master master
 
 echo "Installing Docker"
 cd ~/
