@@ -18,6 +18,7 @@ git config core.sparsecheckout true # allows us to checkout only a portion of th
 echo home-hub/ >> .git/info/sparse-checkout # defines which part of the repo we want to check out
 git remote add -f origin https://github.com/powernet-project/powernet.git
 git pull origin master
+git branch --set-upstream-to=origin/master master
 ```
 
 ### Install Docker on the RPi:
