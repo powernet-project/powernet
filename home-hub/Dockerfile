@@ -8,7 +8,16 @@ WORKDIR /main
 COPY . /main
 
 # Install any needed packages specified in requirements.txt
-RUN pip install numpy
+RUN pip install --upgrade pip
+
+# Need to install numpy and scipy beforehand otherwise CVX complains about 
+# not finding in the system packages when it attempts to run
+RUN pip install numpy scipy
+
+# Also need to manually build for it to be available
+RUN apt-get update
+RUN apt-get install sqlite3
+
 RUN pip install -r requirements.txt
 RUN pip install -f https://download.mosek.com/stable/wheel/index.html Mosek==8.1.43
 
