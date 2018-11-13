@@ -23,9 +23,10 @@ def main():
 
 
     logger.info("Starting main program")
+    h_id = raw_input("Enter house id: ")
 
     # Initializing variables for queue and threads
-    rpi = HardwareClass.HardwareRPi(house_id = 3, gpio_map=None)
+    rpi = HardwareClass.HardwareRPi(house_id = int(h_id), gpio_map=None)
     # batt = StorageClass.Storage()
     buffer_size = 8
     q_ai = Queue(buffer_size)
