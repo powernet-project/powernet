@@ -362,7 +362,7 @@ class HardwareRPi:
         # print 'Atributes: ', message.data
         dts = str(datetime.now())
         data = json.loads(message.data)
-        print 'data: ', data
+        # print 'data: ', data
         load_state = data['status']
         load_name = data['name']
         load_type = data['type']
@@ -449,7 +449,7 @@ class HardwareRPi:
                     # print 'input_sources_measurements: ', self.input_sources_measurements
 
         else:                               # If device list is empty means it needs to create new devices in the server and local db
-            print 'create devices'
+            # print 'create devices'
             home_devID = self.create_devices(8)  # Create 8 devices -> there are 8 channels in the ADC and 8 relays
             # print 'home_devID: ', home_devID
             if home_devID:
@@ -462,7 +462,7 @@ class HardwareRPi:
         self.input_sources_measurements.append(home_devID)           # Adding device ID
         self.input_sources_measurements.append([1,2,3,4,5,6,7,8])    # Adding local DB ID
         self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
-        print 'Input sources: ', self.input_sources_measurements
+        # print 'Input sources: ', self.input_sources_measurements
 
     def create_devices(self, number_of_devices, house_devstatus = 'ON'):
         device = { "status": None, "name": None, "type": None, "value": None, "home": None, "cosphi": None }
