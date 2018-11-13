@@ -341,7 +341,7 @@ class HardwareRPi:
             subscriber = pubsub_v1.SubscriberClient()
             subscription_name = 'projects/{project_id}/subscriptions/{sub}'.format(
             project_id='pwrnet-158117',
-            sub='HH_Test',  # Set this to something appropriate.
+            sub='HH9',  # Set this to something appropriate.
             )
             subscriber.subscribe(subscription_name, callback=self.callback)
         except Exception as exc:
@@ -370,6 +370,7 @@ class HardwareRPi:
         load_id = data['id']
         load_val = data['value']
         load_cPhi = data['cosphi']
+        message.ack()
 
         if load_home == self.house_id:                                      # Chekcing whether the change is in the home we are interested in
             if load_type == 'SDF':                                          # Actuate in the relay controlled loads
