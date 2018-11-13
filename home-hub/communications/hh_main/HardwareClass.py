@@ -445,7 +445,7 @@ class HardwareRPi:
                     conn.close()
                     self.input_sources_measurements.append(home_devID)           # Adding device ID
                     self.input_sources_measurements.append(l_db_prm_key)         # Adding local DB ID
-                    self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
+                    self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
                     # print 'input_sources_measurements: ', self.input_sources_measurements
 
         else:                               # If device list is empty means it needs to create new devices in the server and local db
