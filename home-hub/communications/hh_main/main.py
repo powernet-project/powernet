@@ -23,7 +23,8 @@ def main():
 
 
     logger.info("Starting main program")
-    h_id = raw_input("Enter house id: ")
+    h_id = int(raw_input("Enter house id: "))
+    # h_id = 9      # Comment previous line and uncomment this if want id hardcoded
 
     # Initializing variables for queue and threads
     rpi = HardwareClass.HardwareRPi(house_id = int(h_id), gpio_map=None)
