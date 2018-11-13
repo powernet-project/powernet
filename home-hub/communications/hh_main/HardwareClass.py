@@ -373,7 +373,7 @@ class HardwareRPi:
             if load_type == 'SDF':                                          # Actuate in the relay controlled loads
                 self.devices_act(int(load_name[-1]), load_state)
                 # As of now just writing the relay devices states to db
-                self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])]])
+                self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])-1]])
             elif load_type == 'STORAGE':
                 # print 'Storage...'                                   # Actuate in the battery
                 try:
@@ -447,7 +447,7 @@ class HardwareRPi:
                     # print 'input_sources_measurements: ', self.input_sources_measurements
 
         else:                               # If device list is empty means it needs to create new devices in the server and local db
-            # print 'create devices'
+            print 'create devices'
             home_devID = self.create_devices(8)  # Create 8 devices -> there are 8 channels in the ADC and 8 relays
             # print 'home_devID: ', home_devID
             if home_devID:
