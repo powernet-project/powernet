@@ -101,6 +101,9 @@ class HardwareRPi:
         # Creating battery class:
         self.batt = StorageClass.Storage()
 
+        # Pubsub subscription:
+        self.sub = 'HH'+str(self.house_id)
+
 
 
     # Function to convert data to voltage level,
@@ -341,7 +344,7 @@ class HardwareRPi:
             subscriber = pubsub_v1.SubscriberClient()
             subscription_name = 'projects/{project_id}/subscriptions/{sub}'.format(
             project_id='pwrnet-158117',
-            sub='HH9',  # Set this to something appropriate.
+            sub=self.sub,  # Set this to something appropriate.
             )
             subscriber.subscribe(subscription_name, callback=self.callback)
         except Exception as exc:
