@@ -459,7 +459,7 @@ class HardwareRPi:
 
         self.input_sources_measurements.append(home_devID)           # Adding device ID
         self.input_sources_measurements.append([1,2,3,4,5,6,7,8])    # Adding local DB ID
-        self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
+        self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
         print 'Input sources: ', self.input_sources_measurements
 
     def create_devices(self, number_of_devices, house_devstatus = 'ON'):
