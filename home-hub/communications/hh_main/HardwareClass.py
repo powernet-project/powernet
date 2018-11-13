@@ -354,6 +354,8 @@ class HardwareRPi:
 
 
     def devices_act(self, device, state):
+        print "device: ", device
+        print "state: ", state
         GPIO.output(self.input_sources_measurements[2][device-1],GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     def callback(self, message):
