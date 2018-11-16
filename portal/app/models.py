@@ -140,6 +140,3 @@ class MatlabFiles(models.Model):
 
     filename = models.CharField(max_length=200)
     content = JSONField(null=True, blank=True)
-
-
-    

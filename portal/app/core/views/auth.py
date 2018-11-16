@@ -20,16 +20,16 @@ def signup(request):
     content['errors'] = errors
     content["lastPOST"] = request.POST
 
-    if not 'first_name' in request.POST or not request.POST['first_name']:
+    if 'first_name' not in request.POST or not request.POST['first_name']:
         errors.append('First name is required.')
 
-    if not 'last_name' in request.POST or not request.POST['last_name']:
+    if 'last_name' not in request.POST or not request.POST['last_name']:
         errors.append('Last name is required.')
 
-    if not 'password' in request.POST or not request.POST['password']:
+    if 'password' not in request.POST or not request.POST['password']:
         errors.append('Password is required.')
 
-    if not 'confirmedpassword' in request.POST or not request.POST['confirmedpassword']:
+    if 'confirmedpassword' not in request.POST or not request.POST['confirmedpassword']:
         errors.append('Confirm password is required.')
 
     if 'password' in request.POST and 'confirmedpassword' in request.POST \
@@ -47,15 +47,15 @@ def signup(request):
         print(errors)
         return render(request, 'auth/signup.html', content)
 
-    new_user = User.objects.create_user(username=request.POST['username'], \
-                                        first_name=request.POST['first_name'], \
-                                        last_name=request.POST['last_name'], \
+    new_user = User.objects.create_user(username=request.POST['username'],
+                                        first_name=request.POST['first_name'],
+                                        last_name=request.POST['last_name'],
                                         password=request.POST['password'])
 
     # create corresponding PownetUser
-    newPowernetUser = PowernetUser(user=new_user, \
-                                   first_name=new_user.first_name, \
-                                   last_name=new_user.last_name, \
+    newPowernetUser = PowernetUser(user=new_user,
+                                   first_name=new_user.first_name,
+                                   last_name=new_user.last_name,
                                    email=request.POST['email'])
     newPowernetUser.save()
 
@@ -65,7 +65,7 @@ def signup(request):
 
     # log the new user in
     new_user.save()
-    new_user = authenticate(username=request.POST['username'], \
+    new_user = authenticate(username=request.POST['username'],
                             password=request.POST['password'])
     auth_login(request, new_user)
 

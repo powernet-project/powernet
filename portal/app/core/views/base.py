@@ -12,26 +12,37 @@ def index(request):
 
 @login_required
 def weather(request):
-    return render(request, 'partials/weather.html')
+    if request.user.id == 1:
+        return render(request, 'partials/weather.html')
+    return render(request, 'partials/404.html')
 
 
 @login_required
 def electricity(request):
-    return render(request, 'partials/electricity.html')
+    if request.user.id == 1:
+        return render(request, 'partials/electricity.html')
+    return render(request, 'partials/404.html')
 
 
 @login_required
 def home_one(request):
-    return render(request, 'visualization/Demo3/index.html')
+    if request.user.id == 1:
+        return render(request, 'visualization/Demo3/index.html')
+    return render(request, 'partials/404.html')
 
 
 @login_required
 def home_two(request):
-    return render(request, 'visualization/Demo3/index.html')
+    if request.user.id == 1:
+        return render(request, 'visualization/Demo3/index.html')
+    return render(request, 'partials/404.html')
 
 
 @login_required
 def opf(request):
+    if request.user.id != 1:
+        return render(request, 'partials/404.html')
+
     # get the homes this user has
     homes = Home.objects.filter(owner=request.user.powernetuser)
 
@@ -46,14 +57,20 @@ def opf(request):
 
 @login_required
 def pv(request):
-    return render(request, 'partials/pv.html')
+    if request.user.id == 1:
+        return render(request, 'partials/pv.html')
+    return render(request, 'partials/404.html')
 
 
 @login_required
 def charts(request):
-    return render(request, 'partials/chart_plots.html')
+    if request.user.id == 1:
+        return render(request, 'partials/chart_plots.html')
+    return render(request, 'partials/404.html')
 
 
 @login_required
 def charts_no_control(request):
-    return render(request, 'partials/chart_plots_no_control.html')
+    if request.user.id == 1:
+        return render(request, 'partials/chart_plots_no_control.html')
+    return render(request, 'partials/404.html')
