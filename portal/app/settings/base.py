@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'app.api',
     'app.core',
     'django_celery_results',
-    'rest_framework_swagger'
+    'rest_framework_swagger',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -56,6 +57,8 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'app.common.request_context.RequestContextMiddleware',
+    'app.common.request_context.UserContextMiddleware',
 ]
 
 # Internationalization

@@ -1,16 +1,11 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User
-from django.contrib.auth import login as auth_login, \
-    logout as auth_logout, \
-    authenticate
-from django.contrib.auth.decorators import login_required
-
 from app.models import PowernetUser, Home
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login as auth_login, logout as auth_logout, authenticate
 
 
 def signup(request):
-    print(request.POST)
-
     content = {}
 
     if request.method == 'GET':
@@ -37,14 +32,13 @@ def signup(request):
             and request.POST['password'] != request.POST['confirmedpassword']:
         errors.append('Passwords did not match.')
 
-    if len(User.objects.filter(username=request.POST['username'])) > 0:
+    if User.objects.filter(username__iexact=request.POST['username']).count() > 0:
         errors.append('Username is already taken.')
 
-    if len(PowernetUser.objects.filter(email=request.POST["email"])) > 0:
+    if PowernetUser.objects.filter(email__iexact=request.POST["email"]).count() > 0:
         errors.append("Email address has been used.")
 
     if errors:
-        print(errors)
         return render(request, 'auth/signup.html', content)
 
     new_user = User.objects.create_user(username=request.POST['username'],
@@ -65,8 +59,7 @@ def signup(request):
 
     # log the new user in
     new_user.save()
-    new_user = authenticate(username=request.POST['username'],
-                            password=request.POST['password'])
+    new_user = authenticate(username=request.POST['username'], password=request.POST['password'])
     auth_login(request, new_user)
 
     return redirect('/')
