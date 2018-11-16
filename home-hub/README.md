@@ -21,16 +21,6 @@ git pull origin master
 git branch --set-upstream-to=origin/master master
 ```
 
-### Install Docker on the RPi:
-```bash
-curl -fsSL get.docker.com -o get-docker.sh && sh get-docker.sh
-```
-
-### Allow docker usage w/o sudo
-```bash
-sudo usermod -aG docker pi
-```
-
 ### OPTIONAL - Install `vim`
 ```bash
 sudo apt-get install vim
