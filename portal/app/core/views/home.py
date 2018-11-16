@@ -6,5 +6,15 @@ from app.api.v1.endpoint.device import DeviceSerializer
 
 
 @login_required
-def index(request):
-    return render(request, 'partials/main.html')
+def settings(request):
+    return render(request, 'home/settings.html')
+
+
+@login_required
+def devices(request):
+    return render(request, 'home/devices.html')
+
+
+@login_required
+def consumption(request):
+    return render(request, 'home/consumption.html')
