@@ -24,13 +24,19 @@ class DeviceStateSerializer(serializers.ModelSerializer):
 class DeviceViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
     serializer_class = DeviceSerializer
-    queryset = Device.objects.all().order_by('id')
+
+    def get_queryset(self, **kwargs):
+        queryset = Device.objects.filter(home__owner__user=self.request.user).order_by('id')
+        return queryset
 
 
 class DeviceStateViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
     serializer_class = DeviceStateSerializer
-    queryset = DeviceState.objects.all()
+
+    def get_queryset(self, **kwargs):
+        queryset = DeviceState.objects.filter(device__home__owner__user=self.request.user).order_by('id')
+        return queryset
 
 
 @receiver(post_save, sender=Device)

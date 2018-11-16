@@ -20,10 +20,16 @@ class HomeDataSerializer(serializers.ModelSerializer):
 class HomeViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
     serializer_class = HomeSerializer
-    queryset = Home.objects.all().order_by('id')
+
+    def get_queryset(self, **kwargs):
+        queryset = Home.objects.filter(owner__user=self.request.user).order_by('id')
+        return queryset
 
 
 class HomeDataViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
     serializer_class = HomeDataSerializer
-    queryset = HomeData.objects.all()
+
+    def get_queryset(self, **kwargs):
+        queryset = HomeData.objects.filter(home__owner__user=self.request.user).order_by('id')
+        return queryset
