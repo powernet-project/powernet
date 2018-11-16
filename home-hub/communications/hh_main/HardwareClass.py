@@ -452,13 +452,21 @@ class HardwareRPi:
                     self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
                     # print 'input_sources_measurements: ', self.input_sources_measurements
 
-        else:                               # If device list is empty means it needs to create new devices in the server and local db
+        else:                # If device list is empty means it needs to create new devices in the server and local db
             # print 'create devices'
             home_devID = self.create_devices(8)  # Create 8 devices -> there are 8 channels in the ADC and 8 relays
             # print 'home_devID: ', home_devID
             if home_devID:
                 # print 'call db function to create dev id in measurements table'
-                self.createDB()
+                conn = sqlite3.connect('homehubDB.db')
+                c = conn.cursor()
+                self.create_table(conn)                  # Creating tables
+                for d in range(len(home_devID)):    # Create rows for each dev in the home
+                    vals=[type_devID[d],name_devID[d],home_devID[d]]
+                    self.input_sources_insert(c,vals)
+                conn.commit()
+                conn.close()
+                # self.createDB()
             else:
                 print 'problem in creating devices. Check POST request'
                 pass
