@@ -52,16 +52,16 @@ def signup(request):
                                         last_name=request.POST['last_name'],
                                         password=request.POST['password'])
 
-    # create corresponding PownetUser
-    newPowernetUser = PowernetUser(user=new_user,
-                                   first_name=new_user.first_name,
-                                   last_name=new_user.last_name,
-                                   email=request.POST['email'])
-    newPowernetUser.save()
+    # create corresponding PowernetUser
+    new_powernet_user = PowernetUser(user=new_user,
+                                     first_name=new_user.first_name,
+                                     last_name=new_user.last_name,
+                                     email=request.POST['email'])
+    new_powernet_user.save()
 
     # create the corresponding Home instance
-    newHome = Home(name=new_user.username + "'s home", owner=newPowernetUser)
-    newHome.save()
+    new_home = Home(name=new_user.username + "'s home", owner=new_powernet_user)
+    new_home.save()
 
     # log the new user in
     new_user.save()

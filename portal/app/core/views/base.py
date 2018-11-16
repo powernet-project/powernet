@@ -10,6 +10,11 @@ def index(request):
     return render(request, 'partials/main.html')
 
 
+#########################################################
+# These views are to be used by the demo/lab account only.
+# They are not relevant to regular Powernet users.
+#########################################################
+
 @login_required
 def weather(request):
     if request.user.id == 1:
