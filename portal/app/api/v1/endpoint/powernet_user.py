@@ -14,7 +14,7 @@ class PowernetUserSerializer(EnumFieldSerializerMixin, serializers.ModelSerializ
 class PowernetUserViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
     serializer_class = PowernetUserSerializer
-    
+
     def get_queryset(self):
         queryset = PowernetUser.objects.filter(user=self.request.user).order_by('id')
         return queryset

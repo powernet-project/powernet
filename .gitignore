@@ -15,3 +15,5 @@ venv_*/
 venv/
 markets_algo/
 dump.rdb
+
+gains_debug_prod.py
