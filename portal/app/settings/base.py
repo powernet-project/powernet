@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE_CLASSES = [
+    'app.common.request_context.RequestContextMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,7 +58,6 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'app.common.request_context.RequestContextMiddleware'
 ]
 
 # Internationalization
@@ -69,7 +69,6 @@ USE_TZ = True
 
 # If the user isn't logged, send them to the login page
 LOGIN_URL = '/login'
-
 LOGIN_REDIRECT_URL = '/'
 
 # Static files (CSS, JavaScript, Images)

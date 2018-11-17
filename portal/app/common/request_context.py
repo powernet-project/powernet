@@ -3,8 +3,8 @@ import string
 import threading
 from ipware.ip import get_real_ip, get_ip
 from random import choice as random_choice
-from django.utils.termcolors import colorize
 from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import AnonymousUser
 
 charset = string.ascii_letters + string.digits
 
@@ -43,4 +43,4 @@ class RequestContextMiddleware(object):
         RequestContextMiddleware.THREAD = threading.local()
         RequestContextMiddleware.THREAD.id = get_unique_id()
         RequestContextMiddleware.THREAD.ip = get_real_ip(request) or get_ip(request) or request.get_host()
-        RequestContextMiddleware.THREAD.user = request.user.id if request.user else 'anon'
+        RequestContextMiddleware.THREAD.user = request.user.id if request.user else AnonymousUser()
