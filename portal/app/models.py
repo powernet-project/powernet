@@ -39,14 +39,6 @@ class DeviceType(Enum):
     STOVE_OVEN_EXHAUST = 'STOVE_OVEN_EXHAUST'
 
 
-class ApplianceJsonData(models.Model):
-
-    class Meta:
-        db_table = 'appliance_data'
-
-    devices_json = JSONField(null=True, blank=True)
-
-
 class HueStatesType(Enum):
     ON = 'ON'
     OFF = 'OFF'
@@ -131,6 +123,15 @@ class DeviceState(models.Model):
     watt_consumption = models.FloatField()
     measurement_timestamp = models.DateTimeField(null=False, blank=False)
     additional_information = JSONField(null=True, blank=True)
+
+
+class ApplianceJsonData(models.Model):
+
+    class Meta:
+        db_table = 'appliance_data'
+
+    home = models.ForeignKey(Home)
+    devices_json = JSONField(null=True, blank=True)
 
 
 class MatlabFiles(models.Model):
