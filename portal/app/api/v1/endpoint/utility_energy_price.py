@@ -1,6 +1,6 @@
 from app.models import UtilityEnergyPrice
 from rest_framework import (viewsets, serializers)
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
 from app.api.v1 import CsrfExemptAuth
 
 
@@ -11,6 +11,6 @@ class UtilityEnergyPriceSerializer(serializers.ModelSerializer):
 
 
 class UtilityEnergyPriceViewSet(viewsets.ModelViewSet):
-    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
+    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
     serializer_class = UtilityEnergyPriceSerializer
     queryset = UtilityEnergyPrice.objects.all()

@@ -2,7 +2,7 @@ from app.api.v1 import CsrfExemptAuth
 from app.models import Home, HomeData
 from rest_framework import (viewsets, serializers)
 from app.common.enum_field_handler import EnumFieldSerializerMixin
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 
 
 class HomeSerializer(EnumFieldSerializerMixin, serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class HomeDataSerializer(serializers.ModelSerializer):
 
 
 class HomeViewSet(viewsets.ModelViewSet):
-    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication, SessionAuthentication)
+    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
     serializer_class = HomeSerializer
 
     def get_queryset(self, **kwargs):
@@ -27,7 +27,7 @@ class HomeViewSet(viewsets.ModelViewSet):
 
 
 class HomeDataViewSet(viewsets.ModelViewSet):
-    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
+    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
     serializer_class = HomeDataSerializer
 
     def get_queryset(self, **kwargs):

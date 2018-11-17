@@ -6,7 +6,6 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import (viewsets, serializers, status)
-from rest_framework.authentication import BasicAuthentication
 from app.common.enum_field_handler import EnumFieldSerializerMixin
 
 
@@ -17,7 +16,8 @@ class PowernetUserSerializer(EnumFieldSerializerMixin, serializers.ModelSerializ
 
 
 class PowernetUserViewSet(viewsets.ModelViewSet):
-    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
+    authentication_classes = ()
+    permission_classes = ()
     serializer_class = PowernetUserSerializer
 
     def get_queryset(self):

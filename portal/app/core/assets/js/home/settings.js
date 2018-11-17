@@ -1,4 +1,4 @@
-var settings = settings || {};
+let settings = settings || {};
 
 $(document).ready(function(ns) {
     const onLoad = function() {};

@@ -1,5 +1,5 @@
 from rest_framework import (viewsets, serializers)
-from rest_framework.authentication import BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
 from app.api.v1 import CsrfExemptAuth
 from app.common.enum_field_handler import EnumFieldSerializerMixin
 from app.models import Device, DeviceState
@@ -22,7 +22,7 @@ class DeviceStateSerializer(serializers.ModelSerializer):
 
 
 class DeviceViewSet(viewsets.ModelViewSet):
-    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
+    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
     serializer_class = DeviceSerializer
 
     def get_queryset(self, **kwargs):
@@ -31,7 +31,7 @@ class DeviceViewSet(viewsets.ModelViewSet):
 
 
 class DeviceStateViewSet(viewsets.ModelViewSet):
-    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
+    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
     serializer_class = DeviceStateSerializer
 
     def get_queryset(self, **kwargs):
