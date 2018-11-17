@@ -57,8 +57,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'app.common.request_context.RequestContextMiddleware',
-    'app.common.request_context.UserContextMiddleware',
+    'app.common.request_context.RequestContextMiddleware'
 ]
 
 # Internationalization

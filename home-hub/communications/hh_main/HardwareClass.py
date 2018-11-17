@@ -33,7 +33,7 @@ class HardwareRPi:
         self.CT50 = 50   # 50A/1V
         self.CT100 = 100 # 100A/1V
         self.REQUEST_TIMEOUT = 10
-        self.PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'
+        self.PWRNET_API_BASE_URL = 'https://pwrnet-158117.appspot.com/api/v1/'
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 
         ####################

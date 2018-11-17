@@ -44,10 +44,3 @@ class RequestContextMiddleware(object):
         RequestContextMiddleware.THREAD.id = get_unique_id()
         RequestContextMiddleware.THREAD.ip = get_real_ip(request) or get_ip(request) or request.get_host()
         RequestContextMiddleware.THREAD.user = request.user.id if request.user else 'anon'
-
-
-class UserContextMiddleware(object):
-
-    def process_request(self, request):
-        if request.user.is_authenticated():
-            RequestContextMiddleware.THREAD.user = colorize(request.user.id, fg="cyan")
