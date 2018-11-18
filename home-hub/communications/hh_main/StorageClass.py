@@ -142,6 +142,7 @@ class Storage:
     def battery_thread(self, q_batt):
         self.logger.info('Battery Thread called')
         print 'BATTERY THREAD...'
+        print "battery thread"
         state = "OFF"
         fct = "url"     # Which function to call, url or realtime
         battval = 0
@@ -183,6 +184,7 @@ class Storage:
     def battery_act(self, q_batt):
         self.logger.info('Battery Thread called')
         print 'BATTERY THREAD...'
+        print "battery_act"
         state = q_batt[0]
         fct = q_batt[1]     # Which function to call, url or realtime
         battval = q_batt[2]
