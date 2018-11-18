@@ -382,7 +382,7 @@ class HardwareRPi:
         # print 'Atributes: ', message.data
         dts = str(datetime.now())
         data = json.loads(message.data)
-        # print 'data: ', data
+        print 'data: ', data
         load_state = data['status']
         load_name = data['name']
         load_type = data['type']
