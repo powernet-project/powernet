@@ -406,7 +406,7 @@ class HardwareRPi:
                     self.logger.exception(exc)
                     client.captureException()
             elif self.house_id == 1:
-                idx = home_devID.index(int(load_id))
+                idx = self.home_devID.index(int(load_id))
                 self.devices_act(idx+1, load_state)
                 # As of now just writing the relay devices states to db
                 self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])-1]])
