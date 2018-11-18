@@ -363,6 +363,7 @@ class HardwareRPi:
             sub=self.sub,  # Set this to something appropriate.
             )
             subscriber.subscribe(subscription_name, callback=self.callback)
+            print 
         except Exception as exc:
             self.logger.exception(exc)
             client.captureException()
@@ -404,8 +405,13 @@ class HardwareRPi:
                 except Exception as exc:
                     self.logger.exception(exc)
                     client.captureException()
-            else:                                                           # Actuate in any other load category
-                print "Other devices such as Z-Wave plugs"
+            elif self.house_id == 1:
+                self.devices_act(int(load_name[-1]), load_state)
+                # As of now just writing the relay devices states to db
+                self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])-1]])
+
+            else:                                                          
+                print "Other devices such as Z-Wave plugs"  # Actuate in any other load category
 
 
 
