@@ -18,11 +18,12 @@ from raven import Client
 from pyModbusTCP import utils
 from datetime import datetime
 from pyModbusTCP.client import ModbusClient
-from logging.handlers import RotatingFileHandler
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 client = Client(SENTRY_DSN)
+
+logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 
 class StorageInterface:
     def __init__(self, maxpower=3300, addr_command=63245, addr_time=63243, addr_disPower=63248, addr_chaPower=63246, timeBatt = 36000, SERVER_HOST="192.168.0.51", SERVER_PORT=502, PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'):
@@ -37,14 +38,10 @@ class StorageInterface:
         self.tcpClient = ModbusClient(host=self.SERVER_HOST, port=self.SERVER_PORT, unit_id= 247,timeout=2,auto_open=True)
         self.PWRNET_API_BASE_URL = PWRNET_API_BASE_URL
 
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
-        self.handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
-        self.logger.addHandler(self.handler)
+        self.logger = logger
         self.logger.info('Storage class called')
 
     def realtime(self, battVal = 0.0, cosPhi = 1.0):
-        #self.logger.info('StorageRT function called')
         if battVal > 0:
             command_mode = 4    # Discharging (positive values)
         elif battVal < 0:
@@ -93,8 +90,8 @@ class StorageInterface:
             battStatus = batt.json()["status"]
             power = batt.json()["value"]
             phi = batt.json()["cosphi"]
-            print("power: ", power)
-            print("phi: ", phi)
+            self.logger.info("power: ", power)
+            self.logger.info("phi: ", phi)
         else:
             battStatus = state
 
@@ -147,7 +144,7 @@ class StorageInterface:
 
     def battery_thread(self, q_batt):
         self.logger.info('Battery Thread called')
-        print('BATTERY THREAD...')
+        self.logger.info('BATTERY THREAD...')
         
         state = "OFF"
         fct = "url"     # Which function to call, url or realtime
@@ -155,7 +152,7 @@ class StorageInterface:
         cosphi = 1.0
         while True:
             if not q_batt.empty():
-                print("q_battery empty")
+                self.logger.info("q_battery empty")
                 try:
                     queue_param = q_batt.get(True,1)
                     state = queue_param[0]      # State: CHARGING, DISCHARGING, OFF
@@ -163,7 +160,7 @@ class StorageInterface:
                     battval = queue_param[2]
                     cosphi = queue_param[3]
                     q_batt.task_done()
-                    print("Queue battery: ", queue_param)
+                    self.logger.info("Queue battery: ", queue_param)
                 except Exception as exc:
                     self.logger.exception(exc)
                     client.captureException()
@@ -191,13 +188,13 @@ class StorageInterface:
         battval = q_batt[2]
         cosphi = q_batt[3]
         b_id = q_batt[4]
-        print("q_batt: ", q_batt)
+        self.logger.info("q_batt: ", q_batt)
         if fct == "url":
             batt = self.urlBased(b_id, state, battval, cosphi)
             if batt == -1:
                 try:
                     batt = self.urlBased(b_id, state, battval, cosphi)
-                    print("SUCCEED")
+                    self.logger.info("SUCCEED")
                 except Exception as exc:
                     self.logger.exception(exc)
                     client.captureException()
@@ -240,18 +237,18 @@ class StorageInterface:
         self.realtime(-1500)
         for i in addr:
             if self.tcpClient.is_open():
-                print("TCP client open")
+                self.logger.info("TCP client open")
                 try:
                     resp = self.tcpClient.read_holding_registers(i, 2)   # Reading 2 registers, int16
                     Lh = hex(resp[0])
                     Mh = hex(resp[1])
                     Sh = Mh[2:]+Lh[2:]
-                    print('Sh: ', Sh)
+                    self.logger.info('Sh: ', Sh)
                     val = val = struct.unpack('!f',Sh.decode('hex'))    # Converting from hex to float
                     vals_dc.append(val[0])
 
                 except Exception as exc:
-                    print('error in: ', i)
+                    self.logger.error('error in: ', i)
                     self.logger.exception(exc)
                     client.captureException()
             else:
@@ -346,33 +343,33 @@ if __name__ == '__main__':
             soe = storage.readSOE()
             if soe == -1:
                 soe = storage.readSOE()
-            print("SOE: ", soe)
+            self.logger.info("SOE: ", soe)
             time.sleep(1)
 
         elif funStor == "readDC":
             t = 0
-            print('Inside readDC')
-            while(t<5):
+            self.logger.info('Inside readDC')
+            while(t < 5):
                 vals_dc = storage.readDC()
-                print(vals_dc)
+                self.logger.info(vals_dc)
                 if vals_dc != -1:
                     with open('battData.txt','a') as f:
                         for i in vals_dc:
-                            f.write(str(i)+'/')
+                            f.write(str(i) + '/')
                         f.write('\n')
-                t=t+1
+                t = t + 1
                 time.sleep(5)
 
         elif funStor == "readCosPhi":
             cosPhi = storage.readCosPhi()
             if cosPhi == -9:
                 cosPhi = storage.readCosPhi()
-            print("cosPhi: ", cosPhi)
+            self.logger.info("cosPhi: ", cosPhi)
             time.sleep(1)
 
         else:
             writeCosPhi = storage.writeCosPhi(0.5, True)
             if writeCosPhi == False:
                 writeCosPhi = storage.writeCosPhi(0.5, True)
-            print("cosPhi: ", writeCosPhi)
+            self.logger.info("cosPhi: ", writeCosPhi)
             time.sleep(1)

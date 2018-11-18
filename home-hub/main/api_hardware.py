@@ -65,7 +65,6 @@ class HardwareInterface:
         self.headers = {'Authorization': 'Token ' + self.auth_token}
 
         self.logger = logger
-        print("I SHOULD SEE MY LOG STATEMENT!!!!")
         self.logger.info('HardwareRPi class called')
 
         # Database variables:
@@ -212,12 +211,12 @@ class HardwareInterface:
 
 
     def dbWriteMeasurements(self, vals):
-      try:
-          conn = sqlite3.connect('homehubDB.db')
-          c = conn.cursor()
-          c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
-      except sqlite3.IntegrityError:
-          print('error connecting to db')
+        try:
+            conn = sqlite3.connect('homehubDB.db')
+            c = conn.cursor()
+            c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
+        except sqlite3.IntegrityError:
+            self.logger.error('error connecting to db')
       conn.commit()
       conn.close()
 
@@ -228,7 +227,7 @@ class HardwareInterface:
             c = conn.cursor()
             c.execute("INSERT INTO input_sources_state (state, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
         except sqlite3.IntegrityError:
-            print('error connecting to db')
+            self.logger.error('error connecting to db')
         conn.commit()
         conn.close()
 
@@ -372,21 +371,21 @@ class HardwareInterface:
         except Exception as exc:
             self.logger.exception(exc)
             client.captureException()
-            print("Exception GCP: ", exc)
+            self.logger.error("Exception GCP: ", exc)
 
         while True:
             time.sleep(2)   # Delay between readings
 
 
     def devices_act(self, device, state):
-        print("device: ", device)
-        print("state: ", state)
+        self.logger.info("device: ", device)
+        self.logger.info("state: ", state)
         GPIO.output(self.input_sources_measurements[2][device-1], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     def callback(self, message):
         dts = str(datetime.now())
         data = json.loads(message.data)
-        print('data: ', data)
+        self.logger.info('data: ', data)
         load_state = data['status']
         load_name = data['name']
         load_type = data['type']
@@ -415,7 +414,7 @@ class HardwareInterface:
                 self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1]) - 1]])
 
             else:                                                          
-                print("Other devices such as Z-Wave plugs")  # Actuate in any other load category
+                self.logger.info("Other devices such as Z-Wave plugs")  # Actuate in any other load category
 
 
 
@@ -431,14 +430,14 @@ class HardwareInterface:
                 home_devID.append(h['id'])
                 type_devID.append(h['type'])
                 name_devID.append(h['name'])
-        print("homeDevID: ", home_devID)
+        self.logger.info("homeDevID: ", home_devID)
         if home_devID:                      # If devices list is not empty (meaning that a house with devices is already created) dont create any dev
             try:                            # Check if DB exists in HH
                 conn = sqlite3.connect('homehubDB.db')
                 c = conn.cursor()
                 lst_db = c.execute("SELECT * FROM 'input_sources'")  # HERE: If doesnt throw error need to check whether the number of rows in the list matches number of dev id. If different need to create additional ones based on the id's that are missing
             except Exception as exc:
-                print(exc)
+                self.logger.error(exc)
                 self.logger.exception(exc)
                 client.captureException()
                 self.create_table(conn)                  # Creating tables
@@ -456,7 +455,7 @@ class HardwareInterface:
                 return
             # DB  table exists
             db_is = lst_db.fetchall()       # retireve all input_source table data
-            print(db_is)
+            self.logger.info(db_is)
             l_db_api_id = []
             l_db_prm_key = []
             if len(db_is):
@@ -466,11 +465,11 @@ class HardwareInterface:
                 diff_apidb = sorted(list(set(home_devID)-set(l_db_api_id)))     # Checking difference between get request and db (need to address difference between db and get as well)
                 # diff_apidb.append(71)       # test case
                 # diff_apidb.append(72)       # test case
-                print('diff_apidb: ', diff_apidb)
+                self.logger.info('diff_apidb: ', diff_apidb)
                 if diff_apidb:
                     for i in diff_apidb:
                         vals = [type_devID[home_devID.index(i)], name_devID[home_devID.index(i)], i]
-                        print('vals: ', vals)
+                        self.logger.info('vals: ', vals)
                         self.input_sources_insert(c, vals)
                         l_db_prm_key.append(c.lastrowid)
                     conn.commit()
@@ -495,7 +494,7 @@ class HardwareInterface:
                 conn.commit()
                 conn.close()
             else:
-                print('problem in creating devices. Check POST request')
+                self.logger.info('problem in creating devices. Check POST request')
                 pass
 
         self.input_sources_measurements.append(home_devID)           # Adding device ID
@@ -523,7 +522,7 @@ class HardwareInterface:
                 devID.append(j['id'])
 
             else:
-                print('request not successful')
+                self.logger.warning('request not successful')
                 pass
         return devID
 
@@ -545,7 +544,7 @@ class HardwareInterface:
         except Error as e:
             self.logger.exception(e)
             client.captureException()
-            print(e)
+            self.logger.error(e)
         finally:
             c.close()
             conn.close()
@@ -560,7 +559,7 @@ class HardwareInterface:
             sqlite3.complete_statement(TableSchema)
             c.executescript(TableSchema)
         except Error as e:
-            print(e)
+            self.logger.error(e)
 
     def input_sources_insert(self,c,vals):
         c.execute("INSERT INTO input_sources (type, name, api_id) VALUES ((?), (?), (?))" , (vals[0], vals[1], vals[2]))
