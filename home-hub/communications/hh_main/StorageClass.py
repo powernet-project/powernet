@@ -14,7 +14,7 @@ client = Client(SENTRY_DSN)
 
 class Storage:
 
-    def __init__(self, maxpower=3300, addr_command=63245, addr_time=63243, addr_disPower=63248, addr_chaPower=63246, timeBatt = 10, SERVER_HOST="192.168.0.51", SERVER_PORT=502, PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'):
+    def __init__(self, maxpower=3300, addr_command=63245, addr_time=63243, addr_disPower=63248, addr_chaPower=63246, timeBatt = 36000, SERVER_HOST="192.168.0.51", SERVER_PORT=502, PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'):
         self.maxPower = maxpower
         self.addr_command = addr_command
         self.addr_time = addr_time
