@@ -427,6 +427,7 @@ class HardwareRPi:
                 home_devID.append(h['id'])
                 type_devID.append(h['type'])
                 name_devID.append(h['name'])
+        print "homeDevID: ", home_devID
         if home_devID:                      # If devices list is not empty (meaning that a house with devices is already created) dont create any dev
             try:                            # Check if DB exists in HH
                 conn = sqlite3.connect('homehubDB.db')
@@ -444,7 +445,10 @@ class HardwareRPi:
                 self.input_sources_measurements.append(home_devID)           # Adding device ID
                 self.input_sources_measurements.append(range(len(home_devID)+1)[1:])    # Adding local DB ID
                 # self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
-                self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
+                if house_id == 1:
+                        self.input_sources_measurements.append([33,35,37,29,31,0,0,38]) # GPIO port -> fixed
+                else: 
+                    self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
                 # print 'input_sources_measurements',self.input_sources_measurements
                 return
             # DB  table exists
@@ -499,7 +503,10 @@ class HardwareRPi:
 
         self.input_sources_measurements.append(home_devID)           # Adding device ID
         self.input_sources_measurements.append([1,2,3,4,5,6,7,8])    # Adding local DB ID
-        self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
+        if house_id == 1:
+            self.input_sources_measurements.append([33,35,37,29,31,0,0,38]) # GPIO port -> fixed
+        else: 
+            self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
         # print 'Input sources: ', self.input_sources_measurements
 
     def create_devices(self, number_of_devices, house_devstatus = 'ON'):
