@@ -1,29 +1,35 @@
+"""
+Setup the Hardware interface
+"""
+from __future__ import print_function
 
-# Uncomment these two lines if using BBB
-#import beaglebone_pru_adc as adc
-#import Adafruit_BBIO.GPIO as GPIO
-import RPi.GPIO as GPIO
+__author__ = 'Gustavo C. & Jonathan G. '
+__copyright__ = 'Stanford University'
+__version__ = '0.2'
+__email__ = 'gcezar@stanford.edu, jongon@stanford.edu'
+__status__ = 'Beta'
+
 import math
 import time
 import copy
-import requests
-import logging
-from logging.handlers import RotatingFileHandler
-from raven import Client
-from datetime import datetime
-import spidev
-import numpy as np
-import sqlite3
-from sqlite3 import Error
 import json
-from google.cloud import pubsub_v1
+import spidev
+import logging
+import sqlite3
+import requests
+import numpy as np
 import StorageClass
+import RPi.GPIO as GPIO
 
+from raven import Client
+from sqlite3 import Error
+from datetime import datetime
+from google.cloud import pubsub_v1
+from logging.handlers import RotatingFileHandler
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 client = Client(SENTRY_DSN)
-#battery_fct = StorageClass.Storage(timeBatt=5)
 
 class HardwareRPi:
     def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
@@ -76,7 +82,6 @@ class HardwareRPi:
 
         # Initializing GPIOs:
         GPIO.setmode(GPIO.BOARD)
-
 
         self.N_SAMPLES = N_SAMPLES
         self.adc_Vin = 3.3
@@ -244,27 +249,35 @@ class HardwareRPi:
         template = [
             {
                 "sensor_id": self.input_sources_measurements[1][0],
+                "average": {},
                 "samples": []
             }, {
                 "sensor_id": self.input_sources_measurements[1][1],
+                "average": {},
                 "samples": []
             }, {
                 "sensor_id": self.input_sources_measurements[1][2],
+                "average": {},
                 "samples": []
             }, {
                 "sensor_id": self.input_sources_measurements[1][3],
+                "average": {},
                 "samples": []
             },  {
                 "sensor_id": self.input_sources_measurements[1][4],
+                "average": {},
                 "samples": []
             }, {
                 "sensor_id": self.input_sources_measurements[1][5],
+                "average": {},
                 "samples": []
             }, {
                 "sensor_id": self.input_sources_measurements[1][6],
+                "average": {},
                 "samples": []
             }, {
                 "sensor_id": self.input_sources_measurements[1][7],
+                "average": {},
                 "samples": []
             }
         ]
@@ -313,8 +326,8 @@ class HardwareRPi:
                         for i in range(len(d_fb)):
                             sm = self.sensor_mean(d_fb[i]['samples'])
                             dt = d_fb[i]['samples'][-1]['date_time']
-                            d_fb[i].get('samples').append({'RMS': sm, 'date_time': dt})
-
+                            d_fb[i]['average'] = {'RMS': sm, 'date_time': dt}
+                            
                         try:
                             # send the request to the powernet site instead of firebase
 
