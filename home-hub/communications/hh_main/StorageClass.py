@@ -148,6 +148,7 @@ class Storage:
         cosphi = 1.0
         while True:
             if not q_batt.empty():
+                print "q_battery empty"
                 try:
                     queue_param = q_batt.get(True,1)
                     state = queue_param[0]      # State: CHARGING, DISCHARGING, OFF
@@ -160,6 +161,7 @@ class Storage:
                     self.logger.exception(exc)
                     client.captureException()
             if fct == "url":
+                print "url"
                 batt = self.urlBased(19, state, battval, cosphi)
                 if batt == -1:
                     try:
@@ -169,6 +171,7 @@ class Storage:
                         self.logger.exception(exc)
                         client.captureException()
             else:
+                print "else RT"
                 batt = self.realtime(battval)
                 if batt == -1:
                     try:

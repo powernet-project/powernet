@@ -318,7 +318,7 @@ class HardwareRPi:
                         try:
                             # send the request to the powernet site instead of firebase
 
-                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb, 'home_id': self.house_id}, timeout=self.REQUEST_TIMEOUT, header=self.headers)
+                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb, 'home_id': self.house_id}, timeout=self.REQUEST_TIMEOUT, headers=self.headers)
 
                             if r_post_rms.status_code == 201:
                                 #self.logger.info("Request was successful")
