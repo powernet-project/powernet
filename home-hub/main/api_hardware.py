@@ -439,7 +439,8 @@ class HardwareInterface:
                 conn = sqlite3.connect('homehubDB.db')
                 c = conn.cursor()
                 lst_db = c.execute("SELECT * FROM 'input_sources'")  # HERE: If doesnt throw error need to check whether the number of rows in the list matches number of dev id. If different need to create additional ones based on the id's that are missing
-            except Exception as exc:        # DB does not exist
+            except Exception as exc:
+                print(exc)
                 self.logger.exception(exc)
                 client.captureException()
                 self.create_table(conn)                  # Creating tables
@@ -450,11 +451,10 @@ class HardwareInterface:
                 conn.close()
                 self.input_sources_measurements.append(home_devID)           # Adding device ID
                 self.input_sources_measurements.append(range(len(home_devID)+1)[1:])    # Adding local DB ID
-                # self.input_sources_measurements.append([11,13,15,29,31,33,35,37]) # GPIO port -> fixed
                 if house_id == 1:
-                        self.input_sources_measurements.append([33,35,37,29,31,0,0,38]) # GPIO port -> fixed
+                    self.input_sources_measurements.append([33, 35, 37, 29, 31, 0, 0, 38]) # GPIO port -> fixed
                 else: 
-                    self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
+                    self.input_sources_measurements.append([37, 35, 33, 31, 29, 15, 13, 11]) # GPIO port -> fixed
                 return
             # DB  table exists
             db_is = lst_db.fetchall()       # retireve all input_source table data
