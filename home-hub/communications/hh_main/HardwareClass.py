@@ -309,9 +309,16 @@ class HardwareRPi:
                     q_ai.task_done()
                     #print "length: ", len(d_fb[1]["samples"])
                     if len(d_fb[1]["samples"]) == 10:
+                        # Computing average and adding to json for cloud
+                        for i in range(len(d_fb)):
+                            sm = sensor_mean(d_fb[i]['samples'])
+                            dt = d_fb[i]['samples'][-1]['date_time']
+                            d_fb[i].get('samples').append({'RMS': sm, 'date_time': dt})
+
                         try:
                             # send the request to the powernet site instead of firebase
-                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=self.REQUEST_TIMEOUT, header=self.headers)
+
+                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb, 'home_id':, self.house_id}, timeout=self.REQUEST_TIMEOUT, header=self.headers)
 
                             if r_post_rms.status_code == 201:
                                 #self.logger.info("Request was successful")
@@ -335,6 +342,13 @@ class HardwareRPi:
                 except Exception as exc:
                     self.logger.exception(exc)
                     client.captureException()
+
+    # Function to give average of samples sent to cloud -> used in consumer_ai
+    def sensor_mean(self, data):
+    s = []
+    for i in data:
+        s.append(i['RMS'])
+    return sum(s)/len(s)
 
     def devices_th(self):
         """
