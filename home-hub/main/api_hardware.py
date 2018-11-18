@@ -111,31 +111,35 @@ class HardwareInterface:
         # Pubsub subscription:
         self.sub = 'HH'+str(self.house_id)
 
-
-
-    # Function to convert data to voltage level,
-    # rounded to specified number of decimal places.
+    
     def ConvertVolts(self, data,places):
-      volts = (data * self.adc_Vin) / float(1023)
-      volts = np.around(volts,places)
-      return volts
+        """
+        Function to convert data to voltage level,
+        rounded to specified number of decimal places.
+        """
+        volts = (data * self.adc_Vin) / float(1023)
+        volts = np.around(volts, places)
+        return volts
 
-    # Function to read SPI data from MCP3008 chip
-    # Channel must be an integer 0-7
+    
     def ReadChannel(self, channel):
-      n = 0
-      data = np.zeros(self.N_SAMPLES)
-      #print datetime.now()
-      while (n<100):
-          adc = self.spi.xfer2([1,(8+channel)<<4,0])
-          data[n]=((adc[1]&3) << 8) + adc[2]
-          n+=1
-          time.sleep(self.delay)
-      return self.ConvertVolts(data,2)
+        """
+        Function to read SPI data from MCP3008 chip
+        Channel must be an integer 0-7
+        """
+        n = 0
+        data = np.zeros(self.N_SAMPLES)
+      
+        while(n < 100):
+            adc = self.spi.xfer2([1, (8 + channel) << 4, 0])
+            data[n]=((adc[1] & 3) << 8) + adc[2]
+            n += 1
+            time.sleep(self.delay)
+        return self.ConvertVolts(data, 2)
 
     def producer_ai(self, q_ai):
         """
-            Producer AI
+        Producer AI
         """
 
         self.logger.info('Producer AI called')
@@ -170,8 +174,6 @@ class HardwareInterface:
             temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
             temp_queue = [temp_ai, dts]
 
-            # logger('Adding AI to the queue')
-
             try:
                 q_ai.put(temp_queue, True, 2)
 
@@ -183,7 +185,7 @@ class HardwareInterface:
 
     def RMS(self, data):
         """
-            Current RMS calculation for consumer_ai
+        Current RMS calculation for consumer_ai
         """
         # The size of sum_i is the size of the AIN ports
         sum_i = [0, 0, 0, 0, 0, 0, 0, 0]
@@ -213,37 +215,29 @@ class HardwareInterface:
 
     def dbWriteMeasurements(self, vals):
       try:
-          #print 'connecting'
           conn = sqlite3.connect('homehubDB.db')
           c = conn.cursor()
-          #print 'measurements: ', vals
           c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
       except sqlite3.IntegrityError:
-          print 'error connecting to db'
-          #print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
+          print('error connecting to db')
       conn.commit()
       conn.close()
 
 
     def dbWriteStates(self, vals):
-      try:
-          #print 'connecting'
-          conn = sqlite3.connect('homehubDB.db')
-          c = conn.cursor()
-          #print vals
-          c.execute("INSERT INTO input_sources_state (state, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
-          #print 'State written...'
-          #print 'Vals: ', vals
-      except sqlite3.IntegrityError:
-          print 'error connecting to db'
-          #print('ERROR: ID already exists in PRIMARY KEY column {}'.format(id_column))
-      conn.commit()
-      conn.close()
+        try:
+            conn = sqlite3.connect('homehubDB.db')
+            c = conn.cursor()
+            c.execute("INSERT INTO input_sources_state (state, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
+        except sqlite3.IntegrityError:
+            print('error connecting to db')
+        conn.commit()
+        conn.close()
 
 
     def consumer_ai(self, q_ai):
         """
-            Consumer AI
+        Consumer AI
         """
         self.logger.info('Consumer AI called')
         template = [
@@ -294,12 +288,11 @@ class HardwareInterface:
 
                     # Writing data to db:
                     for i in range(len(i_rms)):
-                        if i_rms[i] >= self.prev[i]+self.dP or i_rms[i] <= self.prev[i]-self.dP:
-                            temp_db = [i_rms[i], temp_date[i].split()[0], temp_date[i].split()[1], i+1]
+                        if i_rms[i] >= self.prev[i] + self.dP or i_rms[i] <= self.prev[i] - self.dP:
+                            temp_db = [i_rms[i], temp_date[i].split()[0], temp_date[i].split()[1], i + 1]
                             try:
                                 self.dbWriteMeasurements(temp_db)
                                 self.flag_db = 1
-                                #print 'try flag: ', self.flag_db
                             except Exception as exc:
                                 self.logger.exception(exc)
                                 client.captureException()
@@ -320,7 +313,7 @@ class HardwareInterface:
 
                     # Queue is done processing the element
                     q_ai.task_done()
-                    #print "length: ", len(d_fb[1]["samples"])
+
                     if len(d_fb[1]["samples"]) == 10:
                         # Computing average and adding to json for cloud
                         for i in range(len(d_fb)):
@@ -356,46 +349,46 @@ class HardwareInterface:
                     self.logger.exception(exc)
                     client.captureException()
 
-    # Function to give average of samples sent to cloud -> used in consumer_ai
     def sensor_mean(self, data):
+        """
+        Function to give average of samples sent to cloud -> used in consumer_ai
+        """
         s = []
         for i in data:
             s.append(i['RMS'])
-        return sum(s)/len(s)
+        return sum(s) / len(s)
 
     def devices_th(self):
         """
-            Devices Status
+        Devices Status
         """
         self.logger.info('Device Thread called')
         # Google Pubsub -> To replace devices thread
         try:
             subscriber = pubsub_v1.SubscriberClient()
             subscription_name = 'projects/{project_id}/subscriptions/{sub}'.format(
-            project_id='pwrnet-158117',
-            sub=self.sub,  # Set this to something appropriate.
+                project_id='pwrnet-158117',
+                sub=self.sub,  # Set this to something appropriate.
             )
             subscriber.subscribe(subscription_name, callback=self.callback)
-            print 
         except Exception as exc:
             self.logger.exception(exc)
             client.captureException()
-            print "Exception GCP: ", exc
+            print("Exception GCP: ", exc)
 
         while True:
             time.sleep(2)   # Delay between readings
 
 
     def devices_act(self, device, state):
-        print "device: ", device
-        print "state: ", state
-        GPIO.output(self.input_sources_measurements[2][device-1],GPIO.LOW if state == 'ON' else GPIO.HIGH)
+        print("device: ", device)
+        print("state: ", state)
+        GPIO.output(self.input_sources_measurements[2][device-1], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     def callback(self, message):
-        # print 'Atributes: ', message.data
         dts = str(datetime.now())
         data = json.loads(message.data)
-        print 'data: ', data
+        print('data: ', data)
         load_state = data['status']
         load_name = data['name']
         load_type = data['type']
@@ -411,7 +404,6 @@ class HardwareInterface:
                 # As of now just writing the relay devices states to db
                 self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])-1]])
             elif load_type == 'STORAGE':
-                # print 'Storage...'                                   # Actuate in the battery
                 try:
                     # Comment the line below if no battery in range
                     self.batt.battery_act([load_state, "url", load_val, load_cPhi,load_id])     # Still needs to figure timing issue modbus
@@ -420,12 +412,12 @@ class HardwareInterface:
                     client.captureException()
             elif self.house_id == 1:
                 idx = self.input_sources_measurements[0].index(int(load_id))
-                self.devices_act(idx+1, load_state)
+                self.devices_act(idx + 1, load_state)
                 # As of now just writing the relay devices states to db
-                self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])-1]])
+                self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1]) - 1]])
 
             else:                                                          
-                print "Other devices such as Z-Wave plugs"  # Actuate in any other load category
+                print("Other devices such as Z-Wave plugs")  # Actuate in any other load category
 
 
 
@@ -441,7 +433,7 @@ class HardwareInterface:
                 home_devID.append(h['id'])
                 type_devID.append(h['type'])
                 name_devID.append(h['name'])
-        print "homeDevID: ", home_devID
+        print("homeDevID: ", home_devID)
         if home_devID:                      # If devices list is not empty (meaning that a house with devices is already created) dont create any dev
             try:                            # Check if DB exists in HH
                 conn = sqlite3.connect('homehubDB.db')
@@ -463,11 +455,10 @@ class HardwareInterface:
                         self.input_sources_measurements.append([33,35,37,29,31,0,0,38]) # GPIO port -> fixed
                 else: 
                     self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
-                # print 'input_sources_measurements',self.input_sources_measurements
                 return
             # DB  table exists
             db_is = lst_db.fetchall()       # retireve all input_source table data
-            print db_is
+            print(db_is)
             l_db_api_id = []
             l_db_prm_key = []
             if len(db_is):
@@ -477,51 +468,44 @@ class HardwareInterface:
                 diff_apidb = sorted(list(set(home_devID)-set(l_db_api_id)))     # Checking difference between get request and db (need to address difference between db and get as well)
                 # diff_apidb.append(71)       # test case
                 # diff_apidb.append(72)       # test case
-                print 'diff_apidb: ', diff_apidb
+                print('diff_apidb: ', diff_apidb)
                 if diff_apidb:
                     for i in diff_apidb:
-                        vals = [type_devID[home_devID.index(i)],name_devID[home_devID.index(i)],i]
-                        # vals = ['Test','TEST',i]    # test case
-                        print 'vals: ', vals
-                        self.input_sources_insert(c,vals)
+                        vals = [type_devID[home_devID.index(i)], name_devID[home_devID.index(i)], i]
+                        print('vals: ', vals)
+                        self.input_sources_insert(c, vals)
                         l_db_prm_key.append(c.lastrowid)
                     conn.commit()
                     conn.close()
                     self.input_sources_measurements.append(home_devID)           # Adding device ID
                     self.input_sources_measurements.append(l_db_prm_key)         # Adding local DB ID
                     if house_id == 1:
-                        self.input_sources_measurements.append([33,35,37,29,31,0,0,38]) # GPIO port -> fixed
+                        self.input_sources_measurements.append([33, 35, 37, 29, 31, 0, 0, 38]) # GPIO port -> fixed
                     else:    
-                        self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed    
-                    
-                    # print 'input_sources_measurements: ', self.input_sources_measurements
+                        self.input_sources_measurements.append([37, 35, 33, 31, 29, 15, 13, 11]) # GPIO port -> fixed    
 
-        else:                # If device list is empty means it needs to create new devices in the server and local db
-            # print 'create devices'
+        else:
+            # If device list is empty means it needs to create new devices in the server and local db
             home_devID = self.create_devices(8)  # Create 8 devices -> there are 8 channels in the ADC and 8 relays
-            # print 'home_devID: ', home_devID
             if home_devID:
-                # print 'call db function to create dev id in measurements table'
                 conn = sqlite3.connect('homehubDB.db')
                 c = conn.cursor()
                 self.create_table(conn)                  # Creating tables
                 for d in range(len(home_devID)):    # Create rows for each dev in the home
-                    vals=[type_devID[d],name_devID[d],home_devID[d]]
-                    self.input_sources_insert(c,vals)
+                    vals = [type_devID[d], name_devID[d], home_devID[d]]
+                    self.input_sources_insert(c, vals)
                 conn.commit()
                 conn.close()
-                # self.createDB()
             else:
-                print 'problem in creating devices. Check POST request'
+                print('problem in creating devices. Check POST request')
                 pass
 
         self.input_sources_measurements.append(home_devID)           # Adding device ID
-        self.input_sources_measurements.append([1,2,3,4,5,6,7,8])    # Adding local DB ID
+        self.input_sources_measurements.append([1, 2, 3, 4, 5, 6, 7, 8])    # Adding local DB ID
         if house_id == 1:
-            self.input_sources_measurements.append([33,35,37,29,31,0,0,38]) # GPIO port -> fixed
+            self.input_sources_measurements.append([33, 35, 37, 29, 31, 0, 0, 38]) # GPIO port -> fixed
         else: 
-            self.input_sources_measurements.append([37,35,33,31,29,15,13,11]) # GPIO port -> fixed
-        # print 'Input sources: ', self.input_sources_measurements
+            self.input_sources_measurements.append([37, 35, 33, 31, 29, 15, 13, 11]) # GPIO port -> fixed
 
     def create_devices(self, number_of_devices, house_devstatus = 'ON'):
         device = { "status": None, "name": None, "type": None, "value": None, "home": None, "cosphi": None }
@@ -535,16 +519,14 @@ class HardwareInterface:
             dev['value'] = 0
             dev['cosphi'] = 1.0
             r_post_dev = requests.post(url = self.PWRNET_API_BASE_URL + "device/", json=dev, timeout=self.REQUEST_TIMEOUT, headers=self.headers)
-            # print "status code", r_post_dev.status_code
+            
             if r_post_dev.status_code == 201:
-                # print 'request was successful'
                 j = json.loads(r_post_dev.text)
                 devID.append(j['id'])
 
             else:
-                print 'request not successful'
+                print('request not successful')
                 pass
-        # print 'devID: ', devID
         return devID
 
 
@@ -557,7 +539,6 @@ class HardwareInterface:
         """ create a database connection to a SQLite database """
         try:
             conn = sqlite3.connect('homehubDB.db')
-            # print(sqlite3.version)
             c = conn.cursor()
             c.execute("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='input_sources'")
             if c.fetchone()[0]==0:
