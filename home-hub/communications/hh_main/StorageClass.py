@@ -190,15 +190,18 @@ class Storage:
         battval = q_batt[2]
         cosphi = q_batt[3]
         b_id = q_batt[4]
+        print "q_batt: ", q_batt
         if fct == "url":
             batt = self.urlBased(b_id, state, battval, cosphi)
             if batt == -1:
                 try:
                     batt = self.urlBased(b_id, state, battval, cosphi)
+                    print "SUCCEED"
                 except Exception as exc:
                     self.logger.exception(exc)
                     client.captureException()
         else:
+            print "RT"
             batt = self.realtime(battval)
             if batt == -1:
                 try:
