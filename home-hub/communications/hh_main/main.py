@@ -26,29 +26,29 @@ def main():
     h_id = int(raw_input("Enter house id: "))
     # h_id = 9      # Comment previous line and uncomment this if want id hardcoded
 
-    # # Get the email and password for this HH's user from the env vars
-    # powernet_user_email = os.getenv('POWERNET_USER_EMAIL', None)
-    # powernet_user_password = os.getenv('POWERNET_USER_PASSWORD', None)
+    # Get the email and password for this HH's user from the env vars
+    powernet_user_email = os.getenv('POWERNET_USER_EMAIL', None)
+    powernet_user_password = os.getenv('POWERNET_USER_PASSWORD', None)
     
-    # if powernet_user_email is None:
-    #     print('Missing the required login email address')
-    #     print('Please set the POWERNET_USER_EMAIL environment variable and try again')
-    #     exit()
+    if powernet_user_email is None:
+        print('Missing the required login email address')
+        print('Please set the POWERNET_USER_EMAIL environment variable and try again')
+        exit()
     
-    # if powernet_user_password is None:
-    #     print('Missing the required login password')
-    #     print('Please set the POWERNET_USER_PASSWORD environment variable and try again')
-    #     exit()
+    if powernet_user_password is None:
+        print('Missing the required login password')
+        print('Please set the POWERNET_USER_PASSWORD environment variable and try again')
+        exit()
     
-    # # attempt to authenticate against our API
-    # form_payload = {'email': powernet_user_email, 'password': powernet_user_password}
-    # response = requests.post('http://localhost:8081/api/v1/powernet_user/auth/', data=form_payload)
-    # print(response.status_code)
-    # auth_token = response.json()['token']
-    # print('Received my authentication token', auth_token)
+    # attempt to authenticate against our API
+    form_payload = {'email': powernet_user_email, 'password': powernet_user_password}
+    response = requests.post('http://localhost:8081/api/v1/powernet_user/auth/', data=form_payload)
+    print(response.status_code)
+    auth_token = response.json()['token']
+    print('Received my authentication token', auth_token)
 
     # Initializing variables for queue and threads
-    rpi = HardwareClass.HardwareRPi(house_id = int(h_id), gpio_map=None)
+    rpi = HardwareClass.HardwareRPi(house_id=int(h_id), gpio_map=None, auth_token=auth_token)
     # batt = StorageClass.Storage()
     buffer_size = 8
     q_ai = Queue(buffer_size)

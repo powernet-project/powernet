@@ -26,7 +26,7 @@ client = Client(SENTRY_DSN)
 #battery_fct = StorageClass.Storage(timeBatt=5)
 
 class HardwareRPi:
-    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100):
+    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
         self.CT20 = 20   # 20A/1V
@@ -54,6 +54,8 @@ class HardwareRPi:
         self.appliance_lst = ["DW_GC", "RF_GC", "LT_GC", "MW_GC", "DR1_GC", "DR2_GC", "Range1_GC", "Range2_GC"]
         ####################
 
+        self.auth_token = auth_token
+        self.headers = {'Authorization': 'Token ' + self.auth_token}
 
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
@@ -309,7 +311,7 @@ class HardwareRPi:
                     if len(d_fb[1]["samples"]) == 10:
                         try:
                             # send the request to the powernet site instead of firebase
-                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=self.REQUEST_TIMEOUT)
+                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb}, timeout=self.REQUEST_TIMEOUT, header=self.headers)
 
                             if r_post_rms.status_code == 201:
                                 #self.logger.info("Request was successful")
@@ -396,7 +398,7 @@ class HardwareRPi:
     def hh_devices_init(self, house_id, house_name):
         # dev_info = {"id": 48, "name": "Test_Dev", "type": "AIR_CONDITIONER", "status": "OFF", "value": 0, "cosphi": 1.0, "home": 2}
         # Getting all device information from cloud
-        dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT).json()["results"]
+        dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT, headers=self.headers).json()["results"]
         home_devID = []
         name_devID = []
         type_devID = []
@@ -487,7 +489,7 @@ class HardwareRPi:
             dev['type'] = "SDF"
             dev['value'] = 0
             dev['cosphi'] = 1.0
-            r_post_dev = requests.post(url = self.PWRNET_API_BASE_URL + "device/", json=dev, timeout=self.REQUEST_TIMEOUT)
+            r_post_dev = requests.post(url = self.PWRNET_API_BASE_URL + "device/", json=dev, timeout=self.REQUEST_TIMEOUT, headers=self.headers)
             # print "status code", r_post_dev.status_code
             if r_post_dev.status_code == 201:
                 # print 'request was successful'
