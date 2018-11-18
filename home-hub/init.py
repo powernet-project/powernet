@@ -24,7 +24,7 @@ from logging.handlers import RotatingFileHandler
 
 
 error_reporter = None
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 DEBUG = False # by default we run the HH with DEBUG off
 
 

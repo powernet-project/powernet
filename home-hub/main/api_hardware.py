@@ -30,7 +30,7 @@ from api_storage import StorageInterface
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 client = Client(SENTRY_DSN)
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 
 class HardwareInterface:
     def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
