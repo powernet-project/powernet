@@ -316,7 +316,6 @@ class HardwareRPi:
                             d_fb[i].get('samples').append({'RMS': sm, 'date_time': dt})
 
                         try:
-                            print "D_FB: ", d_fb
                             # send the request to the powernet site instead of firebase
 
                             r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb, 'home': self.house_id}, timeout=self.REQUEST_TIMEOUT, headers=self.headers)
