@@ -109,7 +109,7 @@ $(document).ready(function(ns) {
                 if(data['status'] === 'OFF') {
                      $('#stove-12').text('0 W');
                 } else {
-                    $.get('/api/v1/rms/consumption?id=12', function(data) {
+                    $.get('/api/v1/rms/consumption?device_id=12&number_of_samples=1', function(data) {
                         stove12 = data['result'] * 120;
                         stove12 = Math.round(stove12 * 10) / 10;
                         $('#stove-12').text(stove12.toString() + ' W');
@@ -122,7 +122,7 @@ $(document).ready(function(ns) {
                 if(data['status'] === 'OFF') {
                     $('#dish-washer-14').text('0 W');
                 } else {
-                    $.get('/api/v1/rms/consumption?id=14', function(data) {
+                    $.get('/api/v1/rms/consumption?device_id=14&number_of_samples=1', function(data) {
                         dishWasher14 = data['result'] * 120;
                         dishWasher14 = Math.round(dishWasher14 * 10) / 10;
                         $('#dish-washer-14').text(dishWasher14.toString() + ' W');
@@ -135,7 +135,7 @@ $(document).ready(function(ns) {
                 if(data['status'] === 'OFF') {
                     $('#fridge-10').text('0 W');
                 } else {
-                    $.get('/api/v1/rms/consumption?id=10', function(data) {
+                    $.get('/api/v1/rms/consumption?device_id=10&number_of_samples=1', function(data) {
                         fridge10 = data['result'] * 120;
                         fridge10 = Math.round(fridge10 * 10) / 10;
                         $('#fridge-10').text(fridge10.toString() + ' W');
@@ -148,7 +148,7 @@ $(document).ready(function(ns) {
                 if(data['status'] === 'OFF') {
                     $('#washer-13').text('0 W');
                 } else {
-                    $.get('/api/v1/rms/consumption?id=13', function(data) {
+                    $.get('/api/v1/rms/consumption?device_id=13&number_of_samples=1', function(data) {
                         washer13 = data['result'] * 120;
                         washer13 = Math.round(washer13 * 10) / 10;
                         $('#washer-13').text(washer13.toString() + ' W');
@@ -161,7 +161,7 @@ $(document).ready(function(ns) {
                 if(data['status'] === 'OFF') {
                     $('#ac-5').text('0 W');
                 } else {
-                    $.get('/api/v1/rms/consumption?id=5', function(data) {
+                    $.get('/api/v1/rms/consumption?device_id=5&number_of_samples=1', function(data) {
                         ac5 = data['result'] * 120;
                         ac5 = Math.round(ac5 * 10) / 10;
                         $('#ac-5').text(ac5.toString() + ' W');
@@ -181,7 +181,7 @@ $(document).ready(function(ns) {
         // zero out the existing total consumption
         totalConsumptionValue = 0;
 
-        var pwrnetApiUrl = '/api/v1/rms/consumption?id=',
+        var pwrnetApiUrl = '/api/v1/rms/consumption?number_of_samples=1&device_id=',
             deviceIds = [5, 10, 12, 13, 14];
 
         for (var i = 0; i < deviceIds.length; i++) {

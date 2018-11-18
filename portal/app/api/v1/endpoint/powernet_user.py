@@ -1,12 +1,13 @@
 from app.models import PowernetUser
 from app.api.v1 import CsrfExemptAuth
-from rest_framework.decorators import action
 from django.contrib.auth import authenticate
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import (viewsets, serializers, status)
+from rest_framework.authentication import TokenAuthentication
 from app.common.enum_field_handler import EnumFieldSerializerMixin
+from rest_framework.decorators import action, authentication_classes
 
 
 class PowernetUserSerializer(EnumFieldSerializerMixin, serializers.ModelSerializer):
@@ -16,7 +17,6 @@ class PowernetUserSerializer(EnumFieldSerializerMixin, serializers.ModelSerializ
 
 
 class PowernetUserViewSet(viewsets.ModelViewSet):
-    authentication_classes = ()
     permission_classes = ()
     serializer_class = PowernetUserSerializer
 
@@ -24,6 +24,12 @@ class PowernetUserViewSet(viewsets.ModelViewSet):
         queryset = PowernetUser.objects.filter(user=self.request.user).order_by('id')
         return queryset
 
+    @action(methods=['GET'], detail=False)
+    @authentication_classes((CsrfExemptAuth, TokenAuthentication))
+    def me(self, request):
+        return Response(self.serializer_class(PowernetUser.objects.get(user=request.user)).data)
+
+    @authentication_classes(())
     @action(detail=False, methods=['POST'])
     def auth(self, request):
         email = request.data.get('email')

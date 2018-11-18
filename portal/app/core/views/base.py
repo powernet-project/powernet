@@ -1,13 +1,18 @@
 import json
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from app.models import Home, Device
+from rest_framework.authtoken.models import Token
 from app.api.v1.endpoint.device import DeviceSerializer
+from django.contrib.auth.decorators import login_required
 
 
 @login_required
 def index(request):
-    return render(request, 'partials/main.html')
+    if Token.objects.filter(user=request.user).count() > 0:
+        token = Token.objects.get(user=request.user)
+    else:
+        token = Token.objects.create(user=request.user)
+    return render(request, 'partials/main.html', {'token': token})
 
 
 #########################################################
