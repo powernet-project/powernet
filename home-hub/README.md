@@ -1,6 +1,6 @@
 # Home Hub
 
-## Getting the RPi up and running with docker and the Home Hub code
+## Getting the RPi up and running with the Home Hub code
 
 ### After you've SSH'ed into the RPi, update its OS:
 ```bash
@@ -28,5 +28,5 @@ sudo apt-get install vim
 
 ### Running the HH
 ```bash
-python init.py  # pass -d flag to run in DEBUG mode, which in turns also prints logs to stdout
+python init.py  # pass -d flag to run in DEBUG mode, which in turn also prints logs to stdout
 ```

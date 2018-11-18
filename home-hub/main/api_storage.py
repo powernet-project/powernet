@@ -18,6 +18,7 @@ from raven import Client
 from pyModbusTCP import utils
 from datetime import datetime
 from pyModbusTCP.client import ModbusClient
+from api_network import NetworkInterface as api
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -26,20 +27,24 @@ client = Client(SENTRY_DSN)
 logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 
 class StorageInterface:
-    def __init__(self, maxpower=3300, addr_command=63245, addr_time=63243, addr_disPower=63248, addr_chaPower=63246, timeBatt = 36000, SERVER_HOST="192.168.0.51", SERVER_PORT=502, PWRNET_API_BASE_URL = 'http://pwrnet-158117.appspot.com/api/v1/'):
-        self.maxPower = maxpower
-        self.addr_command = addr_command
-        self.addr_time = addr_time
-        self.addr_disPower = addr_disPower
-        self.addr_chaPower = addr_chaPower
-        self.timeBatt = timeBatt            # How long to (dis)charge [s]: uint32
-        self.SERVER_HOST = SERVER_HOST
-        self.SERVER_PORT = SERVER_PORT
-        self.tcpClient = ModbusClient(host=self.SERVER_HOST, port=self.SERVER_PORT, unit_id= 247,timeout=2,auto_open=True)
-        self.PWRNET_API_BASE_URL = PWRNET_API_BASE_URL
-
+    def __init__(self, auth_token = None):
+        # initialize the logger
         self.logger = logger
         self.logger.info('Storage class called')
+
+        # initialize the network api
+        api(auth_token)
+
+        # initialize the Storage Interface variables
+        self.maxPower = 3300
+        self.timeBatt = 36000            # How long to (dis)charge [s]: uint32
+        self.addr_time = 63243
+        self.addr_command = 63245
+        self.addr_disPower = 63248
+        self.addr_chaPower = 63246
+        self.SERVER_HOST = '192.168.0.51'
+        self.SERVER_PORT = 502
+        self.tcpClient = ModbusClient(host=self.SERVER_HOST, port=self.SERVER_PORT, unit_id= 247, timeout=2, auto_open=True)
 
     def realtime(self, battVal = 0.0, cosPhi = 1.0):
         if battVal > 0:
@@ -65,28 +70,25 @@ class StorageInterface:
                 regs_disPower = self.tcpClient.write_multiple_registers(self.addr_disPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
                 if str(regs_disPower) != "True":    # Check if write function worked
                     return 0
-                else:
-                    return float(time.time())
+                
+                return float(time.time())
 
             elif command_mode == 3:
                 regs_chaPower = self.tcpClient.write_multiple_registers(self.addr_chaPower,[powerFloat&0xffff,(powerFloat&0xffff0000)>>16])
                 if str(regs_chaPower) != "True":    # Check if write function worked
                     return 0
-                else:
-                    return float(time.time())
+                
+                return float(time.time())
 
-            else:
-                return 0
+            
+            return 0
 
-        else:
-
-            self.tcpClient.open()
-            return -1
+        self.tcpClient.open()
+        return -1
 
     def urlBased(self, devId, state=None, powerReal=0, cosPhi = 1.0):
-        #self.logger.info('Storage URL function called')
         if state == None:
-            batt = requests.get(url=self.PWRNET_API_BASE_URL + "device/" + devId + "/", timeout=10)
+            batt = api.get_battery_status(devId)
             battStatus = batt.json()["status"]
             power = batt.json()["value"]
             phi = batt.json()["cosphi"]
@@ -278,9 +280,9 @@ class StorageInterface:
                 self.logger.exception(exc)
                 client.captureException()
                 return -9
-        else:
-            self.tcpClient.open()
-            return -9   # cannot be -1 as cosPhi can be thos number
+        
+        self.tcpClient.open()
+        return -9   # cannot be -1 as cosPhi can be thos number
 
     def writeCosPhi(self, valCosPhi=1.0, test=False):
         #self.logger.info('writeCosPhi called')
@@ -295,9 +297,9 @@ class StorageInterface:
                     self.logger.exception(exc)
                     client.captureException()
                     return False
-            else:
-                self.tcpClient.open()
-                return False
+            
+            self.tcpClient.open()
+            return False
         else:
             try:
                 data_conv = utils.encode_ieee(valCosPhi)

@@ -25,6 +25,7 @@ from sqlite3 import Error
 from datetime import datetime
 from google.cloud import pubsub_v1
 from api_storage import StorageInterface
+from api_network import NetworkInterface as api
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -34,39 +35,31 @@ logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 
 class HardwareInterface:
     def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
+        # initialize the logger
+        self.logger = logger
+        self.logger.info('HardwareRPi class called')
+        
+        # initialize the network api
+        api(auth_token)
+        
+        # initialize our internal interface vars
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
         self.CT20 = 20   # 20A/1V
         self.CT50 = 50   # 50A/1V
         self.CT100 = 100 # 100A/1V
-        self.REQUEST_TIMEOUT = 10
-        self.PWRNET_API_BASE_URL = 'https://pwrnet-158117.appspot.com/api/v1/'
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 
-        ####################
         self.app_orig_states = ["OFF", "OFF", "OFF"]
         self.app_new_status = ["OFF", "OFF", "OFF"]
-        ####################
-
-        ####################
+        
         # input_sources_statesDB GC -> 'api_appliance_name':[db_id,api_id]
         self.input_sources_statesDB = {'DW_GC': [3,40], 'RF_GC': [4,41], 'LT_GC':[5,42], 'MW_GC':[6,43],'WD1_GC':[7,44], 'WD2_GC': [8,45], 'Range1_GC':[9,46], 'Range2_GC':[10,47]}
         self.sourcesDBID = [self.input_sources_statesDB['DW_GC'][0],self.input_sources_statesDB['RF_GC'][0],self.input_sources_statesDB['LT_GC'][0],self.input_sources_statesDB['MW_GC'][0],self.input_sources_statesDB['WD1_GC'][0],self.input_sources_statesDB['WD2_GC'][0],self.input_sources_statesDB['Range1_GC'][0],self.input_sources_statesDB['Range2_GC'][0]]
-        ######
         self.input_sources_measurements = []
-        ####################
-
-        ####################
         #self.appliance_lst = ["AC1", "SE1", "RF1", "CW1", "DW1", "WM1", "PW2"]
         self.appliance_lst = ["DW_GC", "RF_GC", "LT_GC", "MW_GC", "DR1_GC", "DR2_GC", "Range1_GC", "Range2_GC"]
-        ####################
-
-        self.auth_token = auth_token
-        self.headers = {'Authorization': 'Token ' + self.auth_token}
-
-        self.logger = logger
-        self.logger.info('HardwareRPi class called')
-
+        
         # Database variables:
         self.flag_db = 0
         self.prev = [-1,-1,-1,-1,-1,-1,-1,-1]
@@ -92,21 +85,19 @@ class HardwareInterface:
             else:
                 GPIO.output(i, GPIO.HIGH)
 
-
         # Initializing SPI
         self.spi = spidev.SpiDev()
         self.spi.open(0,0)
         self.spi.max_speed_hz=1000000
 
-        ####################
         # Initializing devices and DB (create DB if does not exist already):
         self.hh_devices_init(self.house_id, self.house_name)
 
         # Creating battery class:
-        self.batt = StorageInterface()
+        self.batt = StorageInterface(auth_token=auth_token)
 
         # Pubsub subscription:
-        self.sub = 'HH'+str(self.house_id)
+        self.sub = 'HH' + str(self.house_id)
 
     
     def ConvertVolts(self, data,places):
@@ -138,7 +129,6 @@ class HardwareInterface:
         """
         Producer AI
         """
-
         self.logger.info('Producer AI called')
         while(True):
             dts = []  # date/time stamp for each start of analog read
@@ -319,25 +309,11 @@ class HardwareInterface:
                             d_fb[i]['average'] = {'RMS': sm, 'date_time': dt}
                             
                         try:
-                            # send the request to the powernet site instead of firebase
-
-                            r_post_rms = requests.post(self.PWRNET_API_BASE_URL + "rms/", json={'devices_json': d_fb, 'home': self.house_id}, timeout=self.REQUEST_TIMEOUT, headers=self.headers)
-
-                            if r_post_rms.status_code == 201:
-                                #self.logger.info("Request was successful")
-                                pass
-                            else:
-                                self.logger.exception("Request failed")
-                                r_post_rms.raise_for_status()
-
-                            d_fb[:]=[]
-                            d_fb = None
-                            d_fb = copy.deepcopy(template)
-
+                            api.save_rms({'devices_json': d_fb, 'home': self.house_id})
                         except Exception as exc:
                             self.logger.exception(exc)
                             client.captureException()
-
+                        finally:
                             d_fb[:]=[]
                             d_fb = None
                             d_fb = copy.deepcopy(template)
@@ -421,7 +397,7 @@ class HardwareInterface:
     def hh_devices_init(self, house_id, house_name):
         # dev_info = {"id": 48, "name": "Test_Dev", "type": "AIR_CONDITIONER", "status": "OFF", "value": 0, "cosphi": 1.0, "home": 2}
         # Getting all device information from cloud
-        dev_status = requests.get(self.PWRNET_API_BASE_URL + "device", timeout=self.REQUEST_TIMEOUT, headers=self.headers).json()["results"]
+        dev_status = api.get_device_status
         home_devID = []
         name_devID = []
         type_devID = []
@@ -515,15 +491,11 @@ class HardwareInterface:
             dev['type'] = "SDF"
             dev['value'] = 0
             dev['cosphi'] = 1.0
-            r_post_dev = requests.post(url = self.PWRNET_API_BASE_URL + "device/", json=dev, timeout=self.REQUEST_TIMEOUT, headers=self.headers)
             
-            if r_post_dev.status_code == 201:
-                j = json.loads(r_post_dev.text)
-                devID.append(j['id'])
-
-            else:
-                self.logger.warning('request not successful')
-                pass
+            saved_device = api.save_devices(dev)
+            if saved_device is not None:
+                devID.append(saved_device)
+            
         return devID
 
 
