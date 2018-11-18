@@ -25,11 +25,12 @@ from sqlite3 import Error
 from datetime import datetime
 from google.cloud import pubsub_v1
 from api_storage import StorageInterface
-from logging.handlers import RotatingFileHandler
 
 # Global variables
 SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
 client = Client(SENTRY_DSN)
+
+logger = logging.getLogger(__name__)
 
 class HardwareInterface:
     def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
@@ -63,11 +64,8 @@ class HardwareInterface:
         self.auth_token = auth_token
         self.headers = {'Authorization': 'Token ' + self.auth_token}
 
-        self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
-        self.handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
-        self.logger.addHandler(self.handler)
-
+        self.logger = logger
+        print("I SHOULD SEE MY LOG STATEMENT!!!!")
         self.logger.info('HardwareRPi class called')
 
         # Database variables:

@@ -26,3 +26,7 @@ git branch --set-upstream-to=origin/master master
 sudo apt-get install vim
 ```
 
+### Running the HH
+```bash
+python init.py  # pass -d flag to run in DEBUG mode, which in turns also prints logs to stdout
+```

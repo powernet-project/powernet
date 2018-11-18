@@ -33,6 +33,7 @@ def init_error_reporting():
     Simple error reporting wrapper - will allow us to plug in
     different error reporting backend(s) in the future
     """
+    global error_reporter
     SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
     error_reporter = Client(SENTRY_DSN)
 
