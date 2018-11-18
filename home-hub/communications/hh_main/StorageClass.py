@@ -155,7 +155,7 @@ class Storage:
                     battval = queue_param[2]
                     cosphi = queue_param[3]
                     q_batt.task_done()
-                    #print "Queue battery: ", queue_param
+                    print "Queue battery: ", queue_param
                 except Exception as exc:
                     self.logger.exception(exc)
                     client.captureException()
@@ -164,6 +164,7 @@ class Storage:
                 if batt == -1:
                     try:
                         batt = self.urlBased(19, state, battval, cosphi)
+                        print "Called tcp"
                     except Exception as exc:
                         self.logger.exception(exc)
                         client.captureException()
