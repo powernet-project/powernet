@@ -42,10 +42,8 @@ def main():
     
     # attempt to authenticate against our API
     form_payload = {'email': powernet_user_email, 'password': powernet_user_password}
-    response = requests.post('http://localhost:8081/api/v1/powernet_user/auth/', data=form_payload)
-    print(response.status_code)
+    response = requests.post('https://pwrnet-158117.appspot.com/api/v1/powernet_user/auth/', data=form_payload)
     auth_token = response.json()['token']
-    print('Received my authentication token', auth_token)
 
     # Initializing variables for queue and threads
     rpi = HardwareClass.HardwareRPi(house_id=int(h_id), gpio_map=None, auth_token=auth_token)
