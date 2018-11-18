@@ -14,12 +14,12 @@ import sys
 import getopt
 import logging
 import requests
-import HardwareClass
 
 from Queue import Queue
 from raven import Client
 from threading import Thread
 from google.cloud import pubsub_v1
+from main.api_hardware import HardwareInterface
 from logging.handlers import RotatingFileHandler
 
 
@@ -103,8 +103,7 @@ def initialize_home_hub(argv):
     auth_token = response.json()['token']
 
     # Initializing variables for queue and threads
-    rpi = HardwareClass.HardwareRPi(house_id=int(home_id), gpio_map=None, auth_token=auth_token)
-    # batt = StorageClass.Storage()
+    rpi = HardwareInterface(house_id=int(home_id), gpio_map=None, auth_token=auth_token)
     buffer_size = 8
     q_ai = Queue(buffer_size)
 
