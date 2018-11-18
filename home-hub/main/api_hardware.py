@@ -18,13 +18,13 @@ import logging
 import sqlite3
 import requests
 import numpy as np
-import StorageClass
 import RPi.GPIO as GPIO
 
 from raven import Client
 from sqlite3 import Error
 from datetime import datetime
 from google.cloud import pubsub_v1
+from api_storage import StorageInterface
 from logging.handlers import RotatingFileHandler
 
 # Global variables
@@ -106,7 +106,7 @@ class HardwareInterface:
         self.hh_devices_init(self.house_id, self.house_name)
 
         # Creating battery class:
-        self.batt = StorageClass.Storage()
+        self.batt = StorageInterface()
 
         # Pubsub subscription:
         self.sub = 'HH'+str(self.house_id)
