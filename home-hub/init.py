@@ -48,10 +48,10 @@ def init_logging():
     rotating_file_handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
     rotating_file_handler.setFormatter(logFormatter)
     logger.addHandler(rotating_file_handler)
-
+    
     if DEBUG:
         # print to stdout if we are debugging
-        stream_handler = logging.StreamHandler()
+        stream_handler = logging.StreamHandler(sys.stdout)
         stream_handler.setFormatter(logFormatter)
         logger.addHandler(stream_handler)
 
@@ -67,6 +67,7 @@ def parse_cmd_line_opts(argv):
         for opt, arg in opts:
             if opt == '-d':
                 print('Running HH with DEBUG set to True')
+                global DEBUG
                 DEBUG = True
     except getopt.GetoptError:
         print('Unrecognized option; running HH with DEBUG set to False')
