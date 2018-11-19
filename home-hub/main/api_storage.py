@@ -126,23 +126,20 @@ class StorageInterface:
                 regs_disPower = self.tcpClient.write_multiple_registers(self.addr_disPower, [powerFloat & 0xffff, (powerFloat & 0xffff0000) >> 16])
                 if (str(regs_disPower) != "True"):    # Check if write function worked
                     return 0
-                else:
-                    return float(time.time())
+                
+                return float(time.time())
 
             elif (command_mode == 3):
                 regs_chaPower = self.tcpClient.write_multiple_registers(self.addr_chaPower, [powerFloat & 0xffff, (powerFloat & 0xffff0000) >> 16])
                 if (str(regs_chaPower) != "True"):    # Check if write function worked
                     return 0
-                else:
-                    return float(time.time())
+                
+                return float(time.time())
 
-            else:
-                return 0
+            return 0
 
-        else:
-            self.tcpClient.open()
-            return -1
-
+        self.tcpClient.open()
+        return -1
 
     def battery_thread(self, q_batt):
         self.logger.info('Battery Thread called')
