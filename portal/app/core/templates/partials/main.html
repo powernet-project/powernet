@@ -16,7 +16,7 @@
 
 {% block page-scripts %}
 <script type="text/javascript">
-    let token = {{ token }};
+    let token = '{{ token }}';
     window.localStorage.setItem('token', token);
 </script>
 {% endblock page-scripts %}
