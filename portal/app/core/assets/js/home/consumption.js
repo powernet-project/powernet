@@ -4,7 +4,7 @@ $(document).ready(function(ns) {
     const onLoad = function() {
         // get the homes device list
         $.ajax({
-            url: '/api/v1/powernet_user/me',
+            url: '/api/v1/rms/consumption/?home_id=1',
             type: "GET",
             beforeSend: function(xhr){
                 xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
