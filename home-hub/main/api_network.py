@@ -30,7 +30,7 @@ class NetworkInterface:
 
     def save_devices(json):
         r = requests.post(self.pwrnet_base_url + 'device/', json=json, timeout=self.request_timeout, headers=self.headers)
-        if r.status_code != 201
+        if r.status_code != 201:
             logger.error('Failed to save device')
             return None
         return json.loads(r.text)['id']
