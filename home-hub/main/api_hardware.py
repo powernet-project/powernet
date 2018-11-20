@@ -401,6 +401,7 @@ class HardwareInterface:
         home_devID = []
         name_devID = []
         type_devID = []
+        print("dev_status", dev_status)
         for h in dev_status:
             if h['home'] == house_id:       # Checking if there is any device in house with house_id and include device id in list
                 home_devID.append(h['id'])
