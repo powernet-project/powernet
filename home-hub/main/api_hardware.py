@@ -207,8 +207,8 @@ class HardwareInterface:
             c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
         except sqlite3.IntegrityError:
             self.logger.error('error connecting to db')
-      conn.commit()
-      conn.close()
+        conn.commit()
+        conn.close()
 
 
     def dbWriteStates(self, vals):
