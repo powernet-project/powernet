@@ -19,7 +19,7 @@ logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 class NetworkInterface:
     def __init__(self, auth_token):
         self.request_timeout = 10
-        self.headers = {'Authorization': 'Token ' + self.auth_token}
+        self.headers = {'Authorization': 'Token ' + auth_token}
         self.pwrnet_base_url = 'https://pwrnet-158117.appspot.com/api/v1/'
 
     def save_rms(json):
