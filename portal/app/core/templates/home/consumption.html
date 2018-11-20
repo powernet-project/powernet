@@ -5,15 +5,18 @@
 {% block main-content %}
 
     <br /><br /><br /><br />
-    <br /><br /><br /><br />
     <div class="row">
         <div class="col-sm-12 text-center">
             CONSUMPTION
         </div>
     </div>
 
+    <div id="home-power-consumption"></div>
+
 {% endblock main-content %}
 
 {% block page-scripts %}
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="{% static "js/home/consumption.js" %}"></script>
 {% endblock page-scripts %}
