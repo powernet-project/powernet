@@ -4,7 +4,7 @@ jobs:
     # chosen path to do our build
     working_directory: ~/powernet
     docker:
-      - image: circleci/python:3.6  
+      - image: circleci/python:2.7  
     steps:      
       # git convenience method
       - checkout            
