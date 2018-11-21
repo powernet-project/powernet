@@ -26,13 +26,13 @@ class NetworkInterface:
     def save_rms(self, json_data):
         r = requests.post(self.pwrnet_base_url + 'rms/', json=json_data, timeout=self.request_timeout, headers=self.headers)
         if r.status_code != 201:
-            self.logger.error('Failed to save rms data')
+            self.logger.info`('Failed to save rms data')
             r.raise_for_status()
 
     def save_devices(self, json_data):
         r = requests.post(self.pwrnet_base_url + 'device/', json=json_data, timeout=self.request_timeout, headers=self.headers)
         if r.status_code != 201:
-            self.logger.error('Failed to save device')
+            self.logger.info('Failed to save device')
             return None
         return json.loads(r.text)['id']
 
