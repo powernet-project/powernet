@@ -398,7 +398,6 @@ class HardwareInterface:
         # dev_info = {"id": 48, "name": "Test_Dev", "type": "AIR_CONDITIONER", "status": "OFF", "value": 0, "cosphi": 1.0, "home": 2}
         # Getting all device information from cloud
         dev_status = api.get_device_status()
-        print("device status: ", dev_status)
         home_devID = []
         name_devID = []
         type_devID = []
