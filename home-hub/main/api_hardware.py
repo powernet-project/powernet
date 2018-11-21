@@ -501,7 +501,7 @@ class HardwareInterface:
 
 
     def createDB(self):
-        SQL_File_Name = 'table_schema.sql'
+        SQL_File_Name = 'main/table_schema.sql'
         TableSchema=""
         with open(SQL_File_Name, 'r') as SchemaFile:
             TableSchema=SchemaFile.read().replace('\n','')
@@ -523,7 +523,7 @@ class HardwareInterface:
             conn.close()
 
     def create_table(self, conn):
-        SQL_File_Name = 'create_table_sql.sql'
+        SQL_File_Name = 'main/create_table_sql.sql'
         TableSchema=""
         with open(SQL_File_Name, 'r') as SchemaFile:
             TableSchema=SchemaFile.read().replace('\n','')
