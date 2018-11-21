@@ -12,7 +12,7 @@ jobs:
           name: Install python's build requirements
           command: sudo pip install -r portal/build-requirements.txt
       - run:
-          name: Collect Statics assets for later syncing with gcloud
+          name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input      
       - run:
           name: Store gcloud Service Account Key
