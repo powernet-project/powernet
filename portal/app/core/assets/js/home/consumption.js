@@ -67,18 +67,17 @@ $(document).ready(function(ns) {
                 xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
             },
             success: function(data) {
-                console.warn(data);
-                buildCharts(data)
+                buildCharts(data);
             }
         });
     };
 
     const loadPerDeviceChart = function() {
-        Plotly.newPlot('consumption-chart', pageCache['perDeviceDataSet'], { title: 'Power consumption per device' });
+        Plotly.newPlot('consumption-chart', pageCache['perDeviceDataSet'], { title: 'Power Consumption per Device' });
     };
 
     const loadHomeAggregateChart = function() {
-        Plotly.newPlot('consumption-chart', pageCache['homeTotalDataSet'], { title: 'Power consumption per device' });
+        Plotly.newPlot('consumption-chart', pageCache['homeTotalDataSet'], { title: 'Total Home Power Consumption' });
     };
 
     /**
@@ -91,12 +90,11 @@ $(document).ready(function(ns) {
      *              average: {
      *                  RMS: float,
      *                  date_time: datetime
-     *              }
+     *              }, ...
      *          }]
-     *      }
+     *      }, ...
      * ]
      * @param dataSource
-     * @param divId
      */
     const buildCharts = function(dataSource) {
         // put the data in a usable format by the plot lib
