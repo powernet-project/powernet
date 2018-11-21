@@ -92,8 +92,8 @@ class StorageInterface:
             battStatus = batt.json()["status"]
             power = batt.json()["value"]
             phi = batt.json()["cosphi"]
-            self.logger.info("power: ", power)
-            self.logger.info("phi: ", phi)
+            self.logger.info("power: %s", power)
+            self.logger.info("phi: %s", phi)
         else:
             battStatus = state
 
@@ -159,7 +159,7 @@ class StorageInterface:
                     battval = queue_param[2]
                     cosphi = queue_param[3]
                     q_batt.task_done()
-                    self.logger.info("Queue battery: ", queue_param)
+                    self.logger.info("Queue battery: %s", queue_param)
                 except Exception as exc:
                     self.logger.exception(exc)
                     client.captureException()
@@ -187,7 +187,7 @@ class StorageInterface:
         battval = q_batt[2]
         cosphi = q_batt[3]
         b_id = q_batt[4]
-        self.logger.info("q_batt: ", q_batt)
+        self.logger.info("q_batt: %s", q_batt)
         if fct == "url":
             batt = self.urlBased(b_id, state, battval, cosphi)
             if batt == -1:
@@ -242,12 +242,12 @@ class StorageInterface:
                     Lh = hex(resp[0])
                     Mh = hex(resp[1])
                     Sh = Mh[2:]+Lh[2:]
-                    self.logger.info('Sh: ', Sh)
+                    self.logger.info('Sh: %s', Sh)
                     val = val = struct.unpack('!f',Sh.decode('hex'))    # Converting from hex to float
                     vals_dc.append(val[0])
 
                 except Exception as exc:
-                    self.logger.error('error in: ', i)
+                    self.logger.error('error in: %s', i)
                     self.logger.exception(exc)
                     client.captureException()
             else:
@@ -282,7 +282,6 @@ class StorageInterface:
         return -9   # cannot be -1 as cosPhi can be thos number
 
     def writeCosPhi(self, valCosPhi=1.0, test=False):
-        #self.logger.info('writeCosPhi called')
         addr = 61706    # Modbus address of FixedCosPhi
         if test:        # Check to see if this function is going to be used for testing or just writing to register
             if self.tcpClient.is_open():
@@ -315,7 +314,7 @@ class StorageInterface:
 ########################
 
 if __name__ == '__main__':
-    storage = Storage()
+    storage = StorageInterface()
     powerTime = 10
     battTime = 0.0
     deviceId = '19'
@@ -342,15 +341,15 @@ if __name__ == '__main__':
             soe = storage.readSOE()
             if soe == -1:
                 soe = storage.readSOE()
-            self.logger.info("SOE: ", soe)
+            logger.info("SOE: %s", soe)
             time.sleep(1)
 
         elif funStor == "readDC":
             t = 0
-            self.logger.info('Inside readDC')
+            logger.info('Inside readDC')
             while(t < 5):
                 vals_dc = storage.readDC()
-                self.logger.info(vals_dc)
+                logger.info(vals_dc)
                 if vals_dc != -1:
                     with open('battData.txt','a') as f:
                         for i in vals_dc:
@@ -363,12 +362,12 @@ if __name__ == '__main__':
             cosPhi = storage.readCosPhi()
             if cosPhi == -9:
                 cosPhi = storage.readCosPhi()
-            self.logger.info("cosPhi: ", cosPhi)
+            logger.info("cosPhi: %s", cosPhi)
             time.sleep(1)
 
         else:
             writeCosPhi = storage.writeCosPhi(0.5, True)
             if writeCosPhi == False:
                 writeCosPhi = storage.writeCosPhi(0.5, True)
-            self.logger.info("cosPhi: ", writeCosPhi)
+            logger.info("cosPhi: %s", writeCosPhi)
             time.sleep(1)

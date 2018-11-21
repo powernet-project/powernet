@@ -347,21 +347,21 @@ class HardwareInterface:
         except Exception as exc:
             self.logger.exception(exc)
             client.captureException()
-            self.logger.error("Exception GCP: ", exc)
+            self.logger.error("Exception GCP: %s", exc)
 
         while True:
             time.sleep(2)   # Delay between readings
 
 
     def devices_act(self, device, state):
-        self.logger.info("device: ", device)
-        self.logger.info("state: ", state)
+        self.logger.info("device: %s", device)
+        self.logger.info("state: %s", state)
         GPIO.output(self.input_sources_measurements[2][device-1], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
     def callback(self, message):
         dts = str(datetime.now())
         data = json.loads(message.data)
-        self.logger.info('data: ', data)
+        self.logger.info('data: %s', data)
         load_state = data['status']
         load_name = data['name']
         load_type = data['type']
@@ -407,7 +407,7 @@ class HardwareInterface:
                 home_devID.append(h['id'])
                 type_devID.append(h['type'])
                 name_devID.append(h['name'])
-        self.logger.info("homeDevID: ", home_devID)
+        self.logger.info("homeDevID: %s", home_devID)
         if home_devID:                      # If devices list is not empty (meaning that a house with devices is already created) dont create any dev
             try:                            # Check if DB exists in HH
                 conn = sqlite3.connect('homehubDB.db')
@@ -442,11 +442,11 @@ class HardwareInterface:
                 diff_apidb = sorted(list(set(home_devID)-set(l_db_api_id)))     # Checking difference between get request and db (need to address difference between db and get as well)
                 # diff_apidb.append(71)       # test case
                 # diff_apidb.append(72)       # test case
-                self.logger.info('diff_apidb: ', diff_apidb)
+                self.logger.info('diff_apidb: %s', diff_apidb)
                 if diff_apidb:
                     for i in diff_apidb:
                         vals = [type_devID[home_devID.index(i)], name_devID[home_devID.index(i)], i]
-                        self.logger.info('vals: ', vals)
+                        self.logger.info('vals: %s', vals)
                         self.input_sources_insert(c, vals)
                         l_db_prm_key.append(c.lastrowid)
                     conn.commit()
