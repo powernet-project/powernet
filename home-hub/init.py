@@ -96,7 +96,7 @@ def initialize_home_hub(argv):
     
     # Verify we have a valid home id
     if HOME_ID is None:
-        logger.info('Home ID is invalid or missing. Please provide an integer following the -i flag')
+        print('Home ID is invalid or missing. Please provide an integer following the -i flag')
         exit()
 
     # Begin Home Hub Specific Setup
