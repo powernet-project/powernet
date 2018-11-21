@@ -46,7 +46,7 @@ def init_logging():
     # set a common log format
     logFormatter = logging.Formatter("%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s]  %(message)s")
     # setup our rotating file handler and assign our common formatter to it
-    rotating_file_handler = RotatingFileHandler('my_log.log', maxBytes=2000, backupCount=10)
+    rotating_file_handler = RotatingFileHandler('my_log.log', maxBytes=200000, backupCount=10)
     rotating_file_handler.setFormatter(logFormatter)
     logger.addHandler(rotating_file_handler)
     
