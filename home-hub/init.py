@@ -18,14 +18,21 @@ import requests
 from Queue import Queue
 from raven import Client
 from threading import Thread
-from google.cloud import pubsub_v1
 from main.api_hardware import HardwareInterface
 from logging.handlers import RotatingFileHandler
 
 
 error_reporter = None
 logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
+HOME_ID = None
 DEBUG = False # by default we run the HH with DEBUG off
+
+FILE_USAGE_EXPLANATAION = """
+    Usage:
+    python init.py -h           # displays this help message
+    python init.py -i <int>     # supply a home ID - this is REQUIRED
+    python init.py -i <int> -d  # run the Home Hub in debug (prints to console as well as file)
+"""
 
 
 def init_error_reporting():
@@ -64,12 +71,18 @@ def parse_cmd_line_opts(argv):
         return
     
     try:
-        opts, args = getopt.getopt(argv, 'd')
+        opts, args = getopt.getopt(argv, 'hdi:')
         for opt, arg in opts:
-            if opt == '-d':
+            if opt == '-h':
+                print(FILE_USAGE_EXPLANATAION)
+                sys.exit()
+            elif opt == '-d':
                 print('Running HH with DEBUG set to True')
                 global DEBUG
                 DEBUG = True
+            elif opt == '-i':
+                global HOME_ID
+                HOME_ID = int(arg)
     except getopt.GetoptError:
         print('Unrecognized option; running HH with DEBUG set to False')
 
@@ -81,9 +94,13 @@ def initialize_home_hub(argv):
     init_logging()
     init_error_reporting()
     
+    # Verify we have a valid home id
+    if HOME_ID is None:
+        logger.info('Home ID is invalid or missing. Please provide an integer following the -i flag')
+        exit()
+
     # Begin Home Hub Specific Setup
-    logger.info("Starting the Home Hub main program")
-    home_id = int(raw_input("Enter house id: "))
+    logger.info('Starting the Home Hub main program for Home: %s', HOME_ID)
 
     # Get the email and password for this HH's user from the env vars
     powernet_user_email = os.getenv('POWERNET_USER_EMAIL', None)
@@ -105,7 +122,7 @@ def initialize_home_hub(argv):
     auth_token = response.json()['token']
 
     # Initializing variables for queue and threads
-    rpi = HardwareInterface(house_id=int(home_id), gpio_map=None, auth_token=auth_token)
+    rpi = HardwareInterface(house_id=int(HOME_ID), gpio_map=None, auth_token=auth_token)
     buffer_size = 8
     q_ai = Queue(buffer_size)
 
