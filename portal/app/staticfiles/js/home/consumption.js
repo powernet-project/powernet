@@ -45,7 +45,20 @@ const colors = [
 var consumption = consumption || {};
 
 $(document).ready(function(ns) {
+    let pageCache = {
+        perDeviceDataSet: [],
+        homeTotalDataSet: []
+    };
+
     const onLoad = function() {
+        $('#view-per-device-chart').click(function() {
+            loadPerDeviceChart();
+        });
+
+        $('#view-home-chart').click(function() {
+            loadHomeAggregateChart();
+        });
+
         // get the homes device list
         $.ajax({
             url: '/api/v1/rms/consumption/?home_id=1',
@@ -58,6 +71,14 @@ $(document).ready(function(ns) {
                 buildCharts(data)
             }
         });
+    };
+
+    const loadPerDeviceChart = function() {
+        Plotly.newPlot('consumption-chart', pageCache['perDeviceDataSet'], { title: 'Power consumption per device' });
+    };
+
+    const loadHomeAggregateChart = function() {
+        Plotly.newPlot('consumption-chart', pageCache['homeTotalDataSet'], { title: 'Power consumption per device' });
     };
 
     /**
@@ -77,21 +98,26 @@ $(document).ready(function(ns) {
      * @param dataSource
      * @param divId
      */
-    const buildCharts = function(dataSource, divId) {
+    const buildCharts = function(dataSource) {
         // put the data in a usable format by the plot lib
         let i = 0,
             xAxis = [],
             deviceMap = {},
             plotlyDataSource = [],
-            len = dataSource.length;
+            len = dataSource.length,
+            aggregateHomeConsumption = [];
 
         for(i; i < len; i ++) {
-            // for each entry in the array, we'll take the first sensor's date time for the x axis
-            xAxis.push(dataSource[i]['devices_json'][0]['average']['date_time']);
+            let j = 0,
+                homeAggregateRunningTotal = 0,
+                devicesList = dataSource[i]['devices_json'],
+                devicesLen = devicesList.length;
 
-            let j = 0, devicesLen = dataSource[i]['devices_json'].length;
+            // for each entry in the array, we'll take the first sensor's date time for the x axis
+            xAxis.push(devicesList[0]['average']['date_time']);
+
             for(j; j < devicesLen; j++) {
-                const device = dataSource[i]['devices_json'][j];
+                const device = devicesList[j];
                 // check if the current device already exists in the map
                 if(!deviceMap[device['sensor_id']]) {
                     // add the key
@@ -101,8 +127,12 @@ $(document).ready(function(ns) {
                         color: colors[j]
                     };
                 }
+                homeAggregateRunningTotal += device['average']['RMS'];
                 deviceMap[device['sensor_id']]['yAxis'].push(device['average']['RMS']);
             }
+
+            // add the running total entry to the aggregate data set
+            aggregateHomeConsumption.push(homeAggregateRunningTotal)
         }
 
         for(let deviceKey in deviceMap) {
@@ -116,7 +146,17 @@ $(document).ready(function(ns) {
             });
         }
 
-        Plotly.newPlot('home-power-consumption', plotlyDataSource, { title: 'Power consumption per device' });
+        pageCache['perDeviceDataSet'] = plotlyDataSource;
+        pageCache['homeTotalDataSet'] = [{
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Aggregate Home Consumption',
+            x: xAxis,
+            y: aggregateHomeConsumption,
+            line: { color: colors[20] }
+        }];
+
+        loadPerDeviceChart();
     };
 
 
