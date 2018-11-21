@@ -100,7 +100,7 @@ class HardwareInterface:
         self.sub = 'HH' + str(self.house_id)
 
     
-    def ConvertVolts(self, data,places):
+    def ConvertVolts(self, data, places):
         """
         Function to convert data to voltage level,
         rounded to specified number of decimal places.
@@ -371,8 +371,8 @@ class HardwareInterface:
         load_cPhi = data['cosphi']
         message.ack()
 
-        if load_home == self.house_id:                                      # Chekcing whether the change is in the home we are interested in
-            if load_type == 'SDF':                                          # Actuate in the relay controlled loads
+        if load_home == self.house_id:                            # Checking whether the change is in the home we are interested in
+            if load_type == 'SDF':                                # Actuate in the relay controlled loads
                 self.devices_act(int(load_name[-1]), load_state)
                 # As of now just writing the relay devices states to db
                 self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1])-1]])
