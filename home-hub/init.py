@@ -122,7 +122,7 @@ def initialize_home_hub(argv):
     auth_token = response.json()['token']
 
     # Initializing variables for queue and threads
-    rpi = HardwareInterface(house_id=int(HOME_ID), gpio_map=None, auth_token=auth_token)
+    rpi = HardwareInterface(house_id=HOME_ID, gpio_map=None, auth_token=auth_token)
     buffer_size = 8
     q_ai = Queue(buffer_size)
 

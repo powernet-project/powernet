@@ -361,7 +361,7 @@ class HardwareInterface:
     def callback(self, message):
         dts = str(datetime.now())
         data = json.loads(message.data)
-        self.logger.info('data: %s', data)
+        
         load_state = data['status']
         load_name = data['name']
         load_type = data['type']
@@ -369,6 +369,7 @@ class HardwareInterface:
         load_id = data['id']
         load_val = data['value']
         load_cPhi = data['cosphi']
+        
         message.ack()
 
         if load_home == self.house_id:                            # Checking whether the change is in the home we are interested in
