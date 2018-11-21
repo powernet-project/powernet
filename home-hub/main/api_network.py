@@ -22,23 +22,23 @@ class NetworkInterface:
         self.headers = {'Authorization': 'Token ' + auth_token}
         self.pwrnet_base_url = 'https://pwrnet-158117.appspot.com/api/v1/'
 
-    def save_rms(json):
-        r = requests.post(self.pwrnet_base_url + 'rms/', json=json, timeout=self.request_timeout, headers=self.headers)
+    def save_rms(self, json_data):
+        r = requests.post(self.pwrnet_base_url + 'rms/', json=json_data, timeout=self.request_timeout, headers=self.headers)
         if r.status_code != 201:
             logger.error('Failed to save rms data')
             r.raise_for_status()
 
-    def save_devices(json):
-        r = requests.post(self.pwrnet_base_url + 'device/', json=json, timeout=self.request_timeout, headers=self.headers)
+    def save_devices(self, json_data):
+        r = requests.post(self.pwrnet_base_url + 'device/', json=json_data, timeout=self.request_timeout, headers=self.headers)
         if r.status_code != 201:
             logger.error('Failed to save device')
             return None
         return json.loads(r.text)['id']
 
-    def get_device_status():
+    def get_device_status(self):
         r = requests.get(self.pwrnet_base_url + 'device/', timeout=self.request_timeout, headers=self.headers)
         return r.json()["results"]
 
-    def get_battery_status(device_id):
+    def get_battery_status(self, device_id):
         r = requests.get(self.pwrnet_base_url + 'device/' + device_id + '/', timeout=self.request_timeout, headers=self.headers)
         return r
