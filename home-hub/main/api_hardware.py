@@ -40,7 +40,7 @@ class HardwareInterface:
         self.logger.info('HardwareRPi class called')
         
         # initialize the network api
-        api(auth_token)
+        self.api = api(auth_token)
         
         # initialize our internal interface vars
         self.CONVERTION = 1.8/4095.0
@@ -309,7 +309,7 @@ class HardwareInterface:
                             d_fb[i]['average'] = {'RMS': sm, 'date_time': dt}
                             
                         try:
-                            api.save_rms({'devices_json': d_fb, 'home': self.house_id})
+                            self.api.save_rms({'devices_json': d_fb, 'home': self.house_id})
                         except Exception as exc:
                             self.logger.exception(exc)
                             client.captureException()
@@ -397,7 +397,7 @@ class HardwareInterface:
     def hh_devices_init(self, house_id, house_name):
         # dev_info = {"id": 48, "name": "Test_Dev", "type": "AIR_CONDITIONER", "status": "OFF", "value": 0, "cosphi": 1.0, "home": 2}
         # Getting all device information from cloud
-        dev_status = api.get_device_status()
+        dev_status = self.api.get_device_status()
         home_devID = []
         name_devID = []
         type_devID = []
@@ -493,7 +493,7 @@ class HardwareInterface:
             dev['value'] = 0
             dev['cosphi'] = 1.0
             
-            saved_device = api.save_devices(dev)
+            saved_device = self.api.save_devices(dev)
             if saved_device is not None:
                 devID.append(saved_device)
             

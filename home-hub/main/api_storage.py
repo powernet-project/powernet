@@ -33,7 +33,7 @@ class StorageInterface:
         self.logger.info('Storage class called')
 
         # initialize the network api
-        api(auth_token)
+        self.api = api(auth_token)
 
         # initialize the Storage Interface variables
         self.maxPower = 3300
@@ -88,7 +88,7 @@ class StorageInterface:
 
     def urlBased(self, devId, state=None, powerReal=0, cosPhi = 1.0):
         if state == None:
-            batt = api.get_battery_status(devId)
+            batt = self.api.get_battery_status(devId)
             battStatus = batt.json()["status"]
             power = batt.json()["value"]
             phi = batt.json()["cosphi"]
