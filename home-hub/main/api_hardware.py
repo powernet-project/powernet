@@ -64,7 +64,7 @@ class HardwareInterface:
         # Database variables:
         self.flag_db = 0
         self.prev = [-1,-1,-1,-1,-1,-1,-1,-1]
-        self.dP = 0.3
+        self.dP = 0.12
         self.flag_state = 0
 
         # Creating home init variables:
