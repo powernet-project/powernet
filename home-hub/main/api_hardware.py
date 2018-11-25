@@ -46,7 +46,7 @@ class HardwareInterface:
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
         # self.CT20 = 20   # 20A/1V
-        self.CT20 = [-0.1142, 20.2966]
+        self.CT20 = [-0.1048, 21.757]
         self.CT50 = 50   # 50A/1V
         self.CT100 = 100 # 100A/1V
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
