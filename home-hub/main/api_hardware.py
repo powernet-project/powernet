@@ -45,7 +45,8 @@ class HardwareInterface:
         # initialize our internal interface vars
         self.CONVERTION = 1.8/4095.0
         self.CT10 = 10   # 10A/1V
-        self.CT20 = 20   # 20A/1V
+        # self.CT20 = 20   # 20A/1V
+        self.CT20 = [-0.1142, 20.2966]
         self.CT50 = 50   # 50A/1V
         self.CT100 = 100 # 100A/1V
         self.SENTRY_DSN = 'https://e3b3b7139bc64177b9694b836c1c5bd6:fbd8d4def9db41d0abe885a35f034118@sentry.io/230474'
@@ -188,14 +189,14 @@ class HardwareInterface:
             sum_i[7] += math.pow((val[7]-self.adc_Vin/2), 2)
 
         # Computing RMS and converting to AMPS
-        rms_a0 = math.sqrt(sum_i[0] / self.N_SAMPLES)*self.CT10
-        rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)*self.CT10
-        rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)*self.CT10
-        rms_a3 = math.sqrt(sum_i[3] / self.N_SAMPLES)*self.CT10
-        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)*self.CT50
-        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)*self.CT50
-        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)*self.CT50
-        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)*self.CT50
+        rms_a0 = math.sqrt(sum_i[0] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
+        rms_a1 = math.sqrt(sum_i[1] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
+        rms_a2 = math.sqrt(sum_i[2] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
+        rms_a3 = math.sqrt(sum_i[3] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
+        rms_a4 = math.sqrt(sum_i[4] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
+        rms_a5 = math.sqrt(sum_i[5] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
+        rms_a6 = math.sqrt(sum_i[6] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
+        rms_a7 = math.sqrt(sum_i[7] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]
 
         return [rms_a0, rms_a1, rms_a2, rms_a3, rms_a4, rms_a5, rms_a6, rms_a7]
 
