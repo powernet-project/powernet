@@ -136,9 +136,8 @@ $(document).ready(function(ns) {
                 // check if the current device already exists in the map
                 if(!deviceMap[device['sensor_id']]) {
                     // add the key
-                    console.warn(device);
                     deviceMap[device['sensor_id']] = {
-                        deviceName: pageCache[device['sensor_id']],
+                        deviceName: pageCache[device['sensor_id']] ? pageCache[device['sensor_id']].name : `D-${device['sensor_id']}`,
                         yAxis: [],
                         color: colors[j]
                     };
@@ -197,7 +196,6 @@ $(document).ready(function(ns) {
                 name: deviceList[i].name
             };
         }
-        console.warn('PAGE CACHE', pageCache.deviceList)
     };
 
     onLoad();
