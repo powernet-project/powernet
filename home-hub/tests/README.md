@@ -1,3 +1,6 @@
 # Unit tests
 
-## WIP - will specify how to run unit tests
+## Running unit tests is pretty simple...
+```bash
+python -m unittest
+```
