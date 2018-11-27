@@ -47,29 +47,46 @@ var consumption = consumption || {};
 $(document).ready(function(ns) {
     let pageCache = {
         perDeviceDataSet: [],
-        homeTotalDataSet: []
+        homeTotalDataSet: [],
+        deviceList: {}
     };
 
     const onLoad = function() {
-        $('#view-per-device-chart').click(function() {
-            loadPerDeviceChart();
-        });
+        const homeList = JSON.parse(window.localStorage.getItem('homes'));
 
-        $('#view-home-chart').click(function() {
-            loadHomeAggregateChart();
-        });
+        generateDeviceMap(JSON.parse(window.localStorage.getItem('devices')));
 
-        // get the homes device list
-        $.ajax({
-            url: '/api/v1/rms/consumption/?home_id=1',
-            type: "GET",
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
-            },
-            success: function(data) {
-                buildCharts(data);
+        $('#view-per-device-chart').click(function() { loadPerDeviceChart(); });
+        $('#view-home-chart').click(function() { loadHomeAggregateChart(); });
+
+        if(homeList.length) {
+            // get the homes device list
+            getHomeData(homeList[0].id);
+
+            // load the select list
+            let i = 0,
+                homeSelectOptions = '',
+                homeListLength = homeList.length;
+
+            for(i; i < homeListLength; i++) {
+                if(i) {
+                    homeSelectOptions += `<option value="${homeList[i].id}">${homeList[i].name}</option>`;
+                } else {
+                    homeSelectOptions += `<option value="${homeList[i].id}" selected="selected">${homeList[i].name}</option>`;
+                }
             }
-        });
+            // add the available options
+            $('#home-select').append(homeSelectOptions);
+
+            // hook up the change listener
+            $('#home-select').on('change', function() {
+                if(this.value) {
+                    getHomeData(this.value);
+                }
+            });
+        } else {
+            $('#home-list-selector-container').html('<h1>No Available Homes, please create one and try again</h1>>');
+        }
     };
 
     const loadPerDeviceChart = function() {
@@ -119,8 +136,9 @@ $(document).ready(function(ns) {
                 // check if the current device already exists in the map
                 if(!deviceMap[device['sensor_id']]) {
                     // add the key
+                    console.warn(device);
                     deviceMap[device['sensor_id']] = {
-                        deviceName: 'RandoDevice' + device['sensor_id'],
+                        deviceName: pageCache[device['sensor_id']],
                         yAxis: [],
                         color: colors[j]
                     };
@@ -157,6 +175,30 @@ $(document).ready(function(ns) {
         loadPerDeviceChart();
     };
 
+    const getHomeData = function(homeId) {
+        $.ajax({
+            url: `/api/v1/rms/consumption/?home_id=${homeId}`,
+            type: "GET",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
+            },
+            success: function (data) {
+                buildCharts(data);
+            }
+        });
+    };
+
+    const generateDeviceMap = function(deviceList) {
+        // convert the data format from an array into a hash map so we can perform O(1) lookup
+        let i = 0, len = deviceList.length;
+        for(i; i < len; i++) {
+            pageCache.deviceList[deviceList[i].id] = {
+                id: deviceList[i].id,
+                name: deviceList[i].name
+            };
+        }
+        console.warn('PAGE CACHE', pageCache.deviceList)
+    };
 
     onLoad();
 }(consumption));

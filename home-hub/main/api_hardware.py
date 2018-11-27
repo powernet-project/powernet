@@ -230,35 +230,35 @@ class HardwareInterface:
         self.logger.info('Consumer AI called')
         template = [
             {
-                "sensor_id": self.input_sources_measurements[1][0],
+                "sensor_id": self.input_sources_measurements[0][0],
                 "average": {},
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_measurements[1][1],
+                "sensor_id": self.input_sources_measurements[0][1],
                 "average": {},
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_measurements[1][2],
+                "sensor_id": self.input_sources_measurements[0][2],
                 "average": {},
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_measurements[1][3],
+                "sensor_id": self.input_sources_measurements[0][3],
                 "average": {},
                 "samples": []
             },  {
-                "sensor_id": self.input_sources_measurements[1][4],
+                "sensor_id": self.input_sources_measurements[0][4],
                 "average": {},
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_measurements[1][5],
+                "sensor_id": self.input_sources_measurements[0][5],
                 "average": {},
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_measurements[1][6],
+                "sensor_id": self.input_sources_measurements[0][6],
                 "average": {},
                 "samples": []
             }, {
-                "sensor_id": self.input_sources_measurements[1][7],
+                "sensor_id": self.input_sources_measurements[0][7],
                 "average": {},
                 "samples": []
             }

@@ -17,6 +17,11 @@
 {% block page-scripts %}
 <script type="text/javascript">
     let token = '{{ token }}';
+    let homeList = {{ homes | safe }};
+    let deviceList = {{ devices | safe }};
+
     window.localStorage.setItem('token', token);
+    window.localStorage.setItem('homes', JSON.stringify(homeList));
+    window.localStorage.setItem('devices', JSON.stringify(deviceList));
 </script>
 {% endblock page-scripts %}

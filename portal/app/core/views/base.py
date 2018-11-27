@@ -2,6 +2,7 @@ import json
 from django.shortcuts import render
 from app.models import Home, Device
 from rest_framework.authtoken.models import Token
+from app.api.v1.endpoint.home import HomeSerializer
 from app.api.v1.endpoint.device import DeviceSerializer
 from django.contrib.auth.decorators import login_required
 
@@ -12,7 +13,20 @@ def index(request):
         token = Token.objects.get(user=request.user)
     else:
         token = Token.objects.create(user=request.user)
-    return render(request, 'partials/main.html', {'token': token})
+
+    # get the list of homes for this user
+    home_lst = Home.objects.filter(owner=request.user.powernetuser)
+    serialized_homes = json.dumps(HomeSerializer(home_lst, many=True).data)
+
+    # get all the devices in all the homes for this user
+    device_lst = Device.objects.filter(home__owner=request.user.powernetuser)
+    serialized_devices = json.dumps(DeviceSerializer(device_lst, many=True).data)
+
+    return render(request, 'partials/main.html', {
+        'token': token,
+        'homes': serialized_homes,
+        'devices': serialized_devices
+    })
 
 
 #########################################################
@@ -62,7 +76,7 @@ def opf(request):
     # serialize the device list and return it in the context
     ser_devices = json.dumps(DeviceSerializer(devices, many=True).data)
 
-    return render(request, 'visualization/Demo2/index.html', {"devices": ser_devices, "userId": request.user.id})
+    return render(request, 'visualization/Demo2/index.html', {'devices': ser_devices, 'userId': request.user.id})
 
 
 @login_required

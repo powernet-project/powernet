@@ -5,11 +5,17 @@
 {% block main-content %}
 
     <br /><br /><br /><br />
+
     <div class="row">
-        <div class="col-sm-12 text-center">
-            CONSUMPTION
+        <div id="home-list-selector-container" class="col-sm-12 text-center">
+            <label for="home-select">Choose a Home:</label>
+
+            <select id="home-select"></select>
         </div>
     </div>
+
+    <br /><br />
+
     <div class="row">
         <div class="col-sm-12 text-center">
             <button id="view-per-device-chart">Per Device Consumption</button>
