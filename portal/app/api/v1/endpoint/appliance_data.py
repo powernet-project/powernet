@@ -34,7 +34,7 @@ class ApplianceJsonDataViewSet(viewsets.ModelViewSet):
         ds = None
         home_id = request.query_params.get('home_id', None)
         device_id = request.query_params.get('device_id', None)
-        number_of_samples = request.query_params.get('number_of_samples', 80)
+        number_of_samples = request.query_params.get('number_of_samples', 40)
 
         # validate the requesting user owns the home he is requesting data for
         home = Home.objects.filter(pk=home_id, owner__user=request.user)
@@ -47,10 +47,11 @@ class ApplianceJsonDataViewSet(viewsets.ModelViewSet):
         device_count = device.count()
 
         if device_count == 1:
-            ds = ApplianceJsonData.objects.filter(devices_json__contains=[{'sensor_id': int(device_id)}]).order_by('-id')
+            ds = ApplianceJsonData.objects.filter(devices_json__contains=[{'sensor_id': int(device_id)}])
 
         # lastly, limit the result set
         if ds:
+            ds = ds.order_by('-id')
             ds = ds[:int(number_of_samples)]
         else:
             return Response({'result': 'Could not determine an appropriate data set to retireve, please ensure'
