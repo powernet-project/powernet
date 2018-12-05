@@ -9,8 +9,11 @@ __version__ = '0.2'
 __email__ = 'tnavidi@stanford.edu, gcezar@stanford.edu, jongon@stanford.edu'
 __status__ = 'Beta'
 
+# Heuristic control of storage and loads
+
 import numpy as np 
-#import matplotlib.pyplot as plt
+
+import matplotlib.pyplot as plt
 
 class Controller(object):
 	# takes load objects and schedules them
@@ -28,12 +31,17 @@ class Controller(object):
 		self.device_id += 1
 		self.device_names.append(device.name)
 
-	def schedule(self, agg, t_step):
+	def calcSchedule(self, agg, t_step):
 		# agg is sum of signal + baseline
 		# first schdule negative side of batteries
 		
 		#plt.figure()
 		#plt.plot(agg)
+
+		#extract variable names from self
+		s_loads = self.s_loads
+		d_loads = self.d_loads
+		batteries = self.batteries
 		
 		period = agg.size
 		base = np.zeros(period)
@@ -65,9 +73,12 @@ class Controller(object):
 				if batt.base is not None:
 					base += batt.base
 
-		SOC0 = SOC0/b_count # take average SOC instead of sum since SOC is percentage of capacity
+			SOC0 = SOC0/b_count # take average SOC instead of sum since SOC is percentage of capacity
+
+		self.base = np.copy(base)
+		#print base
 		agg = agg + base # make new signal to track include baseline
-		self.agg = agg
+		self.agg = np.copy(agg)
 		#print np.max(agg)
 		#print agg
 
@@ -89,13 +100,30 @@ class Controller(object):
 				b_start = b_where[0][0]
 				b_end = b_where[0][-1]
 				b_charge = np.max(-Q[b_where[0]]) # amount of charge needed to ensure batteries are not negative
-				print('required charge to be done by battery', b_charge)
+				# print 'required charge to be done by battery', b_charge
 			else:
 				b_charge = 0
+		else:
+			b_charge = -1e3 # schedules better when it does not delay scheduling when there are no batteries
+
 
 		if s_loads is not None:
+			s_list = []
+			sp_list = []
+			# order scheduled loads so that largest is first
 			for key in s_loads.keys():
+				#print key
 				device = s_loads[key]
+				s_list.append(device)
+				sp_list.append(np.max(device.shapes))
+			sp_list = np.array(sp_list)
+			ordering = np.argsort(sp_list)[::-1]
+			#print ordering
+			#print sp_list[ordering]
+
+			for idx in ordering:
+				#print idx
+				device = s_list[idx]
 				shape, duration = device.getSchedulingInfo()
 				p_fit = -1e8 # initialize as very bad value
 				skippedFlag = 0
@@ -111,9 +139,10 @@ class Controller(object):
 
 				# if there is extra time past horizon and the fit is bad then schedule later
 				if skippedFlag and p_fit < b_charge:
-					print('Scheduling device later', key)
+					# print 'Scheduling device later', key
+					device.makeSchedule(period, 0, op_mode=0) # add empty schedule
 				else:
-					device.schedule(period, s_time) # add start time to device schedule
+					device.makeSchedule(period, s_time) # add start time to device schedule
 					agg[s_time:s_time+duration] += -shape # remove device shape from profile
 
 		if d_loads is not None:
@@ -161,7 +190,7 @@ class Controller(object):
 						else:
 							d_SOC = SOC_down
 
-				device.schedule(schedule)
+				device.makeSchedule(schedule)
 
 		if batteries is not None:
 			b_schedule = agg # batteries take remaining signal
@@ -194,8 +223,8 @@ class Controller(object):
 					EV_SOC0 += b1_schedule[i]*t_step
 
 			Q = np.cumsum(b_schedule)*t_step + s_SOC0*s_cap
-			device.schedule(b1_schedule)
-			device_s.schedule(b_schedule)
+			device.makeSchedule(b1_schedule)
+			device_s.makeSchedule(b_schedule)
 			
 			#print Q
 			#print b1_schedule
@@ -205,6 +234,15 @@ class Controller(object):
 			#plt.plot(b_schedule)
 			#plt.show()
 
+
+	# need to include aggregate battery and function to split agggregate battery accross EV and powerwall
+	def rapidControl(self, agg, actual, umax, umin, SOC):
+		b = agg - actual
+		umin, umax = self.batteries['powerwall'] 
+		return b
+
+
+
 class ScheduledLoad(object):
 	# object containing info for loads that follow a set schedule
 	# Clothes washer, dryer, dish washer
@@ -212,7 +250,7 @@ class ScheduledLoad(object):
 		#self.name = name
 		self.Nmodes = Nmodes # number of operating modes I.E. high power, low power, off
 		if Nmodes == 2:
-			self.shapes = shapes # dictionary of power profiles for each operating mode or just array if only 1 mode
+			self.shapes = shapes # dictionary of power profiles for each operating mode or just array if only 2 modes (on / off)
 		else:
 			self.shapes = {}
 			self.shapes[0] = shapes
@@ -230,9 +268,11 @@ class ScheduledLoad(object):
 		self.last_time = last_time
 		self.op_mode = mode
 
-	def schedule(self, period, s_time):
+	def makeSchedule(self, period, s_time, op_mode=None):
+		if op_mode is None:
+			op_mode = self.op_mode
 		self.schedule = np.zeros(period)
-		self.schedule[s_time] = self.op_mode # turn on at specific time
+		self.schedule[s_time:s_time+self.l_time] = op_mode # value of 1 for each time period device is on
 		self.p_schedule = np.zeros(period)
 		self.p_schedule[s_time:s_time+self.l_time] = self.c_shape # current shape to power schedule
 
@@ -246,14 +286,16 @@ class ScheduledLoad(object):
 
 		return self.c_shape, self.l_time
 
-
-	def getBaseline(self, period, random=True):
+	def getBaseline(self, period, random=True, p_start=None):
 		# period is number of hours in period
 		starts = []
+		if p_start is None:
+			p_start = self.p_start
 		for i in range(period):
-			starts.append(np.random.binomial(1,self.p_start))
+			starts.append(np.random.binomial(1,p_start))
 
 		starts = np.array(starts)
+		#print np.sum(starts)
 		if np.any(starts > 0):
 			s_when = np.where(starts > 0)
 			#print starts
@@ -313,7 +355,7 @@ class DutyLoad(object):
 		SOC_down = SOC - self.leakage*self.t_step/self.capacity
 		return SOC_up, SOC_down
 
-	def schedule(self, schedule):
+	def makeSchedule(self, schedule):
 		self.schedule = schedule
 		self.p_schedule = schedule*self.on_power
 
@@ -346,93 +388,13 @@ class Battery(object):
 		self.base = np.zeros(period)
 		mask = self.q_req == 0
 		# take max required SOC and split approximate charge of that over parked hours
-		self.base[mask] = np.max(q_req)*mod/np.sum(mask) / 2 # reduce EV baseline
+		self.base[mask] = np.max(self.q_req)*mod/np.sum(mask) / 2 # reduce EV baseline
 		#print self.base
 
-	def schedule(self, p_schedule):
+	def makeSchedule(self, p_schedule):
 		self.p_schedule = p_schedule
 
-
-
-if __name__ == '__main__':
-	np.random.seed(12)
-
-	HH_data = np.load('VPP_data.npz')
-	print(HH_data.keys())
-	real_agg = HH_data['real_agg']
-	print(np.max(np.cumsum(real_agg))/12)
-	print(np.max(real_agg))
-	real_agg = real_agg/2
-	real_agg[np.argmax(real_agg)-30:np.argmax(real_agg)+30] += -1
-
-	print('size of data', real_agg.shape)
-	Qmax = HH_data['SOCmax']
-	#print 'agg signal qmax', Qmax
-	umax = HH_data['battmax']
-	umin = HH_data['battmin']
-	#print 'agg signal umax', umax
-	Q = HH_data['Q']
-
-	#print real_agg[0:288]
-
-	"""
-	#plt.figure()
-	#plt.plot(real_agg.T)
-	#plt.show()
-	"""
-
-	# 5 min schedule for cost min / service prep
-	# battery is only thing that can do negative signal+base, so 
-	# schedule negative battery first then schedule loads ensuring enough positive for battery SOC
-
-	period = 288 # 5 minute with hourly mpc so look ahead doesnt need to be much
-	t_step = 1/12.
-	real_agg = real_agg - np.mean(real_agg)
-	total_e = np.sum(real_agg)*t_step
-	print('total energy of agg signal', total_e)
-	print(np.max(np.cumsum(real_agg))/12)
-
-	# define controllable devices
-	shape_wash = 0.6*np.ones(12) # lasts 1 hour
-	shape_dry = 4*np.ones(12) # lasts 1 hour
-	washer = ScheduledLoad(2, shape_wash)
-	dryer = ScheduledLoad(2, shape_dry)
-	s_loads = {}
-	s_loads['washer'] = washer
-	s_loads['dryer'] = dryer
-
-	AC = DutyLoad(70., 74., capacity=3/12., leakage=0.5, on_power=1., SOC0=0.25, t_step = 1/12.)
-	d_loads = {'AC': AC}
-
-	# currently only works with at most 1 EV and 1 battery
-	powerwall = Battery(umin=-3., umax=3., capacity=9., SOC0=0.5)
-	EV = Battery(-1., 1., 3., 0.5)
-	batteries = {'powerwall': powerwall, 'EV': EV}
-
-	# initilize controller
-	cont = Controller(s_loads, d_loads, batteries)
-
-	# define user preferences for current period
-	washer.preferences(12*19, 1)
-	dryer.preferences(12*21, 1)
-	q_req = np.zeros(period)
-	q_req[12*8:12*20] = 3
-	EV.preferences(q_req)
-
-	# get baselines randomly
-	washer.getBaseline(period)
-	#print np.sum(washer.base)
-	dryer.getBaseline(period)
-	#print np.sum(dryer.base)
-	EV.getBaseline(period)
-	AC.getBaseline(period)
-
-	# make schedules
-	cont.schedule(real_agg[0:288], t_step = 1/12.)
-
-	print('washer power schedule', washer.p_schedule)
-	print('dryer power schedule', dryer.p_schedule)
-	print('AC power schedule', AC.p_schedule)
-	print('EV power schedule', EV.p_schedule)
-	print('powerwall power schedule', powerwall.p_schedule)
-	print('powerwall SOC', np.cumsum(powerwall.p_schedule)*t_step + 0.5*9)
+	def getLimits(self, SOC):
+		umax = np.min(self.umax,(1-SOC)*self.capacity/t_step)
+		umin = np.max(self.umin,-SOC*self.capacity/t_step)
+		return umin, umax

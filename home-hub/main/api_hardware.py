@@ -19,6 +19,7 @@ import sqlite3
 import requests
 import numpy as np
 import RPi.GPIO as GPIO
+import load_control as lc
 
 from raven import Client
 from sqlite3 import Error
@@ -99,6 +100,9 @@ class HardwareInterface:
 
         # Pubsub subscription:
         self.sub = 'HH' + str(self.house_id)
+
+        # Local controller thread
+        self.local_controller = 0
 
     
     def ConvertVolts(self, data, places):
@@ -359,6 +363,106 @@ class HardwareInterface:
         self.logger.info("state: %s", state)
         GPIO.output(self.input_sources_measurements[2][device-1], GPIO.LOW if state == 'ON' else GPIO.HIGH)
 
+    def local_controller_th(self):
+        """
+        Local Controller
+        """
+        self.logger.info('Local Controller Thread called')
+        while(True):
+            if(self.local_controller == 1):     # For it's a random load created to enable load control
+                try:
+                    load_schedule = self.run_local_controller()     # Output is a dict with keys being load name and vals being array of 0s and 1s for actions
+                except Exception as exc:
+                    self.logger.exception(exc)
+                    client.captureException()
+                    self.logger.error("Exception Local Controller: %s", exc)
+
+                devices_name = load_schedule.keys()
+                for i in range(len(load_schedule[devices_name[0]])):    # Looping through entire array of actions
+                    for k in devices_name:                              # Looping through each load to get action and actuate in device
+                        if load_schedule[k][i] == 1:
+                            state_load = 'ON'
+                        else:
+                            state_load = 'OFF'
+                        self.devices_act(int(k[-1]),state_load)
+                    time.sleep(10)
+                self.local_controller = 0
+                # making sure url is set back to OFF
+                load_controller_flag = { "id": None, "status": None, "name": None, "type": None, "value": None, "home": None, "cosphi": None }
+                load_controller_flag['id'] = 151    # This id is hardcoded for HH8 -> Automate this by creating a topic in pubsub
+                load_controller_flag['name'] = "Load_Control"
+                load_controller_flag['home'] = self.house_id
+                load_controller_flag['status'] = "OFF"
+                load_controller_flag['type'] = "AIR_CONDITIONER"
+                load_controller_flag['value'] = 0
+                load_controller_flag['cosphi'] = 1.0
+                
+                saved_device = self.api.save_devices(load_controller_flag)
+
+
+    def run_local_controller(self):
+        """
+        Local Controller Algorithm: this code is hardcoded for HH8
+        """
+        # Inser load control code
+        np.random.seed(12)
+        period = 288 # 5 minute with hourly mpc so look ahead doesnt need to be much
+        t_step = 1/12.
+        real_agg = np.zeros(period) # when there is no battery, Cloud coordinator aggregragate signal = 0
+        # This is specifically for HH8
+        shape_fan_1 = 120*0.89*np.ones(6) # turns on for 30 min at a time (6 time periods)
+        shape_lights_2 = 120*0.35*np.ones(6)
+        shape_heater_4 = 120*1.09*np.ones(6)
+        shape_led_5 = 120*0.87*np.ones(6)
+        shape_heater_6 = 120*2.02*np.ones(6)
+        shape_fridge_7 = 120*0.63*np.ones(6)
+        shape_compressor_8 = 120*0.53*np.ones(6)
+
+        fan_1 = lc.ScheduledLoad(2, shape_fan_1) # 2 modes (on/off) with shape defined above
+        lights_2 = lc.ScheduledLoad(2, shape_lights_2)
+        heater_4 = lc.ScheduledLoad(2, shape_heater_4)
+        led_5 = lc.ScheduledLoad(2, shape_led_5)
+        heater_6 = lc.ScheduledLoad(2, shape_heater_6)
+        fridge_7 = lc.ScheduledLoad(2, shape_fridge_7)
+        compressor_8 = lc.ScheduledLoad(2, shape_compressor_8)
+
+        s_loads = {'fan_1' : fan_1, 'lights_2' : lights_2, 'heater_4' : heater_4, 'led_5' : led_5,
+                    'heater_6' : heater_6, 'fridge_7' : fridge_7, 'compressor_8' : compressor_8}
+        # initilize controller
+        cont = lc.Controller(s_loads)
+        schedules_all = {}
+        base_all = np.zeros(period)
+        agg_all = np.zeros(period)
+        for i in range(24-1): # do hourly mpc
+            # define user preferences for current period
+            for key in s_loads.keys():
+                device = s_loads[key]
+                # select latest allowed start time and which mode (1: on, 0: off)
+                device.preferences(period - 1, 1) # turn on latest 35 minutes before the end of the horizon
+
+                # get the baseline randomly for the device
+                device.getBaseline(period, p_start=1./12) # length of horizon, and probability of device turning on at each time period (avg 1 per hour)
+
+            # make schedules
+            cont.calcSchedule(real_agg[i*12:], t_step = 1/12.)
+
+            base_all[i*12:] = cont.base
+            agg_all
+
+            agg_p = np.zeros(period)
+            for key in s_loads.keys():
+                device = s_loads[key]
+                agg_p += device.p_schedule
+                if i == 0:
+                    schedules_all[key] = device.schedule
+                else:
+                    schedules_all[key][i*12:] = device.schedule
+            agg_all[i*12:] = agg_p
+            period += -12
+        return schedules_all
+        
+
+
     def callback(self, message):
         dts = str(datetime.now())
         data = json.loads(message.data)
@@ -390,7 +494,11 @@ class HardwareInterface:
                 self.devices_act(idx + 1, load_state)
                 # As of now just writing the relay devices states to db
                 self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1]) - 1]])
-
+            elif load_type == 'AIR_CONDITIONER':
+                if load_state == 'ON':
+                    self.local_controller = 1
+                else:
+                    self.local_controller = 0
             else:                                                          
                 self.logger.info("Other devices such as Z-Wave plugs")  # Actuate in any other load category
 
