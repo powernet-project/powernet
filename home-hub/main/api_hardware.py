@@ -213,7 +213,9 @@ class HardwareInterface:
             conn = sqlite3.connect('homehubDB.db')
             c = conn.cursor()
             c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
+            print("DB write successfully")
         except sqlite3.IntegrityError:
+            print("Error writing to db")
             self.logger.error('error connecting to db')
         conn.commit()
         conn.close()
@@ -288,6 +290,7 @@ class HardwareInterface:
                             try:
                                 self.dbWriteMeasurements(temp_db)
                                 self.flag_db = 1
+                                print("Writing to DB")
                             except Exception as exc:
                                 self.logger.exception(exc)
                                 client.captureException()
