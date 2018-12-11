@@ -78,7 +78,7 @@ class HardwareInterface:
         self.N_SAMPLES = N_SAMPLES
         self.adc_Vin = 3.3
         # self.adcRef_V = self.adc_Vin/2
-        self.adcRef_V = self.1.62
+        self.adcRef_V = 1.622
         self.delay = 0.002
 
         gpio_map = [11,13,15,29,31,33,35,37]
