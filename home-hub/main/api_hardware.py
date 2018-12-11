@@ -35,7 +35,7 @@ client = Client(SENTRY_DSN)
 logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 
 class HardwareInterface:
-    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
+    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 1200, auth_token = None):
         # initialize the logger
         self.logger = logger
         self.logger.info('HardwareRPi class called')
@@ -122,12 +122,13 @@ class HardwareInterface:
         """
         n = 0
         data = np.zeros(self.N_SAMPLES)
+        
       
-        while(n < 100):
+        while(n < self.N_SAMPLES):
             adc = self.spi.xfer2([1, (8 + channel) << 4, 0])
             data[n]=((adc[1] & 3) << 8) + adc[2]
             n += 1
-            time.sleep(self.delay)
+            # time.sleep(self.delay)
         return self.ConvertVolts(data, 2)
 
     def producer_ai(self, q_ai):
@@ -476,7 +477,6 @@ class HardwareInterface:
         load_cPhi = data['cosphi']
         
         message.ack()
-
         if load_home == self.house_id:                            # Checking whether the change is in the home we are interested in
             if load_type == 'SDF':                                # Actuate in the relay controlled loads
                 self.devices_act(int(load_name[-1]), load_state)
@@ -495,6 +495,7 @@ class HardwareInterface:
                 # As of now just writing the relay devices states to db
                 self.dbWriteStates([load_state, dts.split()[0], dts.split()[1], self.input_sources_measurements[1][int(load_name[-1]) - 1]])
             elif load_type == 'AIR_CONDITIONER':
+                self.logger.info("Load control flag...")
                 if load_state == 'ON':
                     self.local_controller = 1
                 else:
