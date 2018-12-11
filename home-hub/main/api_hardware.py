@@ -77,6 +77,8 @@ class HardwareInterface:
 
         self.N_SAMPLES = N_SAMPLES
         self.adc_Vin = 3.3
+        # self.adcRef_V = self.adc_Vin/2
+        self.adcRef_V = self.1.62
         self.delay = 0.002
 
         gpio_map = [11,13,15,29,31,33,35,37]
@@ -183,15 +185,15 @@ class HardwareInterface:
         # The size of sum_i is the size of the AIN ports
         sum_i = [0, 0, 0, 0, 0, 0, 0, 0]
         for val in data:
-            sum_i[0] += math.pow((val[0]-self.adc_Vin/2), 2)
+            sum_i[0] += math.pow((val[0]-self.adcRef_V), 2)
             #sum_i[0] += math.pow((x-1.6 for x in val[0]), 2)
-            sum_i[1] += math.pow((val[1]-self.adc_Vin/2), 2)
-            sum_i[2] += math.pow((val[2]-self.adc_Vin/2), 2)
-            sum_i[3] += math.pow((val[3]-self.adc_Vin/2), 2)
-            sum_i[4] += math.pow((val[4]-self.adc_Vin/2), 2)
-            sum_i[5] += math.pow((val[5]-self.adc_Vin/2), 2)
-            sum_i[6] += math.pow((val[6]-self.adc_Vin/2), 2)
-            sum_i[7] += math.pow((val[7]-self.adc_Vin/2), 2)
+            sum_i[1] += math.pow((val[1]-self.adcRef_V), 2)
+            sum_i[2] += math.pow((val[2]-self.adcRef_V), 2)
+            sum_i[3] += math.pow((val[3]-self.adcRef_V), 2)
+            sum_i[4] += math.pow((val[4]-self.adcRef_V), 2)
+            sum_i[5] += math.pow((val[5]-self.adcRef_V), 2)
+            sum_i[6] += math.pow((val[6]-self.adcRef_V), 2)
+            sum_i[7] += math.pow((val[7]-self.adcRef_V), 2)
 
         # Computing RMS and converting to AMPS
         rms_a0 = math.sqrt(sum_i[0] / self.N_SAMPLES)*self.CT20[1]+self.CT20[0]

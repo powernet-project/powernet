@@ -137,7 +137,7 @@ def initialize_home_hub(argv):
     devices_thread.start()
 
     load_control_thread = Thread(name="LoadControl", target=rpi.local_controller_th)
-    
+    load_control_thread.start()
 
 if __name__ == '__main__':
     try:
