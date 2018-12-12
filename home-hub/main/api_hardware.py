@@ -35,7 +35,7 @@ client = Client(SENTRY_DSN)
 logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 
 class HardwareInterface:
-    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 1200, auth_token = None):
+    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
         # initialize the logger
         self.logger = logger
         self.logger.info('HardwareRPi class called')
@@ -130,7 +130,7 @@ class HardwareInterface:
             adc = self.spi.xfer2([1, (8 + channel) << 4, 0])
             data[n]=((adc[1] & 3) << 8) + adc[2]
             n += 1
-            # time.sleep(self.delay)
+            time.sleep(self.delay)
         return self.ConvertVolts(data, 2)
 
     def producer_ai(self, q_ai):
@@ -168,7 +168,7 @@ class HardwareInterface:
 
             temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
             temp_queue = [temp_ai, dts]
-
+            print("temp_ai: ", temp_queue)
             try:
                 q_ai.put(temp_queue, True, 2)
 
@@ -277,6 +277,7 @@ class HardwareInterface:
 
         while(True):
             if not q_ai.empty():
+                print("Queue AI not empty")
                 try:
                     temp_cons = q_ai.get(True,2)
                     temp_ai = temp_cons[0]
