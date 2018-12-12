@@ -210,6 +210,7 @@ class HardwareInterface:
 
     def dbWriteMeasurements(self, vals):
         try:
+            print("dbWriteMeasurements")
             conn = sqlite3.connect('homehubDB.db')
             c = conn.cursor()
             c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
@@ -405,6 +406,7 @@ class HardwareInterface:
                 load_controller_flag['cosphi'] = 1.0
                 
                 saved_device = self.api.save_devices(load_controller_flag)
+            time.sleep(0.01)
 
 
     def run_local_controller(self):
