@@ -168,7 +168,7 @@ class HardwareInterface:
 
             temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
             temp_queue = [temp_ai, dts]
-            print("temp_ai: ", temp_queue)
+            # print("temp_ai: ", temp_queue)
             try:
                 q_ai.put(temp_queue, True, 2)
 
@@ -213,9 +213,9 @@ class HardwareInterface:
             conn = sqlite3.connect('homehubDB.db')
             c = conn.cursor()
             c.execute("INSERT INTO measurements (rms, currentdate, currenttime, source_id) VALUES ((?), (?), (?), (?))" , (vals[0], vals[1], vals[2], vals[3]))
-            print("DB write successfully")
+            # print("DB write successfully")
         except sqlite3.IntegrityError:
-            print("Error writing to db")
+            # print("Error writing to db")
             self.logger.error('error connecting to db')
         conn.commit()
         conn.close()
@@ -277,7 +277,7 @@ class HardwareInterface:
 
         while(True):
             if not q_ai.empty():
-                print("Queue AI not empty")
+                # print("Queue AI not empty")
                 try:
                     temp_cons = q_ai.get(True,2)
                     temp_ai = temp_cons[0]
@@ -291,7 +291,7 @@ class HardwareInterface:
                             try:
                                 self.dbWriteMeasurements(temp_db)
                                 self.flag_db = 1
-                                print("Writing to DB")
+                                # print("Writing to DB")
                             except Exception as exc:
                                 self.logger.exception(exc)
                                 client.captureException()
