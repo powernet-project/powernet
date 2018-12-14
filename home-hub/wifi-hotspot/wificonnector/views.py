@@ -5,6 +5,9 @@ from django.shortcuts import render
 from forms import *
 from django.http import HttpResponse, Http404
 
+from wifi_control import add_dhcpcd_conf, delete_dhcpcd_conf, stop_hostapd, disable_hostapd, add_wifi_conf, \
+    restart_dhcpcd
+
 
 # Create your views here.
 
@@ -24,12 +27,12 @@ def process_ssid_pwd(request):
               'please wait for a while'
         context['messages'] = [msg]
 
-
-        # TODO: add action on WIFI connection
-        print("------> HERE are WIFI INFO <------")
-        print(request.POST['ssid'])
-        print(request.POST['pass'])
-
+        # to normal mode and connect to wifi
+        add_wifi_conf(request.POST['ssid'], request.POST['pass'])
+        stop_hostapd()
+        disable_hostapd()
+        delete_dhcpcd_conf()
+        restart_dhcpcd()
 
     # going back to the wifi page
     return render(request, 'wificonnector/credential.html', context)
