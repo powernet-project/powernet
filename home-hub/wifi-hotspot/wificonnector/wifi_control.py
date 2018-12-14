@@ -1,4 +1,5 @@
 from subprocess import call
+import re
 
 
 def add_dhcpcd_conf():
@@ -29,11 +30,18 @@ def delete_dhcpcd_conf():
 
 
 def add_wifi_conf(ssid, psk):
-    with open("/etc/wpa_supplicant/wpa_supplicant.conf", "r+") as f:
+    path = "/etc/wpa_supplicant/wpa_supplicant.conf"
+    with open(path, "r+") as f:
         conf = "\nnetwork={\n\tssid=\"%s\"\n\tpsk=\"%s\"\n\tkey_mgmt=WPA-PSK\n}" % (ssid, psk)
         original = "".join(f.readlines())
-        if conf not in original:
+        if "ssid=\"%s\"" % ssid not in original:
             f.write(conf)
+        else:  # SSID exsited, overide it
+            result = re.findall("network={\s*ssid=\"%s\"[^}]*}" % ssid, original)
+            if len(result) != 0:
+                index = original.find(result[0])
+                with open(path, "w") as fw:
+                    fw.write(original[:index] + conf + original[index + len(result[0]):])
 
 
 def stop_hostapd():
