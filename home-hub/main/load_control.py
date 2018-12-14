@@ -13,7 +13,7 @@ __status__ = 'Beta'
 
 import numpy as np 
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 class Controller(object):
 	# takes load objects and schedules them

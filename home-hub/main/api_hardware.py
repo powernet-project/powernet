@@ -35,7 +35,7 @@ client = Client(SENTRY_DSN)
 logger = logging.getLogger('HOME_HUB_APPLICATION_LOGGER')
 
 class HardwareInterface:
-    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 100, auth_token = None):
+    def __init__(self, house_id, gpio_map = None, N_SAMPLES = 1200, auth_token = None):
         # initialize the logger
         self.logger = logger
         self.logger.info('HardwareRPi class called')
@@ -130,7 +130,7 @@ class HardwareInterface:
             adc = self.spi.xfer2([1, (8 + channel) << 4, 0])
             data[n]=((adc[1] & 3) << 8) + adc[2]
             n += 1
-            time.sleep(self.delay)
+            # time.sleep(self.delay)
         return self.ConvertVolts(data, 2)
 
     def producer_ai(self, q_ai):
@@ -167,7 +167,8 @@ class HardwareInterface:
 
 
             temp_ai = zip(ai0, ai1, ai2, ai3, ai4, ai5, ai6, ai7)
-            temp_queue = [temp_ai, dts]
+            i_rms = self.RMS(temp_ai)
+            temp_queue = [i_rms, dts]            
             # print("temp_ai: ", temp_queue)
             try:
                 q_ai.put(temp_queue, True, 2)
@@ -281,9 +282,8 @@ class HardwareInterface:
                 # print("Queue AI not empty")
                 try:
                     temp_cons = q_ai.get(True,2)
-                    temp_ai = temp_cons[0]
+                    i_rms = temp_cons[0]
                     temp_date = temp_cons[1]
-                    i_rms = self.RMS(temp_ai)
 
                     # Writing data to db:
                     for i in range(len(i_rms)):
@@ -393,7 +393,9 @@ class HardwareInterface:
                         else:
                             state_load = 'OFF'
                         self.devices_act(int(k[-1]),state_load)
-                    time.sleep(10)
+                    # Time between actions
+                    time.sleep(10)  # 10 seconds
+                    # time.sleep(150)  # 150 seconds
                 self.local_controller = 0
                 # making sure url is set back to OFF
                 load_controller_flag = { "id": None, "status": None, "name": None, "type": None, "value": None, "home": None, "cosphi": None }
@@ -425,7 +427,7 @@ class HardwareInterface:
         shape_led_5 = 120*0.87*np.ones(6)
         shape_heater_6 = 120*2.02*np.ones(6)
         shape_fridge_7 = 120*0.63*np.ones(6)
-        shape_compressor_8 = 120*0.53*np.ones(6)
+        shape_compressor_8 = 120*0.31*np.ones(6)
 
         fan_1 = lc.ScheduledLoad(2, shape_fan_1) # 2 modes (on/off) with shape defined above
         lights_2 = lc.ScheduledLoad(2, shape_lights_2)
