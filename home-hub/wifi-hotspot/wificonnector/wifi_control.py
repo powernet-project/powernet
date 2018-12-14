@@ -46,3 +46,11 @@ def disable_hostapd():
 
 def restart_dhcpcd():
     call(["systemctl", "restart", "dhcpcd"])
+
+
+def start_hostapd():
+    call(["systemctl", "start", "hostapd"])
+
+
+def start_dnsmasq():
+    call(["systemctl", "start", "dnsmasq"])
