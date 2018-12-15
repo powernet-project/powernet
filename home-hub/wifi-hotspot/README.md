@@ -20,7 +20,7 @@ Description=WifiPortal
 [Service]
 Type=simple
 User=root
-ExecStart=/usr/bin/python2 /home/pi/powernet/home-hub/wifi-hotspot/manage.py runserver
+ExecStart=/usr/bin/python2 /home/pi/powernet/home-hub/wifi-hotspot/manage.py runserver 0.0.0.0:8000
 
 [Install]
 WantedBy=multi-user.target
@@ -34,6 +34,6 @@ virtualenv venv
 source venv/bin/activate
 sudo pip2 install -r requirements.txt
 python2 manage.py migrate
-python2 manage.py runserver
+python2 manage.py runserver 0.0.0.0:8000
 ```
 
