@@ -171,7 +171,6 @@ DAEMON_CONF="/etc/hostapd/hostapd.conf"
 interface wlan0
     static ip_address=192.168.4.1/24
     nohook wpa_supplicant
-sudo service dhcpcd restart  #now cannot connect to wifi
 # create hot spot end
 ```
 
@@ -202,9 +201,11 @@ cannot connect to Wi-FI.
 
 ### normal mode to hotspot mode
 1. add static IP configuration to /etc/dhcpcd.conf
-2. sudo systemctl start hostapd
+2. sudo systemctl restart dhcpcd
 3. sudo systemctl start dnsmasq
-4. sudo systemctl restart dhcpcd
+4. sudo systemctl start hostapd
+
+
 
 ### hotspot mode to normal mode and connect to wifi
 1. add wifi configuration to /etc/wpa_supplicant/wpa_supplicant.conf
