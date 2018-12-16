@@ -17,7 +17,7 @@ while max_try != 0:  # check 10 times
     result = re.findall("ESSID:\"(\w*)\"", output)
 
     if len(result) != 0:  # connect to wifi
-        call(["sysetmctl", "stop", "wifi-portal@pi.service"])  # stop wifi port web page
+        call(["sysetmctl", "stop", "wifi-portal@pi"])  # stop wifi port web page
         is_connected = True
         break
 
@@ -25,5 +25,5 @@ while max_try != 0:  # check 10 times
     sleep(1)
 
 if not is_connected:  # if not connected to wifi after 10 seconds, set to hot spot mode
-    call(["sysetmctl", "start", "wifi-portal@pi.service"])
+    call(["sysetmctl", "start", "wifi-portal@pi"])
     set_to_hotspot()
