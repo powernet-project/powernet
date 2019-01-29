@@ -62,11 +62,11 @@ def get_hue_lights_status():
     req = requests.get(PHILPS_HUE_BRIDGE_URL + HUE_API_KEY + '/lights/')
     return req.json()
 
-def query_for_updates(global_condition):
+def query_for_updates(global_condition, auth_token):
     """
         Query the powernet server for state change on the philips hue lights
     """
-    req = requests.get(url=POLL_SERVER_URL)
+    req = requests.get(url=POLL_SERVER_URL, headers={'Authorization': 'Token ' + auth_token})
     
     condition = req.json()['state']
 
@@ -86,7 +86,7 @@ def query_for_updates(global_condition):
 
     return condition
 
-def setup_polling_listener():
+def setup_polling_listener(auth_token):
     """
         Setup HTTP long polling of our server for changes in home state, which
         we'll reflect in color changes in the Philips Hue
@@ -94,7 +94,7 @@ def setup_polling_listener():
     gc = 'UNKNOWN'
     while True:
         try:
-            c = query_for_updates(gc)
+            c = query_for_updates(gc, auth_token)
             gc = c
         except Exception as exc:
             print(exc)
@@ -104,7 +104,26 @@ def setup_polling_listener():
 
 if __name__ == '__main__':
     try:
-        setup_polling_listener()
+        # Get the email and password for this HH's user from the env vars
+        powernet_user_email = os.getenv('POWERNET_USER_EMAIL', None)
+        powernet_user_password = os.getenv('POWERNET_USER_PASSWORD', None)
+        
+        if powernet_user_email is None:
+            print('Missing the required login email address')
+            print('Please set the POWERNET_USER_EMAIL environment variable and try again')
+            exit()
+        
+        if powernet_user_password is None:
+            print('Missing the required login password')
+            print('Please set the POWERNET_USER_PASSWORD environment variable and try again')
+            exit()
+        
+        # attempt to authenticate against our API
+        form_payload = {'email': powernet_user_email, 'password': powernet_user_password}
+        response = requests.post('https://pwrnet-158117.appspot.com/api/v1/powernet_user/auth/', data=form_payload)
+        auth_token = response.json()['token']
+
+        setup_polling_listener(auth_token)
     except Exception as exc:
         print(exc)
         time.sleep(3)
