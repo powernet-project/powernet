@@ -9,6 +9,7 @@ __version__ = '0.1'
 __email__ = 'jongon@stanford.edu'
 __status__ = 'Prototype'
 
+import os
 import time
 import requests
 
@@ -127,4 +128,4 @@ if __name__ == '__main__':
     except Exception as exc:
         print(exc)
         time.sleep(3)
-        setup_polling_listener()
+        setup_polling_listener(auth_token)
