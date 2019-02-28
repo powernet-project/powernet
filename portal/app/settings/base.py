@@ -24,13 +24,6 @@ ALLOWED_HOSTS = [
 ROOT_URLCONF = 'app.urls'
 WSGI_APPLICATION = 'app.wsgi.application'
 
-# make sure we save celery results to the django db
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_BROKER_URL = 'redis://10.128.0.6:6379'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,7 +36,6 @@ INSTALLED_APPS = [
     'app',
     'app.api',
     'app.core',
-    'django_celery_results',
     'rest_framework_swagger',
     'rest_framework.authtoken',
 ]

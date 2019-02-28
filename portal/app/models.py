@@ -132,12 +132,3 @@ class ApplianceJsonData(models.Model):
 
     home = models.ForeignKey(Home)
     devices_json = JSONField(null=True, blank=True)
-
-
-class MatlabFiles(models.Model):
-
-    class Meta:
-        db_table = 'matlab_files'
-
-    filename = models.CharField(max_length=200)
-    content = JSONField(null=True, blank=True)
