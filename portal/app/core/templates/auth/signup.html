@@ -14,13 +14,20 @@
 <body>
 <form method="POST">
     {% csrf_token %}
+
+    <div class="row" id="register-bar">
+        <div class="col-md-12">
+            <a class="pull-right" href="{% url 'Powernet Login' %}" id="login-form-link">LOGIN</a>
+        </div>
+    </div>
+
     <div class="container">
         <div class="row">
-            <div class="col-md-6 text-center">
-              <img id="login-logo"
-                   src="https://storage.googleapis.com/powernet-media-artifacts/pics/logos/powernet-logo.png"
-                   height="140"
-                   width="344">
+            <div class="col-md-3"></div>
+
+            <div id="login-panel-wrapper" class="col-md-6">
+            <img id="login-logo" height="140" width="344"
+               src="https://storage.googleapis.com/powernet-media-artifacts/pics/logos/powernet-logo.png" />
               {% if errors %}
                   <div class="alert alert-danger" role="alert">
                       {% for e in errors %}
@@ -28,21 +35,17 @@
                       {% endfor %}
                   </div>
               {% endif %}
-            </div>
-
-            <div id="login-panel-wrapper" class="col-md-6">
             <div class="panel-login">
+
                 <div class="panel-heading">
                     <div class="row">
-                        <div class="col-xs-6">
-                            <a href="{% url 'Powernet Login' %}" id="login-form-link">Login</a>
-                        </div>
-                        <div class="col-xs-6">
-                            <a href="#" class="active" id="register-form-link">Register</a>
+                        <div class="col-xs-12">
+                            <a href="#" class="active" id="register-form-link">REGISTER</a>
                         </div>
                     </div>
                     <hr>
                 </div>
+
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-lg-12">
@@ -98,7 +101,7 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col-sm-6 col-sm-offset-3">
-                                        <button type="submit" class="form-control btn btn-login">Sign Up</button>
+                                        <button type="submit" class="form-control btn btn-login">SIGN UP</button>
                                     </div>
                                 </div>
                             </div>
@@ -107,6 +110,7 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-3"></div>
         </div>
     </div>
 </form>
