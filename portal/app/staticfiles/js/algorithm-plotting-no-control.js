@@ -18,6 +18,9 @@ voltageAllTransposed = [[1.0287055404946936, 0.9835408061928794, 0.9712944595053
 
 $(document).ready(function(ns) {
     var onLoad = function() {
+        $('a .nav-link').removeClass('active');
+        $('#nav-link-no-control').addClass('active');
+
         buildCharts(netPowerAllTransposed, 'net-power-all', {title: 'Net Power for Each Node'});
         buildCharts(solarAllTransposed, 'solar-all', {title: 'Solar Generation for Each Node'});
         buildCharts(qAllTransposed, 'q-all', {title: 'State of Charge for Each Node'});
