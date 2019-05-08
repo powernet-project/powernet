@@ -3,66 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <title>Powernet</title>
-
-    <link rel="stylesheet"
-          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-          crossorigin="anonymous">
-
+    {% load static %}
+    <link rel="stylesheet" href="{% static "css/base.css" %}"/>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/">Main</a></li>
-                    <li><a href="/settings">Settings</a></li>
-                    <li><a href="/devices">Devices</a></li>
-                    <li><a href="/consumption">Consumption</a></li>
-
+    {% if hide_header %}
+        <div></div>
+    {% else %}
+        <div class="container">
+            <header class="blog-header py-3">
+                <div class="row flex-nowrap justify-content-between align-items-center">
+                    <div class="col-4"></div>
+                    <div class="col-4 text-center">
+                        <img width="35%" height="35%" src="https://storage.googleapis.com/powernet-media-artifacts/pics/logos/powernet-logo.png">
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+            </header>
+            <div class="nav-scroller py-1 mb-2">
+                <nav class="nav d-flex justify-content-between">
+                    <a class="p-2 text-muted" href="/">Dashboard</a>
+                    <a class="p-2 text-muted" href="/settings">Settings</a>
+                    <a class="p-2 text-muted" href="/devices">Devices</a>
+                    <a class="p-2 text-muted" href="/consumption">Consumption</a>
                     {% if user.id == 1 %}
-                        <li><a href="/pv/">PV / Storage</a></li>
-                        <li><a href="/charts/">Control</a></li>
-                        <li><a href="/charts_no_control/">No Control</a></li>
-                        <li><a href="/cost-min/">Cost Minimization</a></li>
-                        <li><a href="/home/one/">Home 1</a></li>
+                        <a class="p-2 text-muted" href="/pv/">PV / Storage</a>
+                        <a class="p-2 text-muted" href="/charts/">Control</a>
+                        <a class="p-2 text-muted" href="/charts_no_control/">No Control</a>
+                        <a class="p-2 text-muted" href="/cost-min/">Cost Minimization</a>
+                        <a class="p-2 text-muted" href="/home/one/">Home 1</a>
                     {% endif %}
 
-                    <li><a href="http://powernet.stanford.edu/our-team" target="_blank">Team</a></li>
+                    <a class="p-2 text-muted" href="http://powernet.stanford.edu/our-team" target="_blank">Team</a>
 
                     {% if user %}
-                        <li><a href="/logout">Logout</a></li>
+                        <a class="p-2 text-muted" href="/logout">Logout</a>
                     {% endif %}
-                </ul>
+                </nav>
             </div>
         </div>
-    </nav>
+    {% endif %}
 
-
-    <div class="container-fluid">
+    <div class="container">
         {% block main-content %}{% endblock %}
     </div>
 
 
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.min.js"
-            integrity="sha256-eGE6blurk5sHj+rmkfsGYeKyZx3M4bG+ZlFyA7Kns7E="
-            crossorigin="anonymous"></script>
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-            integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
     {% block page-scripts %}{% endblock %}
 </body>

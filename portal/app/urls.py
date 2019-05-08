@@ -30,3 +30,5 @@ urlpatterns = [
     url(r'^devices/', home.devices, name='Home Devices'),
     url(r'^consumption/', home.consumption, name='Home Consumption'),
 ]
+
+handler404 = 'app.core.views.base.handler404'

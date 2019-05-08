@@ -28,11 +28,19 @@ def index(request):
         'devices': serialized_devices
     })
 
+#########################################################
+# Actual error page handlers
+#########################################################
+
+
+def handler404(request, *args, **kwargs):
+    return render(request, 'partials/404.html', {'hide_header': True})
 
 #########################################################
 # These views are to be used by the demo/lab account only.
 # They are not relevant to regular Powernet users.
 #########################################################
+
 
 @login_required
 def weather(request):
