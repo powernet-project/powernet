@@ -16,7 +16,6 @@ body {
 #register-bar a {
 	text-decoration: none !important;
 	font-size: 1.2em;
-	font-style: bold;
 }
 
 #login-panel-wrapper {
@@ -85,7 +84,7 @@ body {
 }
 .btn-login:hover,
 .btn-login:focus {
-	color: #8c1515 !important;
+	color: #fff !important;
 	border-color: #8c1515;
 }
 .forgot-password {
