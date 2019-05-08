@@ -22,7 +22,7 @@ def index(request):
     device_lst = Device.objects.filter(home__owner=request.user.powernetuser)
     serialized_devices = json.dumps(DeviceSerializer(device_lst, many=True).data)
 
-    return render(request, 'partials/main.html', {
+    return render(request, 'partials/dashboard.html', {
         'token': token,
         'homes': serialized_homes,
         'devices': serialized_devices
