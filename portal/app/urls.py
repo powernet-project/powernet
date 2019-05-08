@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
-from app.core.views import base, auth, home
+from app.core.views import base, auth
 from django.conf.urls import include, url
 
 urlpatterns = [
@@ -26,9 +26,9 @@ urlpatterns = [
     url(r'^cost-min/', base.opf, name='OPF'),
 
     # Powernet Application Views
-    url(r'^settings/', home.settings, name='Home Settings'),
-    url(r'^devices/', home.devices, name='Home Devices'),
-    url(r'^consumption/', home.consumption, name='Home Consumption'),
+    url(r'^settings/', base.settings, name='Home Settings'),
+    url(r'^devices/', base.devices, name='Home Devices'),
+    url(r'^consumption/', base.consumption, name='Home Consumption'),
 ]
 
 handler404 = 'app.core.views.base.handler404'

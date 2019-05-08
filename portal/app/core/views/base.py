@@ -28,6 +28,21 @@ def index(request):
         'devices': serialized_devices
     })
 
+
+@login_required
+def settings(request):
+    return render(request, 'partials/settings.html')
+
+
+@login_required
+def devices(request):
+    return render(request, 'partials/devices.html')
+
+
+@login_required
+def consumption(request):
+    return render(request, 'partials/consumption.html')
+
 #########################################################
 # Actual error page handlers
 #########################################################

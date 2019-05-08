@@ -1,7 +1,10 @@
-var pv = pv || {};
+var pv = {};
 
 $(document).ready(function(ns) {
     var onLoad = function() {
+        $('a .nav-link').removeClass('active');
+        $('#nav-link-pv').addClass('active');
+
         // setup listeners
         loadPvStatus();
         loadStorageStatus();

@@ -52,6 +52,9 @@ $(document).ready(function(ns) {
     };
 
     const onLoad = function() {
+        $('a .nav-link').removeClass('active');
+        $('#nav-link-consumption').addClass('active');
+
         const homeList = JSON.parse(window.localStorage.getItem('homes'));
 
         generateDeviceMap(JSON.parse(window.localStorage.getItem('devices')));
