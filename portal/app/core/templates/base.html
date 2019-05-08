@@ -11,49 +11,68 @@
     {% if hide_header %}
         <div></div>
     {% else %}
-        <div class="container">
-            <header class="blog-header py-3">
-                <div class="row flex-nowrap justify-content-between align-items-center">
-                    <div class="col-4"></div>
-                    <div class="col-4 text-center">
-                        <img width="35%" height="35%" src="https://storage.googleapis.com/powernet-media-artifacts/pics/logos/powernet-logo.png">
+        <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Powernet - SU</a>
+            {% if user %}
+                <ul class="navbar-nav px-3">
+                    <li class="nav-item text-nowrap">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                </ul>
+            {% endif %}
+        </nav>
+        <div class="container-fluid">
+            <div class="row">
+                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                    <div class="sidebar-sticky">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a id="nav-link-dashboard" class="nav-link" href="/">Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="nav-link-settings" class="nav-link" href="/settings">Settings</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="nav-link-devices" class="nav-link" href="/devices">Devices</a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="nav-link-consumption" class="nav-link" href="/consumption">Consumption</a>
+                            </li>
+                            {% if user.id == 1 %}
+                                <li class="nav-item">
+                                    <a id="nav-link-pv" class="nav-link" href="/pv/">PV / Storage</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="nav-link-control" class="nav-link" href="/charts/">Control</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="nav-link-no-control" class="nav-link" href="/charts_no_control/">No Control</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="nav-link-cost-minimization" class="nav-link" href="/cost-min/">Cost Minimization</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a id="nav-link-home-one" class="nav-link" href="/home/one/">Home 1</a>
+                                </li>
+                            {% endif %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="http://powernet.stanford.edu/our-team" target="_blank">Team</a>
+                            </li>
+                        </ul>
                     </div>
-                    <div class="col-4"></div>
-                </div>
-            </header>
-            <div class="nav-scroller py-1 mb-2">
-                <nav class="nav d-flex justify-content-between">
-                    <a class="p-2 text-muted" href="/">Dashboard</a>
-                    <a class="p-2 text-muted" href="/settings">Settings</a>
-                    <a class="p-2 text-muted" href="/devices">Devices</a>
-                    <a class="p-2 text-muted" href="/consumption">Consumption</a>
-                    {% if user.id == 1 %}
-                        <a class="p-2 text-muted" href="/pv/">PV / Storage</a>
-                        <a class="p-2 text-muted" href="/charts/">Control</a>
-                        <a class="p-2 text-muted" href="/charts_no_control/">No Control</a>
-                        <a class="p-2 text-muted" href="/cost-min/">Cost Minimization</a>
-                        <a class="p-2 text-muted" href="/home/one/">Home 1</a>
-                    {% endif %}
-
-                    <a class="p-2 text-muted" href="http://powernet.stanford.edu/our-team" target="_blank">Team</a>
-
-                    {% if user %}
-                        <a class="p-2 text-muted" href="/logout">Logout</a>
-                    {% endif %}
                 </nav>
+                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+                    {% block main-content %}{% endblock %}
+                </main>
             </div>
         </div>
     {% endif %}
 
-    <div class="container">
-        {% block main-content %}{% endblock %}
-    </div>
 
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
     {% block page-scripts %}{% endblock %}
 </body>
 </html>

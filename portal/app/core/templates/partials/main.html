@@ -4,11 +4,7 @@
 
 {% block main-content %}
 
-    <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark">
-        <div class="col-md-12 px-0">
-            <h1>DASHBOARD</h1>
-        </div>
-    </div>
+
 
 {% endblock main-content %}
 
@@ -21,5 +17,8 @@
     window.localStorage.setItem('token', token);
     window.localStorage.setItem('homes', JSON.stringify(homeList));
     window.localStorage.setItem('devices', JSON.stringify(deviceList));
+
+    $('a .nav-link').removeClass('active');
+    $('#nav-link-dashboard').addClass('active');
 </script>
 {% endblock page-scripts %}

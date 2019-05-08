@@ -1,7 +1,10 @@
-let settings = settings || {};
+let settings = {};
 
 $(document).ready(function(ns) {
-    const onLoad = function() {};
+    const onLoad = function() {
+        $('a .nav-link').removeClass('active');
+        $('#nav-link-settings').addClass('active');
+    };
 
 
 
