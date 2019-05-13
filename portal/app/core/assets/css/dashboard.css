@@ -1,0 +1,14 @@
+#svg-author-attribution {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    font-size: 0.5em;
+}
+
+.green {
+    fill: green;
+}
+
+.red {
+    fill: red;
+}
