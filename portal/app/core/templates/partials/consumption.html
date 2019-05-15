@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block main-content %}
+
+    <br /><br /><br /><br />
+
+    <div class="row">
+        <div id="home-list-selector-container" class="col-sm-12 text-center">
+            <label for="home-select">Choose a Home:</label>
+
+            <select id="home-select"></select>
+        </div>
+    </div>
+
+    <br /><br />
+
+    <div class="row">
+        <div class="col-sm-12 text-center">
+            <button id="view-per-device-chart">Per Device Consumption</button>
+            <button id="view-home-chart">Home Total Consumption</button>
+        </div>
+    </div>
+
+    <div id="consumption-chart"></div>
+
+{% endblock main-content %}
+
+{% block page-scripts %}
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="{% static "js/consumption.js" %}"></script>
+{% endblock page-scripts %}

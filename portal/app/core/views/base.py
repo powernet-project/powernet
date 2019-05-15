@@ -22,17 +22,40 @@ def index(request):
     device_lst = Device.objects.filter(home__owner=request.user.powernetuser)
     serialized_devices = json.dumps(DeviceSerializer(device_lst, many=True).data)
 
-    return render(request, 'partials/main.html', {
+    return render(request, 'partials/dashboard.html', {
         'token': token,
         'homes': serialized_homes,
         'devices': serialized_devices
     })
 
 
+@login_required
+def settings(request):
+    return render(request, 'partials/settings.html')
+
+
+@login_required
+def devices(request):
+    return render(request, 'partials/devices.html')
+
+
+@login_required
+def consumption(request):
+    return render(request, 'partials/consumption.html')
+
+#########################################################
+# Actual error page handlers
+#########################################################
+
+
+def handler404(request, *args, **kwargs):
+    return render(request, 'partials/404.html', {'hide_header': True})
+
 #########################################################
 # These views are to be used by the demo/lab account only.
 # They are not relevant to regular Powernet users.
 #########################################################
+
 
 @login_required
 def weather(request):
