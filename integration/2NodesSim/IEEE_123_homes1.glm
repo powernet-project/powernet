@@ -1,0 +1,4099 @@
+module residential {
+	implicit_enduses NONE;
+}
+
+module climate;
+
+module mysql;
+
+module generators;
+
+filter MA(z,1min) = (.01667+.01667 z+.01667 z^2+.01667 z^3+.01667 z^4+ .01667 z^5+ .01667 z^6+ .01667 z^7 + .01667 z^8 + .01667 z^9 + .01667 z^10 +.01667 z^11+.01667 z^12+.01667 z^13+.01667 z^14+ .01667 z^15+ .01667 z^16+ .01667 z^17 + .01667 z^18 + .01667 z^19 + .01667 z^20 +.01667 z^21+.01667 z^22+.01667 z^23+.01667 z^24+ .01667 z^25+ .01667 z^26+ .01667 z^27 + .01667 z^28 + .01667 z^29+ .01667 z^30 +.01667 z^31+.01667 z^32+.01667 z^33+.01667 z^34+ .01667 z^35+ .01667 z^36+ .01667 z^37 + .01667 z^38 + .01667 z^39+ .01667 z^40 +.01667 z^41+.01667 z^42+.01667 z^43+.01667 z^44+ .01667 z^45+ .01667 z^46+ .01667 z^47 + .01667 z^48 + .01667 z^49+ .01667 z^50 +.01667 z^51+.01667 z^52+.01667 z^53+.01667 z^54+ .01667 z^55+ .01667 z^56+ .01667 z^57 + .01667 z^58 + .01667 z^59)/z^60;
+
+class MA_filter {
+	double power_filtered;
+}
+
+class test {
+	double value;
+}
+
+object climate {
+	name tmy_file;
+	tmyfile "724940TYA.tmy3";
+	interpolate LINEAR;
+}
+
+object database {
+	name database_HH;
+	hostname "powernet-gridlabd-rt.cftqw2r7udps.us-east-1.rds.amazonaws.com";
+	username "gridlabd";
+	password "tfPKrZ5lOSXAVf3Y";
+	schema "gridlabd";
+	port 3306;
+	options SHOWQUERY;
+}
+
+object database {
+	name database_inputs;
+	hostname "powernet-gridlabd-rt.cftqw2r7udps.us-east-1.rds.amazonaws.com";
+	username "gridlabd";
+	password "tfPKrZ5lOSXAVf3Y";
+	schema "gridlabd";
+	port 3306;
+	options SHOWQUERY;
+}
+
+object database {
+	name database_outputs;
+	hostname "powernet-gridlabd-rt.cftqw2r7udps.us-east-1.rds.amazonaws.com";
+	username "gridlabd";
+	password "tfPKrZ5lOSXAVf3Y";
+	schema "gridlabd";
+	port 3306;
+	options SHOWQUERY;
+}
+
+object database {
+	name database_agg_load;
+	hostname "powernet-gridlabd-rt.cftqw2r7udps.us-east-1.rds.amazonaws.com";
+	username "gridlabd";
+	password "tfPKrZ5lOSXAVf3Y";
+	schema "gridlabd";
+	port 3306;
+	options SHOWQUERY;
+}
+
+object triplex_line_conductor {
+	name "c1/0 AA triplex";
+	resistance 0.97;
+	geometric_mean_radius 0.0111;
+}
+
+object triplex_line_configuration {
+	name triplex_line_config;
+	conductor_1 "c1/0 AA triplex";
+	conductor_2 "c1/0 AA triplex";
+	conductor_N "c1/0 AA triplex";
+	insulation_thickness 0.08;
+	diameter 0.368;
+}
+
+object transformer_configuration {
+	name house_transformer;
+	connect_type SINGLE_PHASE_CENTER_TAPPED;
+	install_type PADMOUNT;
+	primary_voltage 2401.7771 V;
+	secondary_voltage 124 V;
+	power_rating 250;
+	impedance 0.015+0.0675j;
+}
+
+object test {
+	name test_0;
+}
+
+object player {
+	name player_0;
+	connection database_inputs;
+	parent test_0;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_1450_2015' ORDER BY t";
+}
+
+object test {
+	name test_1;
+}
+
+object player {
+	name player_1;
+	connection database_inputs;
+	parent test_1;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_1524_2015' ORDER BY t";
+}
+
+object test {
+	name test_2;
+}
+
+object player {
+	name player_2;
+	connection database_inputs;
+	parent test_2;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_1731_2015' ORDER BY t";
+}
+
+object test {
+	name test_3;
+}
+
+object player {
+	name player_3;
+	connection database_inputs;
+	parent test_3;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_203_2015' ORDER BY t";
+}
+
+object test {
+	name test_4;
+}
+
+object player {
+	name player_4;
+	connection database_inputs;
+	parent test_4;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_2606_2015' ORDER BY t";
+}
+
+object test {
+	name test_5;
+}
+
+object player {
+	name player_5;
+	connection database_inputs;
+	parent test_5;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_3864_2015' ORDER BY t";
+}
+
+object test {
+	name test_6;
+}
+
+object player {
+	name player_6;
+	connection database_inputs;
+	parent test_6;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_3938_2015' ORDER BY t";
+}
+
+object test {
+	name test_7;
+}
+
+object player {
+	name player_7;
+	connection database_inputs;
+	parent test_7;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_4495_2015' ORDER BY t";
+}
+
+object test {
+	name test_8;
+}
+
+object player {
+	name player_8;
+	connection database_inputs;
+	parent test_8;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_4934_2015' ORDER BY t";
+}
+
+object test {
+	name test_9;
+}
+
+object player {
+	name player_9;
+	connection database_inputs;
+	parent test_9;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_5938_2015' ORDER BY t";
+}
+
+object test {
+	name test_10;
+}
+
+object player {
+	name player_10;
+	connection database_inputs;
+	parent test_10;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_7114_2015' ORDER BY t";
+}
+
+object test {
+	name test_11;
+}
+
+object player {
+	name player_11;
+	connection database_inputs;
+	parent test_11;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_8061_2015' ORDER BY t";
+}
+
+object test {
+	name test_12;
+}
+
+object player {
+	name player_12;
+	connection database_inputs;
+	parent test_12;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_8342_2015' ORDER BY t";
+}
+
+object test {
+	name test_13;
+}
+
+object player {
+	name player_13;
+	connection database_inputs;
+	parent test_13;
+	table player_data;
+	property value;
+	query "SELECT t as t, tot_load as base_power FROM gridlabd.player_data WHERE name = 'ps_9775_2015' ORDER BY t";
+}
+
+object triplex_node {
+	name node_4_C;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object transformer {
+	name house_trans_4_C;
+	phases CS;
+	from meter_4;
+	to node_4_C;
+	configuration house_transformer;
+}
+
+object triplex_node {
+	name node_12_B;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object transformer {
+	name house_trans_12_B;
+	phases BS;
+	from meter_12;
+	to node_12_B;
+	configuration house_transformer;
+}
+
+object triplex_meter {
+	name meter_GLD_0001;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0001;
+	number_of_stories 1;
+	cooling_setpoint 77;
+	heating_setpoint 72;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 1208;
+	window_wall_ratio 0.14;
+	airchange_per_hour 1.07;
+	parent meter_GLD_0001;
+}
+
+object ZIPload {
+	parent GLD_0001;
+	name zip_GLD_0001;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_12.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0001;
+	from node_4_C;
+	to meter_GLD_0001;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0001;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0001;
+	power_filtered MA(meter_GLD_0001:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0001;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0002;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0002;
+	number_of_stories 2;
+	cooling_setpoint 70;
+	heating_setpoint 65;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 2686;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.29;
+	parent meter_GLD_0002;
+}
+
+object ZIPload {
+	parent GLD_0002;
+	name zip_GLD_0002;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_11.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0002;
+	from node_4_C;
+	to meter_GLD_0002;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0002;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0002;
+	power_filtered MA(meter_GLD_0002:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0002;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0003;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0003;
+	number_of_stories 1;
+	cooling_setpoint 70;
+	heating_setpoint 65;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 1892;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.33;
+	parent meter_GLD_0003;
+}
+
+object ZIPload {
+	parent GLD_0003;
+	name zip_GLD_0003;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_12.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0003;
+	from node_4_C;
+	to meter_GLD_0003;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0003;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0003;
+	power_filtered MA(meter_GLD_0003:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0003;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0004;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0004;
+	number_of_stories 1;
+	cooling_setpoint 80;
+	heating_setpoint 75;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 1885;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.42;
+	parent meter_GLD_0004;
+}
+
+object ZIPload {
+	parent GLD_0004;
+	name zip_GLD_0004;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_2.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0004;
+	from node_12_B;
+	to meter_GLD_0004;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0004;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0004;
+	power_filtered MA(meter_GLD_0004:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0004;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0005;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0005;
+	number_of_stories 2;
+	cooling_setpoint 66;
+	heating_setpoint 61;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 3670;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.49;
+	parent meter_GLD_0005;
+}
+
+object ZIPload {
+	parent GLD_0005;
+	name zip_GLD_0005;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_3.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0005;
+	from node_4_C;
+	to meter_GLD_0005;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0005;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0005;
+	power_filtered MA(meter_GLD_0005:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0005;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0006;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0006;
+	number_of_stories 1;
+	cooling_setpoint 67;
+	heating_setpoint 62;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 2405;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.28;
+	parent meter_GLD_0006;
+}
+
+object ZIPload {
+	parent GLD_0006;
+	name zip_GLD_0006;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_0.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0006;
+	from node_12_B;
+	to meter_GLD_0006;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0006;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0006;
+	power_filtered MA(meter_GLD_0006:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0006;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0007;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0007;
+	number_of_stories 2;
+	cooling_setpoint 72;
+	heating_setpoint 67;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	floor_area 2347;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.35;
+	parent meter_GLD_0007;
+}
+
+object ZIPload {
+	parent GLD_0007;
+	name zip_GLD_0007;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_9.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0007;
+	from node_4_C;
+	to meter_GLD_0007;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0007;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0007;
+	power_filtered MA(meter_GLD_0007:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0007;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0008;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0008;
+	number_of_stories 1;
+	cooling_setpoint 73;
+	heating_setpoint 68;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 1346;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.12;
+	parent meter_GLD_0008;
+}
+
+object ZIPload {
+	parent GLD_0008;
+	name zip_GLD_0008;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_13.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0008;
+	from node_4_C;
+	to meter_GLD_0008;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0008;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0008;
+	power_filtered MA(meter_GLD_0008:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0008;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0009;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0009;
+	number_of_stories 1;
+	cooling_setpoint 67;
+	heating_setpoint 62;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 2069;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.3;
+	parent meter_GLD_0009;
+}
+
+object ZIPload {
+	parent GLD_0009;
+	name zip_GLD_0009;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_11.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0009;
+	from node_12_B;
+	to meter_GLD_0009;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0009;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0009;
+	power_filtered MA(meter_GLD_0009:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0009;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0010;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0010;
+	number_of_stories 2;
+	cooling_setpoint 63;
+	heating_setpoint 58;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	floor_area 2717;
+	window_wall_ratio 0.13;
+	airchange_per_hour 0.55;
+	parent meter_GLD_0010;
+}
+
+object ZIPload {
+	parent GLD_0010;
+	name zip_GLD_0010;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_13.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0010;
+	from node_12_B;
+	to meter_GLD_0010;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0010;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0010;
+	power_filtered MA(meter_GLD_0010:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0010;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0011;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0011;
+	number_of_stories 2;
+	cooling_setpoint 72;
+	heating_setpoint 67;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 2642;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+	parent meter_GLD_0011;
+}
+
+object ZIPload {
+	parent GLD_0011;
+	name zip_GLD_0011;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_11.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0011;
+	from node_4_C;
+	to meter_GLD_0011;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0011;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0011;
+	power_filtered MA(meter_GLD_0011:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0011;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0012;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0012;
+	number_of_stories 2;
+	cooling_setpoint 70;
+	heating_setpoint 65;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 1907;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+	parent meter_GLD_0012;
+}
+
+object ZIPload {
+	parent GLD_0012;
+	name zip_GLD_0012;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_9.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0012;
+	from node_12_B;
+	to meter_GLD_0012;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0012;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0012;
+	power_filtered MA(meter_GLD_0012:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0012;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0013;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0013;
+	number_of_stories 1;
+	cooling_setpoint 71;
+	heating_setpoint 66;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 1964;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+	parent meter_GLD_0013;
+}
+
+object ZIPload {
+	parent GLD_0013;
+	name zip_GLD_0013;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_3.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0013;
+	from node_4_C;
+	to meter_GLD_0013;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0013;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0013;
+	power_filtered MA(meter_GLD_0013:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0013;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0014;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0014;
+	number_of_stories 1;
+	cooling_setpoint 67;
+	heating_setpoint 62;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 1433;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.65;
+	parent meter_GLD_0014;
+}
+
+object ZIPload {
+	parent GLD_0014;
+	name zip_GLD_0014;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0014;
+	from node_4_C;
+	to meter_GLD_0014;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0014;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0014;
+	power_filtered MA(meter_GLD_0014:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0014;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0015;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0015;
+	number_of_stories 2;
+	cooling_setpoint 75;
+	heating_setpoint 70;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 3249;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.47;
+	parent meter_GLD_0015;
+}
+
+object ZIPload {
+	parent GLD_0015;
+	name zip_GLD_0015;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0015;
+	from node_4_C;
+	to meter_GLD_0015;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0015;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0015;
+	power_filtered MA(meter_GLD_0015:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0015;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0016;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0016;
+	number_of_stories 1;
+	cooling_setpoint 71;
+	heating_setpoint 66;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 3274;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.42;
+	parent meter_GLD_0016;
+}
+
+object ZIPload {
+	parent GLD_0016;
+	name zip_GLD_0016;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0016;
+	from node_12_B;
+	to meter_GLD_0016;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0016;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0016;
+	power_filtered MA(meter_GLD_0016:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0016;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0017;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0017;
+	number_of_stories 1;
+	cooling_setpoint 66;
+	heating_setpoint 61;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 1719;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.26;
+	parent meter_GLD_0017;
+}
+
+object ZIPload {
+	parent GLD_0017;
+	name zip_GLD_0017;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_9.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0017;
+	from node_4_C;
+	to meter_GLD_0017;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0017;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0017;
+	power_filtered MA(meter_GLD_0017:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0017;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0018;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0018;
+	number_of_stories 1;
+	cooling_setpoint 69;
+	heating_setpoint 64;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 3374;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.37;
+	parent meter_GLD_0018;
+}
+
+object ZIPload {
+	parent GLD_0018;
+	name zip_GLD_0018;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0018;
+	from node_4_C;
+	to meter_GLD_0018;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0018;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0018;
+	power_filtered MA(meter_GLD_0018:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0018;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0019;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0019;
+	number_of_stories 2;
+	cooling_setpoint 75;
+	heating_setpoint 70;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 3223;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.23;
+	parent meter_GLD_0019;
+}
+
+object ZIPload {
+	parent GLD_0019;
+	name zip_GLD_0019;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_0.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0019;
+	from node_12_B;
+	to meter_GLD_0019;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0019;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0019;
+	power_filtered MA(meter_GLD_0019:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0019;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0020;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0020;
+	number_of_stories 1;
+	cooling_setpoint 71;
+	heating_setpoint 66;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 3348;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.37;
+	parent meter_GLD_0020;
+}
+
+object ZIPload {
+	parent GLD_0020;
+	name zip_GLD_0020;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_11.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0020;
+	from node_12_B;
+	to meter_GLD_0020;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0020;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0020;
+	power_filtered MA(meter_GLD_0020:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0020;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0021;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object house {
+	name GLD_0021;
+	number_of_stories 2;
+	cooling_setpoint 75;
+	heating_setpoint 70;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 3372;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.32;
+	parent meter_GLD_0021;
+}
+
+object ZIPload {
+	parent GLD_0021;
+	name zip_GLD_0021;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_7.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0021;
+	from node_12_B;
+	to meter_GLD_0021;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0021;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0021;
+	power_filtered MA(meter_GLD_0021:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0021;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0022;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0022;
+	number_of_stories 1;
+	cooling_setpoint 82;
+	heating_setpoint 77;
+	cooling_system_type HEAT_PUMP;
+	heating_system_type HEAT_PUMP;
+	floor_area 1632;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.37;
+	parent meter_GLD_0022;
+}
+
+object ZIPload {
+	parent GLD_0022;
+	name zip_GLD_0022;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_11.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0022;
+	from node_4_C;
+	to meter_GLD_0022;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0022;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0022;
+	power_filtered MA(meter_GLD_0022:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0022;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0023;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0023;
+	number_of_stories 1;
+	cooling_setpoint 70;
+	heating_setpoint 65;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	floor_area 2053;
+	window_wall_ratio 0.15;
+	airchange_per_hour 0.35;
+	parent meter_GLD_0023;
+}
+
+object ZIPload {
+	parent GLD_0023;
+	name zip_GLD_0023;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_6.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0023;
+	from node_4_C;
+	to meter_GLD_0023;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0023;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0023;
+	power_filtered MA(meter_GLD_0023:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0023;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0024;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0024;
+	number_of_stories 2;
+	cooling_setpoint 65;
+	heating_setpoint 60;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 2635;
+	window_wall_ratio 0.16;
+	airchange_per_hour 0.32;
+	parent meter_GLD_0024;
+}
+
+object ZIPload {
+	parent GLD_0024;
+	name zip_GLD_0024;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_4.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0024;
+	from node_4_C;
+	to meter_GLD_0024;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0024;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0024;
+	power_filtered MA(meter_GLD_0024:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0024;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0025;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0025;
+	number_of_stories 2;
+	cooling_setpoint 71;
+	heating_setpoint 66;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 3071;
+	window_wall_ratio 0.17;
+	airchange_per_hour 0.47;
+	parent meter_GLD_0025;
+}
+
+object ZIPload {
+	parent GLD_0025;
+	name zip_GLD_0025;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0025;
+	from node_4_C;
+	to meter_GLD_0025;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0025;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0025;
+	power_filtered MA(meter_GLD_0025:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0025;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0026;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0026;
+	number_of_stories 2;
+	cooling_setpoint 75;
+	heating_setpoint 70;
+	cooling_system_type ELECTRIC;
+	heating_system_type RESISTANCE;
+	floor_area 2820;
+	window_wall_ratio 0.14;
+	airchange_per_hour 0.58;
+	parent meter_GLD_0026;
+}
+
+object ZIPload {
+	parent GLD_0026;
+	name zip_GLD_0026;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_2.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0026;
+	from node_4_C;
+	to meter_GLD_0026;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0026;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0026;
+	power_filtered MA(meter_GLD_0026:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0026;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_meter {
+	name meter_GLD_0027;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object house {
+	name GLD_0027;
+	number_of_stories 2;
+	cooling_setpoint 76;
+	heating_setpoint 71;
+	cooling_system_type ELECTRIC;
+	heating_system_type GAS;
+	floor_area 2561;
+	window_wall_ratio 0.15;
+	airchange_per_hour 1.51;
+	parent meter_GLD_0027;
+}
+
+object ZIPload {
+	parent GLD_0027;
+	name zip_GLD_0027;
+	power_fraction 0.5;
+	impedance_fraction 0.5;
+	current_fraction 0.0;
+	power_pf 0.9;
+	current_pf 0.9;
+	impedance_pf 0.9;
+	heat_fraction 0.0;
+	base_power test_1.value;
+}
+
+object triplex_line {
+	name house_line_GLD_0027;
+	from node_4_C;
+	to meter_GLD_0027;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object recorder {
+	connection database_outputs;
+	parent meter_GLD_0027;
+	table outputs;
+	property measured_voltage_1, measured_real_power, measured_current_1;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object MA_filter {
+	name HH_GLD_0027;
+	power_filtered MA(meter_GLD_0027:measured_power);
+}
+
+object recorder {
+	connection database_HH;
+	parent HH_GLD_0027;
+	table home_filter;
+	property power_filtered;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name PV_line_1;
+	from node_4_C;
+	to PV_meter_1;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_1;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_1;
+	phases CS;
+	parent PV_meter_1;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_1;
+	phases CS;
+	parent PV_inverter_1;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; //173 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_2;
+	from node_12_B;
+	to PV_meter_2;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_2;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name PV_inverter_2;
+	phases BS;
+	parent PV_meter_2;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 2000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_2;
+	phases BS;
+	parent PV_inverter_2;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; // 140 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_3;
+	from node_4_C;
+	to PV_meter_3;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_3;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_3;
+	phases CS;
+	parent PV_meter_3;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 8000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_3;
+	phases CS;
+	parent PV_inverter_3;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; // 614 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_4;
+	from node_4_C;
+	to PV_meter_4;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_4;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_4;
+	phases CS;
+	parent PV_meter_4;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 4000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_4;
+	phases CS;
+	parent PV_inverter_4;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; // 276 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_5;
+	from node_12_B;
+	to PV_meter_5;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_5;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name PV_inverter_5;
+	phases BS;
+	parent PV_meter_5;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 4000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_5;
+	phases BS;
+	parent PV_inverter_5;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; // 326 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_6;
+	from node_4_C;
+	to PV_meter_6;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_6;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_6;
+	phases CS;
+	parent PV_meter_6;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 6000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_6;
+	phases CS;
+	parent PV_inverter_6;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; // 440 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_7;
+	from node_4_C;
+	to PV_meter_7;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_7;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_7;
+	phases CS;
+	parent PV_meter_7;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 4000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_7;
+	phases CS;
+	parent PV_inverter_7;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; // 262 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name PV_line_8;
+	from node_4_C;
+	to PV_meter_8;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name PV_meter_8;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name PV_inverter_8;
+	phases CS;
+	parent PV_meter_8;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PF;
+	generator_mode SUPPLY_DRIVEN;
+	rated_power 3000;
+	inverter_efficiency 0.95;
+}
+
+object solar {
+	name PV_array_8;
+	phases CS;
+	parent PV_inverter_8;
+	generator_status ONLINE;
+	generator_mode SUPPLY_DRIVEN;
+	panel_type SINGLE_CRYSTAL_SILICON;
+	area 0.1ft^2; // 213 ft^2;
+	tilt_angle 45.0;
+	efficiency 0.135;
+	orientation_azimuth 0;
+	orientation FIXED_AXIS;
+	SOLAR_TILT_MODEL SOLPOS;
+	SOLAR_POWER_MODEL FLATPLATE;
+}
+
+object triplex_line {
+	name Bat_line_1;
+	from node_12_B;
+	to Bat_meter_1;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_1;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_1;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_1;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_1;
+	parent Bat_inverter_1;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_1;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_2;
+	from node_4_C;
+	to Bat_meter_2;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_2;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_2;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_2;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_2;
+	parent Bat_inverter_2;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_2;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_3;
+	from node_4_C;
+	to Bat_meter_3;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_3;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_3;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_3;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_3;
+	parent Bat_inverter_3;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_3;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_4;
+	from node_12_B;
+	to Bat_meter_4;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_4;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_4;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_4;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_4;
+	parent Bat_inverter_4;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_4;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_5;
+	from node_4_C;
+	to Bat_meter_5;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_5;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_5;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_5;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_5;
+	parent Bat_inverter_5;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_5;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_6;
+	from node_4_C;
+	to Bat_meter_6;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_6;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_6;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_6;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_6;
+	parent Bat_inverter_6;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_6;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_7;
+	from node_4_C;
+	to Bat_meter_7;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_7;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_7;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_7;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_7;
+	parent Bat_inverter_7;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_7;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_8;
+	from node_4_C;
+	to Bat_meter_8;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_8;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_8;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_8;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_8;
+	parent Bat_inverter_8;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_8;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_9;
+	from node_12_B;
+	to Bat_meter_9;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_9;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_9;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_9;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_9;
+	parent Bat_inverter_9;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_9;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_10;
+	from node_4_C;
+	to Bat_meter_10;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_10;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_10;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_10;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_10;
+	parent Bat_inverter_10;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_10;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_11;
+	from node_4_C;
+	to Bat_meter_11;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_11;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_11;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_11;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_11;
+	parent Bat_inverter_11;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_11;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_12;
+	from node_4_C;
+	to Bat_meter_12;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_12;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_12;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_12;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_12;
+	parent Bat_inverter_12;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_12;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_13;
+	from node_12_B;
+	to Bat_meter_13;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_13;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_13;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_13;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_13;
+	parent Bat_inverter_13;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_13;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_14;
+	from node_4_C;
+	to Bat_meter_14;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_14;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_14;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_14;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_14;
+	parent Bat_inverter_14;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_14;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_15;
+	from node_12_B;
+	to Bat_meter_15;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_15;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_15;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_15;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_15;
+	parent Bat_inverter_15;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_15;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_16;
+	from node_12_B;
+	to Bat_meter_16;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_16;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_16;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_16;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_16;
+	parent Bat_inverter_16;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_16;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_17;
+	from node_4_C;
+	to Bat_meter_17;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_17;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_17;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_17;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_17;
+	parent Bat_inverter_17;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_17;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_18;
+	from node_4_C;
+	to Bat_meter_18;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_18;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_18;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_18;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_18;
+	parent Bat_inverter_18;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_18;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_19;
+	from node_12_B;
+	to Bat_meter_19;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_19;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_19;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_19;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_19;
+	parent Bat_inverter_19;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_19;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_20;
+	from node_12_B;
+	to Bat_meter_20;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_20;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_20;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_20;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_20;
+	parent Bat_inverter_20;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_20;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_21;
+	from node_4_C;
+	to Bat_meter_21;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_21;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_21;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_21;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_21;
+	parent Bat_inverter_21;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_21;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_22;
+	from node_4_C;
+	to Bat_meter_22;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_22;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_22;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_22;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_22;
+	parent Bat_inverter_22;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_22;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_23;
+	from node_12_B;
+	to Bat_meter_23;
+	phases BS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_23;
+	nominal_voltage 124.00;
+	phases BS;
+}
+
+object inverter {
+	name Bat_inverter_23;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_23;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_23;
+	parent Bat_inverter_23;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_23;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_24;
+	from node_4_C;
+	to Bat_meter_24;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_24;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_24;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_24;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_24;
+	parent Bat_inverter_24;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_24;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_25;
+	from node_4_C;
+	to Bat_meter_25;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_25;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_25;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_25;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_25;
+	parent Bat_inverter_25;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_25;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_26;
+	from node_4_C;
+	to Bat_meter_26;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_26;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_26;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_26;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_26;
+	parent Bat_inverter_26;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_26;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object triplex_line {
+	name Bat_line_27;
+	from node_4_C;
+	to Bat_meter_27;
+	phases CS;
+	length 30 ft;
+	configuration triplex_line_config;
+}
+
+object triplex_meter {
+	name Bat_meter_27;
+	nominal_voltage 124.00;
+	phases CS;
+}
+
+object inverter {
+	name Bat_inverter_27;
+	generator_status ONLINE;
+	inverter_type FOUR_QUADRANT;
+	four_quadrant_control_mode CONSTANT_PQ;
+	parent Bat_meter_27;
+	rated_power 3000.0;
+	inverter_efficiency 0.95;
+	Q_Out 0;
+}
+
+object battery {
+	name Battery_27;
+	parent Bat_inverter_27;
+	use_internal_battery_model TRUE;
+	battery_type LI_ION;
+	power_factor 1.0;
+	V_Max 260;
+	I_Max 15;
+	E_Max 7000;
+	power_type DC;
+	battery_capacity 7000;
+	base_efficiency 0.95;
+	state_of_charge 0.0;
+	generator_mode SUPPLY_DRIVEN;
+}
+
+object recorder {
+	connection database_HH;
+	parent Battery_27;
+	table battery;
+	property state_of_charge;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object recorder {
+	connection database_agg_load;
+	parent meter_4;
+	table agg_load;
+	property measured_real_power;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
+
+object recorder {
+	connection database_agg_load;
+	parent meter_12;
+	table agg_load;
+	property measured_real_power;
+	mode "w+";
+	interval 3600;
+	options UNITS;
+	datetime_fieldname "t";
+	recordid_fieldname "id";
+	header_fieldnames "name";
+}
