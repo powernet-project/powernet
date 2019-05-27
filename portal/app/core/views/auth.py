@@ -66,8 +66,20 @@ def signup(request):
 
 
 def login(request):
-    print("login")
-    return render(request, 'auth/login.html')
+    if request.method == 'GET':
+        return render(request, 'auth/login.html')
+
+    username = request.POST['username']
+    password = request.POST['password']
+    user = authenticate(request, username=username, password=password)
+
+    if user is not None:
+        auth_login(request, user)
+        return redirect('/')
+
+    content = {'errors': ['Invalid credentials']}
+    return render(request, 'auth/login.html', content)
+
 
 
 @login_required
