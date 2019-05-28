@@ -56,6 +56,12 @@ class HueStates(models.Model):
     state = EnumField(HueStatesType, default=HueStatesType.UNKNOWN, max_length=40)
 
 
+def disable_callable(cls):
+    cls.do_not_call_in_templates = True
+    return cls
+
+
+@disable_callable
 class PowernetUserType(Enum):
     LAB = 'LAB'  # special user type that has more lab like functionality for more  R&D type work
     HOME = 'HOME'
