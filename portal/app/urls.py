@@ -12,7 +12,7 @@ urlpatterns = [
 
     # Authentication / Authorization / Onboarding
     url(r'^signup/', auth.signup, name='Powernet Signup'),
-    url(r'^login/', auth_views.login, {'template_name': 'auth/login.html'}, name='Powernet Login'),
+    url(r'^login/', auth.login, name='Powernet Login'),
     url(r'^logout/', auth.logout, name='Powernet Logout'),
 
     # View for demo/lab account only

@@ -1,8 +1,8 @@
 import json
 from django.shortcuts import render
-from app.models import Home, Device
 from rest_framework.authtoken.models import Token
 from app.api.v1.endpoint.home import HomeSerializer
+from app.models import Home, Device, PowernetUserType
 from app.api.v1.endpoint.device import DeviceSerializer
 from django.contrib.auth.decorators import login_required
 
@@ -22,7 +22,14 @@ def index(request):
     device_lst = Device.objects.filter(home__owner=request.user.powernetuser)
     serialized_devices = json.dumps(DeviceSerializer(device_lst, many=True).data)
 
-    return render(request, 'partials/dashboard.html', {
+    if request.user.powernetuser.type == PowernetUserType.LAB:
+        template = 'partials/main_lab.html'
+    elif request.user.powernetuser.type == PowernetUserType.FARM:
+        template = 'partials/main_farm.html'
+    else:
+        template = 'partials/main_home.html'
+
+    return render(request, template, {
         'token': token,
         'homes': serialized_homes,
         'devices': serialized_devices
@@ -59,35 +66,35 @@ def handler404(request, *args, **kwargs):
 
 @login_required
 def weather(request):
-    if request.user.id == 1:
+    if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'partials/weather.html')
     return render(request, 'partials/404.html')
 
 
 @login_required
 def electricity(request):
-    if request.user.id == 1:
+    if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'partials/electricity.html')
     return render(request, 'partials/404.html')
 
 
 @login_required
 def home_one(request):
-    if request.user.id == 1:
+    if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'visualization/Demo3/index.html')
     return render(request, 'partials/404.html')
 
 
 @login_required
 def home_two(request):
-    if request.user.id == 1:
+    if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'visualization/Demo3/index.html')
     return render(request, 'partials/404.html')
 
 
 @login_required
 def opf(request):
-    if request.user.id != 1:
+    if request.user.powernetuser.type != PowernetUserType.LAB:
         return render(request, 'partials/404.html')
 
     # get the homes this user has
@@ -104,20 +111,20 @@ def opf(request):
 
 @login_required
 def pv(request):
-    if request.user.id == 1:
+    if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'partials/pv.html')
     return render(request, 'partials/404.html')
 
 
 @login_required
 def charts(request):
-    if request.user.id == 1:
+    if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'partials/chart_plots.html')
     return render(request, 'partials/404.html')
 
 
 @login_required
 def charts_no_control(request):
-    if request.user.id == 1:
+    if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'partials/chart_plots_no_control.html')
     return render(request, 'partials/404.html')

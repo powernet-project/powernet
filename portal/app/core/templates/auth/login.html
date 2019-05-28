@@ -28,7 +28,13 @@
             <div id="login-panel-wrapper" class="col-md-6">
                 <img id="login-logo" height="140" width="344"
                      src="https://storage.googleapis.com/powernet-media-artifacts/pics/logos/powernet-logo.png"/>
-
+                {% if errors %}
+                    <div class="alert alert-danger" role="alert">
+                        {% for e in errors %}
+                            <h5>{{e}}</h5>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                 <div class="panel-login">
 
                     <div class="panel-heading">
