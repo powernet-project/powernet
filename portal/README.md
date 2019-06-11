@@ -31,7 +31,7 @@ django-admin runserver
 # PENDING TO-DOs:
 - Forgot password link isn't hooked up to anything
 - Login flow and the rest of the application use diff bootstrap versions. Consolidate!
-- Fix static assets setup and deploy - afff.....
+- Fix static assets setup and deploy - afff.....whatever else that is needed
 
 
 
