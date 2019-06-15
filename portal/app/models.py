@@ -145,3 +145,15 @@ class ApplianceJsonData(models.Model):
 
     home = models.ForeignKey(Home)
     devices_json = JSONField(null=True, blank=True)
+
+
+class FarmDevice(models.Model):
+
+    class Meta:
+        db_table = 'farm_device_data'
+
+    home = models.ForeignKey(Home)
+    device_data = JSONField(null=True, blank=True)
+    type = EnumField(DeviceType, max_length=40)
+    timestamp = models.DateTimeField(default=timezone.now)
+    
