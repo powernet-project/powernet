@@ -37,6 +37,10 @@ class DeviceType(Enum):
     CLOTHES_WASHER = 'CLOTHES_WASHER'
     AIR_CONDITIONER = 'AIR_CONDITIONER'
     STOVE_OVEN_EXHAUST = 'STOVE_OVEN_EXHAUST'
+    SONNEN = 'SONNEN'
+    EGAUGE = 'EGAUGE'
+    BLENDER = 'BLENDER'
+    LORA = 'LORA'
 
 
 class HueStatesType(Enum):
@@ -154,6 +158,6 @@ class FarmDevice(models.Model):
 
     home = models.ForeignKey(Home)
     device_data = JSONField(null=True, blank=True)
+    device_uid = models.CharField(default = 'UNKNOWN', max_length=100)
     type = EnumField(DeviceType, max_length=40)
     timestamp = models.DateTimeField(default=timezone.now)
-    
