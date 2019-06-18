@@ -1,9 +1,5 @@
 from app.api.v1 import CsrfExemptAuth
-from rest_framework.decorators import action
-from rest_framework.response import Response
 from app.models import FarmDevice, Home, Device
-from rest_framework import (viewsets, serializers, status)
-from rest_framework.authentication import TokenAuthentication
 import requests
 
 # This method does a request to sonnen api to get status
@@ -12,7 +8,7 @@ def _get_batteries_status_json():
     # serial2 = '67670'
     token = '5db92cf858eebce34af146974f49f4d40ec699b99372546c0af628fb48133f61'
     url_ini = 'https://core-api.sonnenbatterie.de/proxy/'
-    headers = { 'Accept': 'application/vnd.sonnenbatterie.api.core.v1+json','Authorization': 'Bearer '+self.token,}
+    headers = { 'Accept': 'application/vnd.sonnenbatterie.api.core.v1+json','Authorization': 'Bearer '+token,}
     status_endpoint = '/api/v1/status'
 
     try:
@@ -23,19 +19,22 @@ def _get_batteries_status_json():
         return data
 
     except requests.exceptions.HTTPError as err:
+        print('Error get_battery_status_json')
         return None
 
 
 # This method is used on scheduler.py to pull data in given periodicity
 def update_battery_status():
     json = _get_batteries_status_json()
+    print('json: ', json)
     if json is not None:
         try:
-            farmdevice = FarmDevice()
-            farmdevice = FarmDevice.objects.get(device_uid = '67682')
-            farmdevice.update(device_data = json)
-            print('saving...\n', farmdevice)
+            farm_device = FarmDevice()
+            farm_device = FarmDevice.objects.get(device_uid='67682')
+            farm_device.update(device_data = json)
+            print('saving...\n', farm_device)
         except:
+            print('Error update_battery_status')
             pass
             
         

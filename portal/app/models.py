@@ -39,7 +39,7 @@ class DeviceType(Enum):
     STOVE_OVEN_EXHAUST = 'STOVE_OVEN_EXHAUST'
     SONNEN = 'SONNEN'
     EGAUGE = 'EGAUGE'
-    BLENDER = 'BLENDER'
+    PICO_BLENDER = 'PICO_BLENDER'
     LORA = 'LORA'
 
 
@@ -155,9 +155,10 @@ class FarmDevice(models.Model):
 
     class Meta:
         db_table = 'farm_device_data'
+        unique_together = ['home', 'device_uid']
 
     home = models.ForeignKey(Home)
     device_data = JSONField(null=True, blank=True)
-    device_uid = models.CharField(default = 'UNKNOWN', max_length=100)
+    device_uid = models.CharField(max_length=100, blank=False, null=False)
     type = EnumField(DeviceType, max_length=40)
     timestamp = models.DateTimeField(default=timezone.now)
