@@ -1,9 +1,9 @@
-from datetime import datetime
-from apscheduler.schedulers.background import BackgroundScheduler
 import sonnen_api
 import logging
+from apscheduler.schedulers.background import BackgroundScheduler
 
 logging.basicConfig()
+
 
 def start():
     scheduler = BackgroundScheduler()

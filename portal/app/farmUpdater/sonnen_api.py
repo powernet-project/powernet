@@ -1,9 +1,8 @@
-from app.api.v1 import CsrfExemptAuth
-from app.models import FarmDevice, Home, Device
 import requests
 
-# This method does a request to sonnen api to get status
+
 def _get_batteries_status_json():
+    # This method does a request to sonnen api to get status
     serial1 = '67682'
     # serial2 = '67670'
     token = '5db92cf858eebce34af146974f49f4d40ec699b99372546c0af628fb48133f61'
@@ -25,16 +24,14 @@ def _get_batteries_status_json():
 
 # This method is used on scheduler.py to pull data in given periodicity
 def update_battery_status():
+    from app.models import FarmDevice
     json = _get_batteries_status_json()
     print('json: ', json)
     if json is not None:
         try:
-            farm_device = FarmDevice()
             farm_device = FarmDevice.objects.get(device_uid='67682')
-            farm_device.update(device_data = json)
+            farm_device.update(device_data=json)
             print('saving...\n', farm_device)
-        except:
-            print('Error update_battery_status')
+        except FarmDevice.DoesNotExist as e:
+            print('Error update_battery_status', e)
             pass
-            
-        
