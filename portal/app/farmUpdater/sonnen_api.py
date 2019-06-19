@@ -30,7 +30,8 @@ def update_battery_status():
     if json is not None:
         try:
             farm_device = FarmDevice.objects.get(device_uid='67682')
-            farm_device.update(device_data=json)
+            farm_device.device_data = json
+            farm_device.save()
             print('saving...\n', farm_device)
         except FarmDevice.DoesNotExist as e:
             print('Error update_battery_status', e)
