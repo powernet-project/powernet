@@ -37,6 +37,10 @@ class DeviceType(Enum):
     CLOTHES_WASHER = 'CLOTHES_WASHER'
     AIR_CONDITIONER = 'AIR_CONDITIONER'
     STOVE_OVEN_EXHAUST = 'STOVE_OVEN_EXHAUST'
+    SONNEN = 'SONNEN'
+    EGAUGE = 'EGAUGE'
+    PICO_BLENDER = 'PICO_BLENDER'
+    LORA = 'LORA'
 
 
 class HueStatesType(Enum):
@@ -145,3 +149,16 @@ class ApplianceJsonData(models.Model):
 
     home = models.ForeignKey(Home)
     devices_json = JSONField(null=True, blank=True)
+
+
+class FarmDevice(models.Model):
+
+    class Meta:
+        db_table = 'farm_device_data'
+        unique_together = ['home', 'device_uid']
+
+    home = models.ForeignKey(Home)
+    device_data = JSONField(null=True, blank=True)
+    device_uid = models.CharField(max_length=100, blank=False, null=False)
+    type = EnumField(DeviceType, max_length=40)
+    timestamp = models.DateTimeField(default=timezone.now)
