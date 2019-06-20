@@ -7,7 +7,7 @@ def _get_batteries_status_json():
     # serial2 = '67670'
     token = '5db92cf858eebce34af146974f49f4d40ec699b99372546c0af628fb48133f61'
     url_ini = 'https://core-api.sonnenbatterie.de/proxy/'
-    headers = { 'Accept': 'application/vnd.sonnenbatterie.api.core.v1+json','Authorization': 'Bearer '+token,}
+    headers = { 'Accept': 'application/vnd.sonnenbatterie.api.core.v1+json','Authorization': 'Bearer ' + token}
     status_endpoint = '/api/v1/status'
 
     try:
