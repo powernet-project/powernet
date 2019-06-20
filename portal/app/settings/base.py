@@ -119,3 +119,5 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
 }
+SUN_TECH_DRIVE_URL = ''
+SUN_TECH_DRIVE_TEST_URL = 'https://test.suntechdrive.com'

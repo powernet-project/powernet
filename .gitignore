@@ -18,3 +18,5 @@ dump.rdb
 
 gains_debug_prod.py
 my_log.log
+
+gains_debug_with_secrets.py
