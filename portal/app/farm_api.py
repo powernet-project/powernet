@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-from app.farm_updater import updater
+from app.farmUpdater import updater
 
 
 class FarmConfig(AppConfig):

@@ -11,6 +11,3 @@ DATABASES = {
         'PORT': '5432'
     }
 }
-
-EGUAGE_USER = 'owener'
-EGAUGE_PASSWORD = 'SuXbc58vi9'
