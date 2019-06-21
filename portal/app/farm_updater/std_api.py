@@ -29,12 +29,18 @@ class StdApiInterface:
 
 def update_std_device_status():
     from app.models import FarmDevice
-    try:
-        std_api = StdApiInterface(url=settings.SUN_TECH_DRIVE_TEST_URL, username=settings.SUN_TECH_DRIVE_USERNAME,
-                                  password=settings.SUN_TECH_DRIVE_PASSWORD)
-        std_api.login()
-        devices_from_std = std_api.get_devices_status()
-        print(devices_from_std)
 
-    except Exception as e:
-        print('Error retrieving data from sun tech drive', e)
+    # TODO: will store this in the DB later
+    username = settings.SUN_TECH_DRIVE_USERNAME
+    password = settings.SUN_TECH_DRIVE_PASSWORD
+
+    if username and password:
+        try:
+            std_api = StdApiInterface(url=settings.SUN_TECH_DRIVE_TEST_URL, username=settings.SUN_TECH_DRIVE_USERNAME,
+                                      password=settings.SUN_TECH_DRIVE_PASSWORD)
+            std_api.login()
+            devices_from_std = std_api.get_devices_status()
+            print(devices_from_std)
+
+        except Exception as e:
+            print('Error retrieving data from sun tech drive', e)
