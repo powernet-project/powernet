@@ -24,9 +24,10 @@ router.register(r'home', HomeViewSet, base_name='Home')
 router.register(r'home_data', HomeDataViewSet, base_name='Home Data')
 router.register(r'powernet_user', PowernetUserViewSet, base_name='Powernet User')
 router.register(r'farm_device', FarmDeviceViewSet, base_name='Farm Device')
-router.register(r'lora_device', LoraDeviceViewSet, base_name='Lora Device')
+# router.register(r'lora_device', LoraDeviceViewSet.as_view(), base_name='Lora Device')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^$', schema_view),
+    url(r'lora_device', LoraDeviceViewSet.as_view())
 ]
