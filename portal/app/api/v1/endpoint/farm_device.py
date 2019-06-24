@@ -10,6 +10,7 @@ class FarmDeviceSerializer(EnumFieldSerializerMixin, serializers.ModelSerializer
         model = FarmDevice
         fields = '__all__'
 
+
 class FarmDeviceViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
     serializer_class = FarmDeviceSerializer
