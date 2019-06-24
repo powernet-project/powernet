@@ -49,24 +49,23 @@ class ApplianceJsonDataViewSet(viewsets.ModelViewSet):
         if device_count == 1:
             ds = ApplianceJsonData.objects.filter(devices_json__contains=[{'sensor_id': int(device_id)}])
 
-        # lastly, limit the result set
-        if ds:
-            ds = ds.order_by('-id')
-            ds = ds[:int(number_of_samples)]
+        if ds is not None:
+            if ds.count() == 0:
+                return Response({'result': 'no data for the supplied id'}, status=status.HTTP_404_NOT_FOUND)
+
+            # THIS IS A HACK FOR BACKWARDS COMPAT WITH THE LAB VIZ
+            if ds.count() == 1 and device_count == 1:
+                for item in ds[0].devices_json:
+                    if item['sensor_id'] == int(device_id):
+                        result = item['samples'][0]['RMS']
+                        return Response({'result': result, 'id': device_id}, status=status.HTTP_200_OK)
+            else:
+                ds = ds.order_by('-id')
+                ds = ds[:int(number_of_samples)]
         else:
-            return Response({'result': 'Could not determine an appropriate data set to retireve, please ensure'
+            return Response({'result': 'Could not determine an appropriate data set to retrieve, please ensure'
                                        ' the supplied parameters are correct.'},
                             status=status.HTTP_400_BAD_REQUEST)
-
-        if len(ds) == 0:
-            return Response({'result': 'no data for the supplied id'}, status=status.HTTP_404_NOT_FOUND)
-
-        # THIS IS A HACK FOR BACKWARDS COMPAT WITH THE LAB VIZ
-        if len(ds) == 1 and device_count == 1:
-            for item in ds[0].devices_json:
-                if item['sensor_id'] == int(device_id):
-                    result = item['samples'][0]['RMS']
-                    return Response({'result': result, 'id': device_id}, status=status.HTTP_200_OK)
 
         serializer = self.serializer_class(ds, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
