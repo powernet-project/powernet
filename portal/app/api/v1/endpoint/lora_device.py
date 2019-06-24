@@ -3,13 +3,14 @@ from app.api.v1 import CsrfExemptAuth
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from app.models import FarmDevice
+from rest_framework import status
 import json
 
 
 class LoraDeviceViewSet(APIView):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
 
-    def dataparsing(self, data):
+    def _data_parsing(self, data):
         try:
             temperature = data['event_data']['payload'][2]['value']
             rel_humidity = data['event_data']['payload'][3]['value']
@@ -17,19 +18,17 @@ class LoraDeviceViewSet(APIView):
             timestamp = data['event_data']['timestamp']
             dev_internal_id = data['device']['id']
             device_uid = data['device']['thing_name'][1:3]
-            return [device_uid, json.dumps({'temperature': temperature, 'rel_humidity': rel_humidity, 'batt_value': batt_value,
-                           'dev_internal_id': dev_internal_id,'timestamp': timestamp})]
+            return [device_uid, json.dumps({'temperature': temperature,
+                                            'rel_humidity': rel_humidity,
+                                            'batt_value': batt_value,
+                                            'dev_internal_id': dev_internal_id,
+                                            'timestamp': timestamp})]
         except Exception as e:
-            print('Error in Lora dataparsing: ', e)
+            print('Error in Lora _data_parsing: ', e)
             return None
 
     def post(self, request):
-        try:
-            lora_data = self.dataparsing(request.data)
-        except Exception as e:
-            lora_data = None
-            print('Error: ', e)
-
+        lora_data = self._data_parsing(request.data)
         if lora_data is not None:
             try:
                 lora_device = FarmDevice.objects.get(device_uid=lora_data[0])
@@ -39,7 +38,10 @@ class LoraDeviceViewSet(APIView):
                 return Response({'message': 'dev_id {} and data {}'.format(lora_data[0], lora_data[1])})
             except FarmDevice.DoesNotExist as e:
                 print('Error update_battery_status', e)
-                return Response({'Error':'Somehting went wrong with Lora request'})
+                return Response({'Error':'Device ID not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        else:
+            return Response({'Error': 'Problem with Lora data format'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
