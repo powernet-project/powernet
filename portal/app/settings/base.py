@@ -122,5 +122,7 @@ REST_FRAMEWORK = {
 SUN_TECH_DRIVE_URL = ''
 SUN_TECH_DRIVE_TEST_URL = 'https://test.suntechdrive.com'
 
-EGAUGE_URL='https://egauge46613.egaug.es/cgi-bin/egauge?param'
+EGAUGE_URL='https://egauge46613.egaug.es/cgi-bin/egauge'
+EGAUGE_USER = 'owner'
+EGAUGE_PASSWORD = 'SuXbc58vi9'
 
