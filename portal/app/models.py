@@ -100,6 +100,9 @@ class Home(models.Model):
     class Meta:
         db_table = 'home'
 
+    def __unicode__(self):
+        return "Home - {0}".format(self.name)
+
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=1000)
     type = EnumField(HomeType, default=HomeType.UNKNOWN, max_length=20)
