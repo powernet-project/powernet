@@ -5,6 +5,7 @@ from xml.etree import ElementTree as ET
 from requests.auth import HTTPDigestAuth
 import json
 
+
 class EgaugeInterface():
 
     def __init__(self, url=None, username=None, password=None, t_sample=5):
@@ -26,7 +27,7 @@ class EgaugeInterface():
         root = ET.fromstring(request.text)
         timestamp = root.findtext("ts")
 
-        if timestamp != None:
+        if timestamp is not None:
             for r in root.findall('r'):
                 for child in r:
                     if r.get('n') == 'L1 Voltage':
@@ -123,7 +124,8 @@ class EgaugeInterface():
 
 def update_egauge_data():
     from app.models import FarmDevice
-    egauge_data = EgaugeInterface(url=settings.EGAUGE_URL, username=settings.EGAUGE_USER, password=settings.EGAUGE_PASSWORD).processing_egauge_data()
+    egauge_data = EgaugeInterface(url=settings.EGAUGE_URL, username=settings.EGAUGE_USER, password=settings.
+                                  EGAUGE_PASSWORD).processing_egauge_data()
 
     if egauge_data is not None:
         try:
