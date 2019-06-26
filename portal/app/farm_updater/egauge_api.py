@@ -86,46 +86,40 @@ class EgaugeInterface():
             resp = requests.get(self.url, auth=HTTPDigestAuth(self.username, self.password))
             resp.raise_for_status()
             data_current = self.get_egauge_data(resp)
-
+            egauge_data['raw'] = data_current
         except requests.exceptions.HTTPError as err:
             print(err)
-            return json.dumps(power_values)
-
-        try:
-            queryset = FarmDevice.objects.filter(type=DeviceType.EGAUGE).order_by('-id')[0].device_data
-        except Exception as e:
-            print('No EGAUGE data in db: ', e)
-            queryset = None
-
-        if queryset is None:
-            egauge_data['raw'] = data_current
             return json.dumps(egauge_data)
 
-        else:
-            print(queryset)
-            data_prev = json.loads(queryset)['raw']
-            ts_delta = data_current['ts'] - data_prev['ts']
+        queryset = FarmDevice.objects.filter(type=DeviceType.EGAUGE).order_by('-id')[0].device_data
+        if queryset is None:
+            print('Error, no egauge data in DB...')
+            return json.dumps(egauge_data)
 
-            try:
-                power_values['ts'] = data_current['ts']
-                power_values['timestamp'] = datetime.datetime.fromtimestamp(int(data_current['ts'])).strftime('%Y-%m-%d %H:%M:%S')
-                power_values['L1 Voltage'] = ((data_current['L1 Voltage'] - data_prev['L1 Voltage']) / ts_delta) / 1000
-                power_values['L2 Voltage'] = ((data_current['L2 Voltage'] - data_prev['L2 Voltage']) / ts_delta) / 1000
-                power_values['Power Circuit 1'] = (data_current['Power Circuit 1'] - data_prev['Power Circuit 1']) / ts_delta
-                power_values['Power Circuit 1*'] = (data_current['Power Circuit 1*'] - data_prev['Power Circuit 1*']) / ts_delta
-                power_values['Power Circuit 2'] = (data_current['Power Circuit 2'] - data_prev['Power Circuit 2']) / ts_delta
-                power_values['Power Circuit 2*'] = (data_current['Power Circuit 2*'] - data_prev['Power Circuit 2*']) / ts_delta
-                power_values['Power Circuit 1 neutral'] = (data_current['Power Circuit 1 neutral'] - data_prev[
-                    'Power Circuit 1 neutral']) / ts_delta
-                power_values['Shed Power'] = (data_current['Shed Power'] - data_prev['Shed Power']) / ts_delta
-                power_values['Control Fan Power'] = (data_current['Control Fan Power'] - data_prev[
-                    'Control Fan Power']) / ts_delta
-                power_values['Control Fan Power*'] = (data_current['Control Fan Power*'] - data_prev[
-                    'Control Fan Power*']) / ts_delta
+        data_prev = json.loads(queryset)['raw']
 
-                print(power_values)
-                return json.dumps(power_values)
-                # return json.dumps(data_prev)
+        ts_delta = data_current['ts'] - data_prev['ts']
+
+        power_values['ts'] = data_current['ts']
+        power_values['timestamp'] = datetime.datetime.fromtimestamp(int(data_current['ts'])
+                                                                    ).strftime('%Y-%m-%d %H:%M:%S')
+        power_values['L1 Voltage'] = ((data_current['L1 Voltage'] - data_prev['L1 Voltage']) / ts_delta) / 1000
+        power_values['L2 Voltage'] = ((data_current['L2 Voltage'] - data_prev['L2 Voltage']) / ts_delta) / 1000
+        power_values['Power Circuit 1'] = (data_current['Power Circuit 1'] - data_prev['Power Circuit 1']) / ts_delta
+        power_values['Power Circuit 1*'] = (data_current['Power Circuit 1*'] - data_prev['Power Circuit 1*']) / ts_delta
+        power_values['Power Circuit 2'] = (data_current['Power Circuit 2'] - data_prev['Power Circuit 2']) / ts_delta
+        power_values['Power Circuit 2*'] = (data_current['Power Circuit 2*'] - data_prev['Power Circuit 2*']) / ts_delta
+        power_values['Power Circuit 1 neutral'] = (data_current['Power Circuit 1 neutral'] - data_prev[
+            'Power Circuit 1 neutral']) / ts_delta
+        power_values['Shed Power'] = (data_current['Shed Power'] - data_prev['Shed Power']) / ts_delta
+        power_values['Control Fan Power'] = (data_current['Control Fan Power'] - data_prev[
+            'Control Fan Power']) / ts_delta
+        power_values['Control Fan Power*'] = (data_current['Control Fan Power*'] - data_prev[
+            'Control Fan Power*']) / ts_delta
+
+        egauge_data['processed'] = power_values
+        return json.dumps(egauge_data)
+
 
 def update_egauge_data():
     from app.models import FarmDevice
