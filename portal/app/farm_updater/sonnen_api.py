@@ -4,29 +4,28 @@ from django.conf import settings
 
 class SonnenApiInterface:
 
-    def __init__(self, url=settings.SONNEN_URL):
+    def __init__(self, url=settings.SONNEN_URL, token=settings.SONNEN_TOKEN):
         self.url = url
-        self.serial = '67682'
-        # self.serial2 = '67670'
-        self.token = '5db92cf858eebce34af146974f49f4d40ec699b99372546c0af628fb48133f61'
-        self.headers = {'Accept': 'application/vnd.sonnenbatterie.api.core.v1+json', 'Authorization': 'Bearer ' + self.token}
+        self.token = token
+        self.headers = {'Accept': 'application/vnd.sonnenbatterie.api.core.v1+json', 'Authorization': 'Bearer ' +
+                                                                                                      self.token}
 
-    def get_batteries_status_json(self):
+    def get_batteries_status_json(self, serial):
         # This method does a request to sonnen api to get status
         status_endpoint = '/api/v1/status'
 
         try:
-            resp = requests.get(self.url + self.serial + status_endpoint, headers=self.headers)
+            resp = requests.get(self.url + serial + status_endpoint, headers=self.headers)
             resp.raise_for_status()
             data = resp.json()
-            data['batt_id'] = self.serial
+            data['batt_id'] = serial
             return data
 
         except requests.exceptions.HTTPError as err:
             print('Error get_battery_status_json')
             return None
 
-    def manual_mode_control(self, mode='charge', value='0'):
+    def manual_mode_control(self, serial, mode='charge', value='0'):
         control_endpoint = '/api/v1/setpoint/'
         # Checking if system is in off-grid mode
         voltage = self.get_batteries_status_json().get_status()['Uac']
@@ -37,7 +36,7 @@ class SonnenApiInterface:
 
         else:
             try:
-                resp = requests.get(self.url + self.serial + control_endpoint + mode + '/' + value,
+                resp = requests.get(self.url + serial + control_endpoint + mode + '/' + value,
                                     headers=self.headers)
                 resp.raise_for_status()
 
@@ -50,18 +49,33 @@ class SonnenApiInterface:
 # This method is used on scheduler.py to pull data in given periodicity
 def update_battery_status():
     from app.models import FarmDevice
+    serial_batt1 = settings.SONNEN_BATT1
+    serial_batt2 = settings.SONNEN_BATT2
 
     sonnen_api = SonnenApiInterface()
-    json = sonnen_api.get_batteries_status_json()
-    print('json: ', json)
-    if json is not None:
+    json_batt1 = sonnen_api.get_batteries_status_json(serial=serial_batt1)
+    json_batt2 = sonnen_api.get_batteries_status_json(serial=serial_batt2)
+    print('json: ', json_batt1)
+    print('json: ', json_batt2)
+
+    if json_batt1 is not None:
         try:
-            farm_device = FarmDevice.objects.get(device_uid='67682')
-            farm_device.device_data = json
+            farm_device = FarmDevice.objects.get(device_uid=serial_batt1)
+            farm_device.device_data = json_batt1
             farm_device.save()
             print('saving...\n', farm_device)
         except FarmDevice.DoesNotExist as e:
-            print('Error update_battery_status', e)
+            print('Error update_battery1_status', e)
+            pass
+
+    if json_batt2 is not None:
+        try:
+            farm_device2 = FarmDevice.objects.get(device_uid=serial_batt2)
+            farm_device2.device_data = json_batt2
+            farm_device2.save()
+            print('saving...\n', farm_device2)
+        except FarmDevice.DoesNotExist as e:
+            print('Error update_battery2_status', e)
             pass
 
 
