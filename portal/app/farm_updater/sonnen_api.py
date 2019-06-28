@@ -2,6 +2,7 @@ import requests
 from django.conf import settings
 
 
+
 class SonnenApiInterface:
 
     def __init__(self, url=settings.SONNEN_URL, token=settings.SONNEN_TOKEN):
@@ -48,35 +49,22 @@ class SonnenApiInterface:
 
 # This method is used on scheduler.py to pull data in given periodicity
 def update_battery_status():
-    from app.models import FarmDevice
-    serial_batt1 = settings.SONNEN_BATT1
-    serial_batt2 = settings.SONNEN_BATT2
+    from app.models import FarmDevice, DeviceType
 
+    devices = FarmDevice.objects.filter(home='1').filter(type=DeviceType.SONNEN).all()
     sonnen_api = SonnenApiInterface()
-    json_batt1 = sonnen_api.get_batteries_status_json(serial=serial_batt1)
-    json_batt2 = sonnen_api.get_batteries_status_json(serial=serial_batt2)
-    print('json: ', json_batt1)
-    print('json: ', json_batt2)
 
-    if json_batt1 is not None:
-        try:
-            farm_device = FarmDevice.objects.get(device_uid=serial_batt1)
-            farm_device.device_data = json_batt1
-            farm_device.save()
-            print('saving...\n', farm_device)
-        except FarmDevice.DoesNotExist as e:
-            print('Error update_battery1_status', e)
-            pass
-
-    if json_batt2 is not None:
-        try:
-            farm_device2 = FarmDevice.objects.get(device_uid=serial_batt2)
-            farm_device2.device_data = json_batt2
-            farm_device2.save()
-            print('saving...\n', farm_device2)
-        except FarmDevice.DoesNotExist as e:
-            print('Error update_battery2_status', e)
-            pass
+    for dev in devices:
+        json_batt = sonnen_api.get_batteries_status_json(serial=dev.device_uid)
+        if json_batt is not None:
+            try:
+                farm_device = FarmDevice.objects.get(device_uid=dev.device_uid)
+                farm_device.device_data = json_batt
+                farm_device.save()
+                print('saving...\n', dev.device_uid)
+            except FarmDevice.DoesNotExist as e:
+                print('Error update_battery_status for serial: ', dev.device_uid)
+                print(e)
 
 
 # This method is used to control whether battery is charging or discharging at a given rate
