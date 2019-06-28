@@ -71,5 +71,3 @@ def set_battery_action(mode='charge', value='0'):
     sonnen_api = SonnenApiInterface()
     control = sonnen_api.manual_mode_control(mode, value)
     print('control: ', control)
-    if control is None or int(control['ResponseCode']) != 0:
-        print('Error submitting request to sonnen server: ', control)
