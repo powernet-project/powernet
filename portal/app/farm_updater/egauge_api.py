@@ -17,9 +17,9 @@ class EgaugeInterface():
         # Initializing parameters
         self.t_sample = t_sample
         self.keys_db = ['raw', 'processed']
-        self.keys = ['L1 Voltage', 'L2 Voltage', 'Power Circuit 1', 'Power Circuit 1*', 'Power Circuit 2',
-                     'Power Circuit 2*', 'Power Circuit 1 neutral', 'Shed Power', 'Control Fan Power',
-                     'Control Fan Power*', 'ts']
+        self.keys = ['L1 - VOLTAGE_C', 'L2 - VOLTAGE_A', 'Power Circuit 1', 'Power Circuit 1*', 'Power Circuit 2',
+                     'POWER_FACTOR_CIRCUIT2', 'POWER_CIRCUIT1_NEUTRAL', 'SHED_POWER', 'CONTROL_FAN_POWER',
+                     'CONTROL_FAN_POWER*', 'ts']
 
     # Function to get and format e-gauge data
     def get_egauge_data(self, request):
@@ -30,26 +30,26 @@ class EgaugeInterface():
         if timestamp is not None:
             for r in root.findall('r'):
                 for child in r:
-                    if r.get('n') == 'L1 Voltage':
-                        power_values['L1 Voltage'] = (int(child.text))
-                    elif r.get('n') == 'L2 Voltage':
-                        power_values['L2 Voltage'] = (int(child.text))
+                    if r.get('n') == 'L1 - VOLTAGE_C':
+                        power_values['L1 - VOLTAGE_C'] = (int(child.text))
+                    elif r.get('n') == 'L2 - VOLTAGE_A':
+                        power_values['L2 - VOLTAGE_A'] = (int(child.text))
                     elif r.get('n') == 'Power Circuit 1':
                         power_values['Power Circuit 1'] = (int(child.text))
                     elif r.get('n') == 'Power Circuit 1*':
                         power_values['Power Circuit 1*'] = (int(child.text))
                     elif r.get('n') == 'Power Circuit 2':
                         power_values['Power Circuit 2'] = (int(child.text))
-                    elif r.get('n') == 'Power Circuit 2*':
-                        power_values['Power Circuit 2*'] = (int(child.text))
-                    elif r.get('n') == 'Power Circuit 1 neutral':
-                        power_values['Power Circuit 1 neutral'] = (int(child.text))
-                    elif r.get('n') == 'Shed Power':
-                        power_values['Shed Power'] = (int(child.text))
-                    elif r.get('n') == 'Control Fan Power':
-                        power_values['Control Fan Power'] = (int(child.text))
-                    elif r.get('n') == 'Control Fan Power*':
-                        power_values['Control Fan Power*'] = (int(child.text))
+                    elif r.get('n') == 'POWER_FACTOR_CIRCUIT2':
+                        power_values['POWER_FACTOR_CIRCUIT2'] = (int(child.text))
+                    elif r.get('n') == 'POWER_CIRCUIT1_NEUTRAL':
+                        power_values['POWER_CIRCUIT1_NEUTRAL'] = (int(child.text))
+                    elif r.get('n') == 'SHED_POWER':
+                        power_values['SHED_POWER'] = (int(child.text))
+                    elif r.get('n') == 'CONTROL_FAN_POWER':
+                        power_values['CONTROL_FAN_POWER'] = (int(child.text))
+                    elif r.get('n') == 'CONTROL_FAN_POWER*':
+                        power_values['CONTROL_FAN_POWER*'] = (int(child.text))
 
             power_values['ts'] = int(timestamp)
 
@@ -104,19 +104,19 @@ class EgaugeInterface():
         power_values['ts'] = data_current['ts']
         power_values['timestamp'] = datetime.datetime.fromtimestamp(int(data_current['ts'])
                                                                     ).strftime('%Y-%m-%d %H:%M:%S')
-        power_values['L1 Voltage'] = ((data_current['L1 Voltage'] - data_prev['L1 Voltage']) / ts_delta) / 1000
-        power_values['L2 Voltage'] = ((data_current['L2 Voltage'] - data_prev['L2 Voltage']) / ts_delta) / 1000
-        power_values['Power Circuit 1'] = (data_current['Power Circuit 1'] - data_prev['Power Circuit 1']) / ts_delta
-        power_values['Power Circuit 1*'] = (data_current['Power Circuit 1*'] - data_prev['Power Circuit 1*']) / ts_delta
-        power_values['Power Circuit 2'] = (data_current['Power Circuit 2'] - data_prev['Power Circuit 2']) / ts_delta
-        power_values['Power Circuit 2*'] = (data_current['Power Circuit 2*'] - data_prev['Power Circuit 2*']) / ts_delta
-        power_values['Power Circuit 1 neutral'] = (data_current['Power Circuit 1 neutral'] - data_prev[
-            'Power Circuit 1 neutral']) / ts_delta
-        power_values['Shed Power'] = (data_current['Shed Power'] - data_prev['Shed Power']) / ts_delta
-        power_values['Control Fan Power'] = (data_current['Control Fan Power'] - data_prev[
-            'Control Fan Power']) / ts_delta
-        power_values['Control Fan Power*'] = (data_current['Control Fan Power*'] - data_prev[
-            'Control Fan Power*']) / ts_delta
+        power_values['L1 - VOLTAGE_C'] = ((data_current['L1 - VOLTAGE_C'] - data_prev['L1 - VOLTAGE_C']) / ts_delta) / 1000
+        power_values['L2 - VOLTAGE_A'] = ((data_current['L2 - VOLTAGE_A'] - data_prev['L2 - VOLTAGE_A']) / ts_delta) / 1000
+        power_values['POWER_CIRCUIT1'] = (data_current['POWER_CIRCUIT1'] - data_prev['POWER_CIRCUIT1']) / ts_delta
+        power_values['POWER_FACTOR_CIRCUIT1'] = (data_current['POWER_FACTOR_CIRCUIT1'] - data_prev['POWER_FACTOR_CIRCUIT1']) / ts_delta
+        power_values['POWER_CIRCUIT2'] = (data_current['POWER_CIRCUIT2'] - data_prev['POWER_CIRCUIT2']) / ts_delta
+        power_values['POWER_FACTOR_CIRCUIT2'] = (data_current['POWER_FACTOR_CIRCUIT2'] - data_prev['POWER_FACTOR_CIRCUIT2']) / ts_delta
+        power_values['POWER_CIRCUIT1_NEUTRAL'] = (data_current['POWER_CIRCUIT1_NEUTRAL'] - data_prev[
+            'POWER_CIRCUIT1_NEUTRAL']) / ts_delta
+        power_values['SHED_POWER'] = (data_current['SHED_POWER'] - data_prev['SHED_POWER']) / ts_delta
+        power_values['CONTROL_FAN_POWER'] = (data_current['CONTROL_FAN_POWER'] - data_prev[
+            'CONTROL_FAN_POWER']) / ts_delta
+        power_values['CONTROL_FAN_POWER*'] = (data_current['CONTROL_FAN_POWER*'] - data_prev[
+            'CONTROL_FAN_POWER*']) / ts_delta
 
         egauge_data['processed'] = power_values
         return json.dumps(egauge_data)
