@@ -28,8 +28,7 @@ class StdApiInterface:
 
     def get_single_device_status(self, dev_id):
         try:
-            resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie,
-                                verify=False)  # Remove verify=False -> using this to bypass computer firewall
+            resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie)
         except Exception as exc:
             print(exc)
 
@@ -37,8 +36,7 @@ class StdApiInterface:
 
     def post_devices_command(self, dev_id, command='setpower', value='on'):
         try:
-            resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie,
-                                 verify=False)  # Remove verify=False -> using this to bypass computer firewall
+            resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie)
         except Exception as exc:
             print(exc)
 
@@ -46,8 +44,7 @@ class StdApiInterface:
 
     def post_devices_command_all(self, command='setpower', value='on'):
         try:
-            resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie,
-                                 verify=False)  # Remove verify=False -> using this to bypass computer firewall
+            resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie)
         except Exception as exc:
             print(exc)
 
@@ -55,7 +52,6 @@ class StdApiInterface:
 
 
 def update_std_device_status():
-    from app.models import FarmDevice
 
     # TODO: will store this in the DB later
     username = settings.SUN_TECH_DRIVE_USERNAME
