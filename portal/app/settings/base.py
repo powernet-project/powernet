@@ -127,5 +127,6 @@ SUN_TECH_DRIVE_PASSWORD = ''
 SONNEN_URL = 'https://core-api.sonnenbatterie.de/proxy/'
 SONNEN_BATT1 = '67682'
 SONNEN_BATT2 = '67670'
+SONNEN_TOKEN = ''
 EGAUGE_URL='https://egauge46613.egaug.es/cgi-bin/egauge'
 
