@@ -1,21 +1,25 @@
 from rest_framework.authentication import BasicAuthentication
+from rest_framework.decorators import authentication_classes, permission_classes, api_view
 from app.api.v1 import CsrfExemptAuth
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from app.models import FarmDevice
 from rest_framework import status
-import json
+import json, datetime
 
 
+@authentication_classes([])
+@permission_classes([])
 class LoraDeviceViewSet(APIView):
-    authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, BasicAuthentication)
 
     def _data_parsing(self, data):
+
         try:
             temperature = data['event_data']['payload'][2]['value']
             rel_humidity = data['event_data']['payload'][3]['value']
             batt_value = data['event_data']['payload'][4]['value']
-            timestamp = data['event_data']['timestamp']
+            ts = datetime.datetime.fromtimestamp(data['event_data']['timestamp']/1000.)
+            timestamp = ts.strftime("%Y-%m-%d %H:%M:%S")
             dev_internal_id = data['device']['id']
             device_uid = data['device']['thing_name'][1:3]
             return [device_uid, json.dumps({'temperature': temperature,
