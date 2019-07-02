@@ -26,9 +26,32 @@ class StdApiInterface:
         resp = requests.get(self.url + self.DEVICE_ENDPOINT, cookies=self.cookie)
         return resp.json()
 
+    def get_single_device_status(self, dev_id):
+        try:
+            resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie)
+        except requests.exceptions.RequestException as exc:
+            print(exc)
+
+        return resp.json()
+
+    def post_devices_command(self, dev_id, command='setpower', value='on'):
+        try:
+            resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie)
+        except requests.exceptions.RequestException as exc:
+            print(exc)
+
+        return resp
+
+    def post_devices_command_all(self, command='setpower', value='on'):
+        try:
+            resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie)
+        except requests.exceptions.RequestException as exc:
+            print(exc)
+
+        return resp
+
 
 def update_std_device_status():
-    from app.models import FarmDevice
 
     # TODO: will store this in the DB later
     username = settings.SUN_TECH_DRIVE_USERNAME
