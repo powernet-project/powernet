@@ -20,8 +20,6 @@ class EgaugeInterface():
         self.keys = ['L1 - VOLTAGE_C', 'L2 - VOLTAGE_A', 'POWER_CIRCUIT1', 'POWER_FACTOR_CIRCUIT1', 'POWER_CIRCUIT2',
                      'POWER_FACTOR_CIRCUIT2', 'POWER_CIRCUIT1_NEUTRAL', 'SHED_POWER', 'CONTROL_FAN_POWER', 'ts', 'timestamp']
 
-        self.db_delete = False
-
     # Function to get and format e-gauge data
     def get_egauge_data(self, request):
         power_values = dict.fromkeys(self.keys, None)
@@ -57,12 +55,6 @@ class EgaugeInterface():
 
         return power_values
 
-    def delete_eguage_db_entries(self):
-        from app.models import FarmDevice
-        from app.models import DeviceType
-
-        FarmDevice.objects.filter(home='1', type=DeviceType.EGAUGE).delete()
-
     def request_egauge_data(self):
         try:
             resp = requests.get(self.url, auth=HTTPDigestAuth(self.username, self.password))
@@ -77,9 +69,6 @@ class EgaugeInterface():
     def processing_egauge_data(self):
         from app.models import FarmDevice
         from app.models import DeviceType
-
-        if self.db_delete:
-            self.delete_eguage_db_entries()
 
         power_values = dict.fromkeys(self.keys, None)
         egauge_data = dict.fromkeys(self.keys_db, None)
@@ -103,14 +92,17 @@ class EgaugeInterface():
         ts_delta = data_current['ts'] - data_prev['ts']
 
         power_values['ts'] = data_current['ts']
-        power_values['timestamp'] = datetime.datetime.fromtimestamp(data_current['ts']
-                                                                    ).strftime('%Y-%m-%d %H:%M:%S')
-        power_values['L1 - VOLTAGE_C'] = ((data_current['L1 - VOLTAGE_C'] - data_prev['L1 - VOLTAGE_C']) / ts_delta) / 1000
-        power_values['L2 - VOLTAGE_A'] = ((data_current['L2 - VOLTAGE_A'] - data_prev['L2 - VOLTAGE_A']) / ts_delta) / 1000
+        power_values['timestamp'] = datetime.datetime.fromtimestamp(data_current['ts']).strftime('%Y-%m-%d %H:%M:%S')
+        power_values['L1 - VOLTAGE_C'] = ((data_current['L1 - VOLTAGE_C'] - data_prev['L1 - VOLTAGE_C']) / ts_delta)\
+                                         / 1000
+        power_values['L2 - VOLTAGE_A'] = ((data_current['L2 - VOLTAGE_A'] - data_prev['L2 - VOLTAGE_A']) / ts_delta)\
+                                         / 1000
         power_values['POWER_CIRCUIT1'] = (data_current['POWER_CIRCUIT1'] - data_prev['POWER_CIRCUIT1']) / ts_delta
-        power_values['POWER_FACTOR_CIRCUIT1'] = (data_current['POWER_FACTOR_CIRCUIT1'] - data_prev['POWER_FACTOR_CIRCUIT1']) / ts_delta
+        power_values['POWER_FACTOR_CIRCUIT1'] = (data_current['POWER_FACTOR_CIRCUIT1'] -
+                                                 data_prev['POWER_FACTOR_CIRCUIT1']) / ts_delta
         power_values['POWER_CIRCUIT2'] = (data_current['POWER_CIRCUIT2'] - data_prev['POWER_CIRCUIT2']) / ts_delta
-        power_values['POWER_FACTOR_CIRCUIT2'] = (data_current['POWER_FACTOR_CIRCUIT2'] - data_prev['POWER_FACTOR_CIRCUIT2']) / ts_delta
+        power_values['POWER_FACTOR_CIRCUIT2'] = (data_current['POWER_FACTOR_CIRCUIT2'] -
+                                                 data_prev['POWER_FACTOR_CIRCUIT2']) / ts_delta
         power_values['POWER_CIRCUIT1_NEUTRAL'] = (data_current['POWER_CIRCUIT1_NEUTRAL'] - data_prev[
             'POWER_CIRCUIT1_NEUTRAL']) / ts_delta
         power_values['SHED_POWER'] = (data_current['SHED_POWER'] - data_prev['SHED_POWER']) / ts_delta
