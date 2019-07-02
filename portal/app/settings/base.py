@@ -119,14 +119,16 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 100
 }
-SUN_TECH_DRIVE_URL = ''
-SUN_TECH_DRIVE_TEST_URL = 'https://test.suntechdrive.com'
 
+SUN_TECH_DRIVE_URL = ''
 SUN_TECH_DRIVE_USERNAME = ''
 SUN_TECH_DRIVE_PASSWORD = ''
-SONNEN_URL = 'https://core-api.sonnenbatterie.de/proxy/'
+SUN_TECH_DRIVE_TEST_URL = 'https://test.suntechdrive.com'
+
+SONNEN_TOKEN = ''
 SONNEN_BATT1 = '67682'
 SONNEN_BATT2 = '67670'
-SONNEN_TOKEN = ''
-EGAUGE_URL='https://egauge46613.egaug.es/cgi-bin/egauge'
+SONNEN_URL = 'https://core-api.sonnenbatterie.de/proxy/'
 
+EGAUGE_USER = ''
+EGAUGE_URL = 'https://egauge46613.egaug.es/cgi-bin/egauge'
