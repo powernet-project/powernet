@@ -17,9 +17,10 @@ class EgaugeInterface():
         # Initializing parameters
         self.t_sample = t_sample
         self.keys_db = ['raw', 'processed']
-        self.keys = ['L1 - VOLTAGE_C', 'L2 - VOLTAGE_A', 'Power Circuit 1', 'Power Circuit 1*', 'Power Circuit 2',
-                     'POWER_FACTOR_CIRCUIT2', 'POWER_CIRCUIT1_NEUTRAL', 'SHED_POWER', 'CONTROL_FAN_POWER',
-                     'CONTROL_FAN_POWER*', 'ts']
+        self.keys = ['L1 - VOLTAGE_C', 'L2 - VOLTAGE_A', 'POWER_CIRCUIT1', 'POWER_FACTOR_CIRCUIT1', 'POWER_CIRCUIT2',
+                     'POWER_FACTOR_CIRCUIT2', 'POWER_CIRCUIT1_NEUTRAL', 'SHED_POWER', 'CONTROL_FAN_POWER', 'ts', 'timestamp']
+
+        self.db_delete = False
 
     # Function to get and format e-gauge data
     def get_egauge_data(self, request):
@@ -34,12 +35,12 @@ class EgaugeInterface():
                         power_values['L1 - VOLTAGE_C'] = (int(child.text))
                     elif r.get('n') == 'L2 - VOLTAGE_A':
                         power_values['L2 - VOLTAGE_A'] = (int(child.text))
-                    elif r.get('n') == 'Power Circuit 1':
-                        power_values['Power Circuit 1'] = (int(child.text))
-                    elif r.get('n') == 'Power Circuit 1*':
-                        power_values['Power Circuit 1*'] = (int(child.text))
-                    elif r.get('n') == 'Power Circuit 2':
-                        power_values['Power Circuit 2'] = (int(child.text))
+                    elif r.get('n') == 'POWER_CIRCUIT1':
+                        power_values['POWER_CIRCUIT1'] = (int(child.text))
+                    elif r.get('n') == 'POWER_FACTOR_CIRCUIT1':
+                        power_values['POWER_FACTOR_CIRCUIT1'] = (int(child.text))
+                    elif r.get('n') == 'POWER_CIRCUIT2':
+                        power_values['POWER_CIRCUIT2'] = (int(child.text))
                     elif r.get('n') == 'POWER_FACTOR_CIRCUIT2':
                         power_values['POWER_FACTOR_CIRCUIT2'] = (int(child.text))
                     elif r.get('n') == 'POWER_CIRCUIT1_NEUTRAL':
@@ -48,8 +49,6 @@ class EgaugeInterface():
                         power_values['SHED_POWER'] = (int(child.text))
                     elif r.get('n') == 'CONTROL_FAN_POWER':
                         power_values['CONTROL_FAN_POWER'] = (int(child.text))
-                    elif r.get('n') == 'CONTROL_FAN_POWER*':
-                        power_values['CONTROL_FAN_POWER*'] = (int(child.text))
 
             power_values['ts'] = int(timestamp)
 
@@ -79,7 +78,9 @@ class EgaugeInterface():
         from app.models import FarmDevice
         from app.models import DeviceType
 
-        # self.delete_eguage_db_entries()
+        if self.db_delete:
+            self.delete_eguage_db_entries()
+
         power_values = dict.fromkeys(self.keys, None)
         egauge_data = dict.fromkeys(self.keys_db, None)
 
@@ -115,8 +116,6 @@ class EgaugeInterface():
         power_values['SHED_POWER'] = (data_current['SHED_POWER'] - data_prev['SHED_POWER']) / ts_delta
         power_values['CONTROL_FAN_POWER'] = (data_current['CONTROL_FAN_POWER'] - data_prev[
             'CONTROL_FAN_POWER']) / ts_delta
-        power_values['CONTROL_FAN_POWER*'] = (data_current['CONTROL_FAN_POWER*'] - data_prev[
-            'CONTROL_FAN_POWER*']) / ts_delta
 
         egauge_data['processed'] = power_values
         return json.dumps(egauge_data)
