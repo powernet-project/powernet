@@ -61,7 +61,7 @@ class EgaugeInterface():
         from app.models import FarmDevice
         from app.models import DeviceType
 
-        FarmDevice.objects.filter(type=DeviceType.EGAUGE).delete()
+        FarmDevice.objects.filter(home='1', type=DeviceType.EGAUGE).delete()
 
     def request_egauge_data(self):
         try:
@@ -103,7 +103,7 @@ class EgaugeInterface():
         ts_delta = data_current['ts'] - data_prev['ts']
 
         power_values['ts'] = data_current['ts']
-        power_values['timestamp'] = datetime.datetime.fromtimestamp(int(data_current['ts'])
+        power_values['timestamp'] = datetime.datetime.fromtimestamp(data_current['ts']
                                                                     ).strftime('%Y-%m-%d %H:%M:%S')
         power_values['L1 - VOLTAGE_C'] = ((data_current['L1 - VOLTAGE_C'] - data_prev['L1 - VOLTAGE_C']) / ts_delta) / 1000
         power_values['L2 - VOLTAGE_A'] = ((data_current['L2 - VOLTAGE_A'] - data_prev['L2 - VOLTAGE_A']) / ts_delta) / 1000
