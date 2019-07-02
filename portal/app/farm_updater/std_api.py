@@ -29,7 +29,7 @@ class StdApiInterface:
     def get_single_device_status(self, dev_id):
         try:
             resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie)
-        except Exception as exc:
+        except requests.exceptions.RequestException as exc:
             print(exc)
 
         return resp.json()
@@ -37,7 +37,7 @@ class StdApiInterface:
     def post_devices_command(self, dev_id, command='setpower', value='on'):
         try:
             resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie)
-        except Exception as exc:
+        except requests.exceptions.RequestException as exc:
             print(exc)
 
         return resp
@@ -45,7 +45,7 @@ class StdApiInterface:
     def post_devices_command_all(self, command='setpower', value='on'):
         try:
             resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie)
-        except Exception as exc:
+        except requests.exceptions.RequestException as exc:
             print(exc)
 
         return resp
