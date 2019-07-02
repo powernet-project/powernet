@@ -87,8 +87,8 @@ class EgaugeInterface():
         if queryset.count() == 0:
             print('No egauge device created. Please create one')
             return None
-        else:
-            data = queryset[0].device_data
+
+        data = queryset[0].device_data
 
         if data is None:
             print('Error, no egauge data in DB...')
