@@ -121,14 +121,14 @@ REST_FRAMEWORK = {
 }
 
 SUN_TECH_DRIVE_URL = ''
-SUN_TECH_DRIVE_USERNAME = ''
-SUN_TECH_DRIVE_PASSWORD = ''
+SUN_TECH_DRIVE_USERNAME=''
+SUN_TECH_DRIVE_PASSWORD=''
 SUN_TECH_DRIVE_TEST_URL = 'https://test.suntechdrive.com'
 
-SONNEN_TOKEN = ''
+SONNEN_TOKEN=''
 SONNEN_BATT1 = '67682'
 SONNEN_BATT2 = '67670'
 SONNEN_URL = 'https://core-api.sonnenbatterie.de/proxy/'
 
-EGAUGE_USER = ''
+EGAUGE_USER=''
 EGAUGE_URL = 'https://egauge46613.egaug.es/cgi-bin/egauge'
