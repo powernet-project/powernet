@@ -69,7 +69,6 @@ class EgaugeInterface():
     def processing_egauge_data(self):
         from app.models import FarmDevice
         from app.models import DeviceType
-        from app.models import PowernetUserType
 
         power_values = dict.fromkeys(self.keys, None)
         egauge_data = dict.fromkeys(self.keys_db, None)
@@ -84,14 +83,18 @@ class EgaugeInterface():
             return json.dumps(egauge_data)
 
         # Filtering by home_id and picking the first element in the list
-        home_queryset = FarmDevice.objects.get_queryset().order_by('home_id')
-        queryset = home_queryset.filter(type=DeviceType.EGAUGE)[0].device_data
+        queryset = FarmDevice.objects.filter(type=DeviceType.EGAUGE)
+        if queryset.count() == 0:
+            print('No egauge device created. Please create one')
+            return None
+        else:
+            data = queryset[0].device_data
 
-        if queryset is None:
+        if data is None:
             print('Error, no egauge data in DB...')
             return json.dumps(egauge_data)
 
-        data_prev = json.loads(queryset)['raw']
+        data_prev = json.loads(data)['raw']
 
         ts_delta = data_current['ts'] - data_prev['ts']
 
