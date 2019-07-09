@@ -121,7 +121,7 @@ class EgaugeInterface():
 
 
 def update_egauge_data():
-    from app.models import FarmDevice
+    from app.models import FarmDevice, FarmData
     egauge_data = EgaugeInterface(url=settings.EGAUGE_URL, username=settings.EGAUGE_USER, password=settings.
                                   EGAUGE_PASSWORD).processing_egauge_data()
 
