@@ -48,9 +48,9 @@ class SonnenApiInterface:
 
 # This method is used on scheduler.py to pull data in given periodicity
 def update_battery_status():
-    from app.models import FarmDevice, DeviceType
+    from app.models import FarmDevice, DeviceType, FarmData
 
-    devices = FarmDevice.objects.filter(home='1', type=DeviceType.SONNEN)
+    devices = FarmDevice.objects.filter(type=DeviceType.SONNEN)
     sonnen_api = SonnenApiInterface()
 
     for dev in devices:
@@ -58,9 +58,10 @@ def update_battery_status():
         if json_batt is not None:
             try:
                 farm_device = FarmDevice.objects.get(device_uid=dev.device_uid)
-                farm_device.device_data = json_batt
-                farm_device.save()
-                print('saving...\n', dev.device_uid)
+                farmdata = FarmData(farmdevice=farm_device)
+                farmdata.device_data = json_batt
+                farmdata.save()
+                print('saving...\n', farmdata.device_data)
             except FarmDevice.DoesNotExist as e:
                 print('Error update_battery_status for serial: ', dev.device_uid)
                 print(e)
