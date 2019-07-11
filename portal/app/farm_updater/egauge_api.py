@@ -67,7 +67,7 @@ class EgaugeInterface():
 
     # Function to process data from e-gauge and convert to useful power values
     def processing_egauge_data(self):
-        from app.models import FarmDevice
+        from app.models import FarmDevice, FarmData
         from app.models import DeviceType
 
         power_values = dict.fromkeys(self.keys, None)
@@ -84,17 +84,19 @@ class EgaugeInterface():
 
         # Filtering by home_id and picking the first element in the list
         queryset = FarmDevice.objects.filter(type=DeviceType.EGAUGE)
+
         if queryset.count() == 0:
             print('No egauge device created. Please create one')
             return None
 
-        data = queryset[0].device_data
+        # taking only the first Eguage -> Need to automate this in case there are more egauges
+        data_queryset = FarmData.objects.filter(farmdevice=queryset[0]).order_by('-id')
 
-        if data is None:
-            print('Error, no egauge data in DB...')
-            return json.dumps(egauge_data)
+        if data_queryset is None:
+            print('No previous Egauge data exists...creating first entry')
+            return json.dump(egauge_data)
 
-        data_prev = json.loads(data)['raw']
+        data_prev = json.loads(data_queryset[0].device_data)['raw']
 
         ts_delta = data_current['ts'] - data_prev['ts']
 
@@ -128,9 +130,10 @@ def update_egauge_data():
     if egauge_data is not None:
         try:
             farm_device = FarmDevice.objects.get(device_uid='46613')
-            farm_device.device_data = egauge_data
-            farm_device.save()
-            print('saving...\n', farm_device.device_data)
+            farmdata = FarmData(farmdevice=farm_device)
+            farmdata.device_data = egauge_data
+            farmdata.save()
+            print('saving...\n', farmdata.device_data)
 
         except FarmDevice.DoesNotExist as e:
             print('Error update_egauge_data', e)
