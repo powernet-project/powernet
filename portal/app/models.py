@@ -171,6 +171,6 @@ class FarmData(models.Model):
     class Meta:
         db_table = 'farm_device_data'
 
-    farmdevice = models.ForeignKey(FarmDevice, null=True)
+    farm_device = models.ForeignKey(FarmDevice, null=True)
     device_data = JSONField(null=True, blank=True, default=None)
     timestamp = models.DateTimeField(default=timezone.now)
