@@ -58,7 +58,7 @@ def update_battery_status():
         if json_batt is not None:
             try:
                 farm_device = FarmDevice.objects.get(device_uid=dev.device_uid)
-                farmdata = FarmData(farmdevice=farm_device)
+                farmdata = FarmData(farm_device=farm_device)
                 farmdata.device_data = json_batt
                 farmdata.save()
                 print('saving...\n', farmdata.device_data)

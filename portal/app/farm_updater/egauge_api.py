@@ -90,11 +90,11 @@ class EgaugeInterface():
             return None
 
         # taking only the first Eguage -> Need to automate this in case there are more egauges
-        data_queryset = FarmData.objects.filter(farmdevice=queryset[0]).order_by('-id')
+        data_queryset = FarmData.objects.filter(farm_device=queryset[0]).order_by('-id')
 
-        if data_queryset is None:
+        if not data_queryset:
             print('No previous Egauge data exists...creating first entry')
-            return json.dump(egauge_data)
+            return json.dumps(egauge_data)
 
         data_prev = json.loads(data_queryset[0].device_data)['raw']
 
@@ -130,7 +130,7 @@ def update_egauge_data():
     if egauge_data is not None:
         try:
             farm_device = FarmDevice.objects.get(device_uid='46613')
-            farmdata = FarmData(farmdevice=farm_device)
+            farmdata = FarmData(farm_device=farm_device)
             farmdata.device_data = egauge_data
             farmdata.save()
             print('saving...\n', farmdata.device_data)
