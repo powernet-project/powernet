@@ -3,7 +3,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 from app.api.v1 import CsrfExemptAuth
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from app.models import FarmDevice
+from app.models import FarmDevice, FarmData
 from rest_framework import status
 import json, datetime
 
@@ -36,8 +36,9 @@ class LoraDeviceViewSet(APIView):
         if lora_data is not None:
             try:
                 lora_device = FarmDevice.objects.get(device_uid=lora_data[0])
-                lora_device.device_data = lora_data[1]
-                lora_device.save()
+                lora_device_data = FarmData(farm_device=lora_device)
+                lora_device_data.device_data = lora_data[1]
+                lora_device_data.save()
                 print('saving...\n', lora_device)
                 return Response({'message': 'dev_id {} and data {}'.format(lora_data[0], lora_data[1])})
             except FarmDevice.DoesNotExist as e:

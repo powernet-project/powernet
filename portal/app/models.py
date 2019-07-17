@@ -157,11 +157,20 @@ class ApplianceJsonData(models.Model):
 class FarmDevice(models.Model):
 
     class Meta:
-        db_table = 'farm_device_data'
+        db_table = 'farm_device'
         unique_together = ['home', 'device_uid']
 
     home = models.ForeignKey(Home)
-    device_data = JSONField(null=True, blank=True)
     device_uid = models.CharField(max_length=100, blank=False, null=False)
     type = EnumField(DeviceType, max_length=40)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+
+class FarmData(models.Model):
+
+    class Meta:
+        db_table = 'farm_device_data'
+
+    farm_device = models.ForeignKey(FarmDevice, null=True)
+    device_data = JSONField(null=True, blank=True, default=None)
     timestamp = models.DateTimeField(default=timezone.now)
