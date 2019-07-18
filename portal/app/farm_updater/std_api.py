@@ -8,7 +8,8 @@ class StdApiInterface:
     """
 
     LOGIN_ENDPOINT = '/api/login'
-    DEVICE_ENDPOINT = '/api/device'
+    DEVICES_ENDPOINT = '/api/device'
+    DEVICE_ENDPOINT = '/api/device/'
 
     def __init__(self, url=settings.SUN_TECH_DRIVE_URL, username=None, password=None):
         self.url = url
@@ -17,18 +18,23 @@ class StdApiInterface:
 
     def login(self):
         session = requests.Session()
-        session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials)
+        try:
+            # resp = session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials)
+            session.post(self.url + '/api/login', data=self.credentials, verify=False)
+        except requests.exceptions.RequestException as exc:
+            print(exc)
         self.cookie = session.cookies.get_dict()
-        print(self.cookie)
+        # print(self.cookie)
 
     def get_devices_status(self):
         print('Getting devices')
-        resp = requests.get(self.url + self.DEVICE_ENDPOINT, cookies=self.cookie)
+        resp = requests.get(self.url + self.DEVICES_ENDPOINT, cookies=self.cookie, verify=False)
         return resp.json()
 
     def get_single_device_status(self, dev_id):
         try:
-            resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie)
+            resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie, verify=False)
+            print(resp.text)
         except requests.exceptions.RequestException as exc:
             print(exc)
 
@@ -36,7 +42,7 @@ class StdApiInterface:
 
     def post_devices_command(self, dev_id, command='setpower', value='on'):
         try:
-            resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie)
+            resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie, verify=False)
         except requests.exceptions.RequestException as exc:
             print(exc)
 
@@ -44,7 +50,7 @@ class StdApiInterface:
 
     def post_devices_command_all(self, command='setpower', value='on'):
         try:
-            resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie)
+            resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie, verify=False)
         except requests.exceptions.RequestException as exc:
             print(exc)
 
@@ -63,6 +69,7 @@ def update_std_device_status():
                                       password=settings.SUN_TECH_DRIVE_PASSWORD)
             std_api.login()
             devices_from_std = std_api.get_devices_status()
+            # device_from_std = std_api.get_single_device_status('697151')
             print(devices_from_std)
 
         except Exception as e:
