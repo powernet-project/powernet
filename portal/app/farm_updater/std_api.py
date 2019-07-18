@@ -8,8 +8,7 @@ class StdApiInterface:
     """
 
     LOGIN_ENDPOINT = '/api/login'
-    DEVICES_ENDPOINT = '/api/device'
-    DEVICE_ENDPOINT = '/api/device/'
+    DEVICE_ENDPOINT = '/api/device'
 
     def __init__(self, url=settings.SUN_TECH_DRIVE_URL, username=None, password=None):
         self.url = url
@@ -26,12 +25,12 @@ class StdApiInterface:
 
     def get_devices_status(self):
         print('Getting devices')
-        resp = requests.get(self.url + self.DEVICES_ENDPOINT, cookies=self.cookie, verify=False)
+        resp = requests.get(self.url + self.DEVICE_ENDPOINT, cookies=self.cookie, verify=False)
         return resp.json()
 
     def get_single_device_status(self, dev_id):
         try:
-            resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie, verify=False)
+            resp = requests.get(self.url + self.DEVICE_ENDPOINT + '/' +dev_id, cookies=self.cookie, verify=False)
             print(resp.text)
         except requests.exceptions.RequestException as exc:
             print(exc)
