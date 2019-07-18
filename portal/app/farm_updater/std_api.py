@@ -19,12 +19,10 @@ class StdApiInterface:
     def login(self):
         session = requests.Session()
         try:
-            # resp = session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials)
-            session.post(self.url + '/api/login', data=self.credentials, verify=False)
+            session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials, verify=False)
         except requests.exceptions.RequestException as exc:
             print(exc)
         self.cookie = session.cookies.get_dict()
-        # print(self.cookie)
 
     def get_devices_status(self):
         print('Getting devices')
@@ -69,7 +67,6 @@ def update_std_device_status():
                                       password=settings.SUN_TECH_DRIVE_PASSWORD)
             std_api.login()
             devices_from_std = std_api.get_devices_status()
-            # device_from_std = std_api.get_single_device_status('697151')
             print(devices_from_std)
 
         except Exception as e:
