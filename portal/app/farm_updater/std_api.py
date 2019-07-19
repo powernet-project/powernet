@@ -17,18 +17,18 @@ class StdApiInterface:
 
     def login(self):
         session = requests.Session()
-        session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials)
+        session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials, verify=False)
         self.cookie = session.cookies.get_dict()
-        print(self.cookie)
 
     def get_devices_status(self):
         print('Getting devices')
-        resp = requests.get(self.url + self.DEVICE_ENDPOINT, cookies=self.cookie)
+        resp = requests.get(self.url + self.DEVICE_ENDPOINT, cookies=self.cookie, verify=False)
         return resp.json()
 
     def get_single_device_status(self, dev_id):
         try:
-            resp = requests.get(self.url + self.DEVICE_ENDPOINT + dev_id, cookies=self.cookie)
+            resp = requests.get(self.url + self.DEVICE_ENDPOINT + '/' + dev_id, cookies=self.cookie, verify=False)
+            print(resp.text)
         except requests.exceptions.RequestException as exc:
             print(exc)
 
@@ -36,7 +36,7 @@ class StdApiInterface:
 
     def post_devices_command(self, dev_id, command='setpower', value='on'):
         try:
-            resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie)
+            resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie, verify=False)
         except requests.exceptions.RequestException as exc:
             print(exc)
 
@@ -44,7 +44,7 @@ class StdApiInterface:
 
     def post_devices_command_all(self, command='setpower', value='on'):
         try:
-            resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie)
+            resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie, verify=False)
         except requests.exceptions.RequestException as exc:
             print(exc)
 
