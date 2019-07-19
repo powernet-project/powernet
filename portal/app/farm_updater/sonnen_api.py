@@ -29,7 +29,7 @@ class SonnenApiInterface:
     def manual_mode_control(self, serial, mode='charge', value='0'):
 
         # Checking if system is in off-grid mode
-        voltage = self.get_batteries_status_json().get_status()['Uac']
+        voltage = self.get_batteries_status_json(serial)['Uac']
 
         if voltage == 0:
             print('Battery is in off-grid mode... Cannot execute the command')
@@ -65,10 +65,3 @@ def update_battery_status():
             except FarmDevice.DoesNotExist as e:
                 print('Error update_battery_status for serial: ', dev.device_uid)
                 print(e)
-
-
-# This method is used to control whether battery is charging or discharging at a given rate
-def set_battery_action(mode='charge', value='0'):
-    sonnen_api = SonnenApiInterface()
-    control = sonnen_api.manual_mode_control(mode, value)
-    print('control: ', control)
