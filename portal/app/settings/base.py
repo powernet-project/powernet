@@ -126,6 +126,7 @@ SONNEN_BATT2 = '67670'
 SONNEN_URL = 'https://core-api.sonnenbatterie.de/proxy/'
 SUN_TECH_DRIVE_TEST_URL = 'https://test.suntechdrive.com'
 EGAUGE_URL = 'https://egauge46613.egaug.es/cgi-bin/egauge'
+EGAUGE_ID = '46613'
 
 # DO NOT MANUALLY EDIT THESE!!!!! THEY ARE INJECTED IN OUR BUILD PIPELINE
 # AND THEREFORE WILL BE OVERWRITTEN ANYWAYS
