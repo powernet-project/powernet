@@ -17,10 +17,7 @@ class StdApiInterface:
 
     def login(self):
         session = requests.Session()
-        try:
-            session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials, verify=False)
-        except requests.exceptions.RequestException as exc:
-            print(exc)
+        session.post(self.url + self.LOGIN_ENDPOINT, data=self.credentials, verify=False)
         self.cookie = session.cookies.get_dict()
 
     def get_devices_status(self):
