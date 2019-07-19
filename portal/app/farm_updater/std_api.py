@@ -30,7 +30,7 @@ class StdApiInterface:
 
     def get_single_device_status(self, dev_id):
         try:
-            resp = requests.get(self.url + self.DEVICE_ENDPOINT + '/' +dev_id, cookies=self.cookie, verify=False)
+            resp = requests.get(self.url + self.DEVICE_ENDPOINT + '/' + dev_id, cookies=self.cookie, verify=False)
             print(resp.text)
         except requests.exceptions.RequestException as exc:
             print(exc)
