@@ -22,13 +22,12 @@ def batt_dispatch():
         test_pen_power.append(egauge_data['processed']['POWER_CIRCUIT1'] + egauge_data['processed']['POWER_CIRCUIT2'])
 
     avg_test_pen_power = np.average(np.asarray(test_pen_power))
-
+    
     hour_day_utc = datetime.datetime.now().hour
     if hour_day_utc < 7:
         hour_day = hour_day_utc + 24 - 7
     else:
         hour_day = hour_day_utc - 7
-
 
     # getting batt soc
     sonnen_queryset = FarmDevice.objects.filter(type=DeviceType.SONNEN)
