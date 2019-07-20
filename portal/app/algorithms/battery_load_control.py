@@ -23,7 +23,12 @@ def batt_dispatch():
 
     avg_test_pen_power = np.average(np.asarray(test_pen_power))
 
-    hour_day = datetime.datetime.now().hour - 7
+    hour_day_utc = datetime.datetime.now().hour
+    if hour_day_utc < 7:
+        hour_day = hour_day_utc + 24 - 7
+    else:
+        hour_day = hour_day_utc - 7
+
 
     # getting batt soc
     sonnen_queryset = FarmDevice.objects.filter(type=DeviceType.SONNEN)
@@ -34,7 +39,7 @@ def batt_dispatch():
         print('Battery Serial: ', batt_serial)
 
         if hour_day < 7:
-            if soc < 10:
+            if soc < 90:
                 batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='2000')
                 print('Battery charging at 2kW...')
 
@@ -42,8 +47,8 @@ def batt_dispatch():
             batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='0')
             print('Battery in idle mode...')
 
-        elif hour_day < 21:
-            if avg_test_pen_power > 10000:
+        elif hour_day < 22:
+            if avg_test_pen_power < -4000:
                 if soc > 10:
                     batt_instance.manual_mode_control(serial=batt_serial, mode='discharge', value='4000')
                     print('Battery discharging at 4kW')
