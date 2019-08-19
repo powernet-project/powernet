@@ -80,7 +80,7 @@ class EgaugeInterface():
             egauge_data['raw'] = data_current
         except requests.exceptions.HTTPError as err:
             print(err)
-            return json.dumps(egauge_data)
+            return None
 
         # Filtering by home_id and picking the first element in the list
         queryset = FarmDevice.objects.filter(type=DeviceType.EGAUGE)
@@ -101,9 +101,8 @@ class EgaugeInterface():
 
         # Checking if timestamp is different than null
         if data_prev is None:
-            print('Problem saving previous egauge data')
-            return json.dump(egauge_data)
-
+            print('Problem communicating with E-Gauge. No data collected')
+            return None
 
         ts_delta = data_current['ts'] - data_prev['ts']
 
