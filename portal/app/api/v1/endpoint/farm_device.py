@@ -13,7 +13,7 @@ class FarmDeviceSerializer(EnumFieldSerializerMixin, serializers.ModelSerializer
 
 class FarmDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FarmDevice
+        model = FarmData
         fields = '__all__'
 
 
@@ -31,7 +31,7 @@ class FarmDataViewSet(viewsets.ModelViewSet):
     serializer_class = FarmDataSerializer
 
     def get_queryset(self, **kwargs):
-        queryset = FarmData.objects.filter(home__owner__user=self.request.user).order_by('-id')
+        queryset = FarmData.objects.all().order_by('-id')
         return queryset
 
 
