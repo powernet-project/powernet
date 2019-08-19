@@ -11,7 +11,7 @@ class FarmDeviceSerializer(EnumFieldSerializerMixin, serializers.ModelSerializer
         fields = '__all__'
 
 
-class FarmDeviceDataSerializer(serializers.ModelSerializer):
+class FarmDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = FarmDevice
         fields = '__all__'
@@ -28,10 +28,10 @@ class FarmDeviceViewSet(viewsets.ModelViewSet):
 
 class FarmDeviceDataViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
-    serializer_class = FarmDeviceDataSerializer
+    serializer_class = FarmDataSerializer
 
     def get_queryset(self, **kwargs):
-        queryset = FarmData.objects.filter(home__owner__user=self.request.user).order_by('id')
+        queryset = FarmData.objects.filter(home__owner__user=self.request.user).order_by('-id')
         return queryset
 
 
