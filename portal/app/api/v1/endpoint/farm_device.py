@@ -26,7 +26,7 @@ class FarmDeviceViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class FarmDeviceDataViewSet(viewsets.ModelViewSet):
+class FarmDataViewSet(viewsets.ModelViewSet):
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
     serializer_class = FarmDataSerializer
 
