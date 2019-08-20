@@ -1,8 +1,10 @@
-from rest_framework import (viewsets, serializers)
+from rest_framework import (viewsets, serializers, filters, status)
 from rest_framework.authentication import TokenAuthentication
 from app.api.v1 import CsrfExemptAuth
 from app.common.enum_field_handler import EnumFieldSerializerMixin
 from app.models import FarmDevice, FarmData
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 
 class FarmDeviceSerializer(EnumFieldSerializerMixin, serializers.ModelSerializer):
@@ -27,11 +29,13 @@ class FarmDeviceViewSet(viewsets.ModelViewSet):
 
 
 class FarmDataViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
+    search_fields = ['farm_device__device_uid']
+    filter_backends = (filters.SearchFilter,)
+
+    queryset = FarmData.objects.all().order_by('-id')
     serializer_class = FarmDataSerializer
 
-    def get_queryset(self, **kwargs):
-        queryset = FarmData.objects.all().order_by('-id')
-        return queryset
 
 
