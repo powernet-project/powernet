@@ -31,11 +31,12 @@ class FarmDeviceViewSet(viewsets.ModelViewSet):
 class FarmDataViewSet(viewsets.ModelViewSet):
     pagination_class = None
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
-    search_fields = ['farm_device__device_uid']
+    search_fields = ['farm_device__device_uid', 'timestamp']
     filter_backends = (filters.SearchFilter,)
 
     queryset = FarmData.objects.all().order_by('-id')
     serializer_class = FarmDataSerializer
 
+# class FarmDataFilter(filters.FilterSet)
 
 
