@@ -36,8 +36,3 @@ class FarmDataViewSet(viewsets.ModelViewSet):
         device_id = self.request.query_params.get('device_id', None)
         queryset = FarmData.objects.filter(farm_device__device_uid=device_id)
         return queryset
-
-    queryset = FarmData.objects.all().order_by('-id')
-    serializer_class = FarmDataSerializer
-
-# class FarmDataFilter(filters.FilterSet)
