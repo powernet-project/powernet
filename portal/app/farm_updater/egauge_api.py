@@ -80,7 +80,7 @@ class EgaugeInterface():
             egauge_data['raw'] = data_current
         except requests.exceptions.HTTPError as err:
             print(err)
-            return json.dumps(egauge_data)
+            return None
 
         # Filtering by home_id and picking the first element in the list
         queryset = FarmDevice.objects.filter(type=DeviceType.EGAUGE)
@@ -92,11 +92,17 @@ class EgaugeInterface():
         # taking only the first Eguage -> Need to automate this in case there are more egauges
         data_queryset = FarmData.objects.filter(farm_device=queryset[0]).order_by('-id')
 
+        # Checking if there's data stored already
         if not data_queryset:
             print('No previous Egauge data exists...creating first entry')
             return json.dumps(egauge_data)
 
         data_prev = json.loads(data_queryset[0].device_data)['raw']
+
+        # Checking if timestamp is different than null
+        if data_prev is None:
+            print('Problem communicating with E-Gauge. No data collected')
+            return None
 
         ts_delta = data_current['ts'] - data_prev['ts']
 
