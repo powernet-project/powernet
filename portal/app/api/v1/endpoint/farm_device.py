@@ -34,7 +34,8 @@ class FarmDataViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self, **kwargs):
         device_uid = self.request.query_params.get('device_uid', None)
-        #start_date = self.request.query_params.get('start_date', None)
-        #end_date = self.request.query_params.get('end_date', None)
-        queryset = FarmData.objects.filter(farm_device__device_uid=device_uid)
+        start_date = self.request.query_params.get('start_date', None)
+        end_date = self.request.query_params.get('end_date', None)
+        queryset = FarmData.objects.filter(farm_device__device_uid=device_uid, timestamp__range=[start_date,end_date])
+
         return queryset
