@@ -1,10 +1,9 @@
-from rest_framework import (viewsets, serializers, filters, status)
+from rest_framework import (viewsets, serializers)
 from rest_framework.authentication import TokenAuthentication
 from app.api.v1 import CsrfExemptAuth
 from app.common.enum_field_handler import EnumFieldSerializerMixin
 from app.models import FarmDevice, FarmData
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from rest_framework.exceptions import APIException
 
 
 class FarmDeviceSerializer(EnumFieldSerializerMixin, serializers.ModelSerializer):
@@ -36,6 +35,15 @@ class FarmDataViewSet(viewsets.ModelViewSet):
         device_uid = self.request.query_params.get('device_uid', None)
         start_date = self.request.query_params.get('start_date', None)
         end_date = self.request.query_params.get('end_date', None)
-        queryset = FarmData.objects.filter(farm_device__device_uid=device_uid, timestamp__range=[start_date,end_date])
-
+        if device_uid is None or start_date is None or end_date is None:
+            raise InvalidParamException
+            return
+        queryset = FarmData.objects.filter(farm_device__device_uid=device_uid, timestamp__range=[start_date, end_date])
         return queryset
+
+
+class InvalidParamException(APIException):
+    status_code = 404
+    default_detail = 'Could not determine an appropriate data set to retrieve, please ensure ' \
+                     'the supplied parameters are correct.'
+    default_code = 'invalid_parameters'
