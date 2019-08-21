@@ -106,6 +106,10 @@ class EgaugeInterface():
 
         ts_delta = data_current['ts'] - data_prev['ts']
 
+        if ts_delta == 0:
+            print('time difference between samples need to be greater than zero')
+            return None
+
         power_values['ts'] = data_current['ts']
         power_values['timestamp'] = datetime.datetime.fromtimestamp(data_current['ts']).strftime('%Y-%m-%d %H:%M:%S')
         power_values['L1 - VOLTAGE_C'] = ((data_current['L1 - VOLTAGE_C'] - data_prev['L1 - VOLTAGE_C']) / ts_delta)\
