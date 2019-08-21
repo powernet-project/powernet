@@ -43,7 +43,7 @@ class FarmDataViewSet(viewsets.ModelViewSet):
 
 
 class InvalidParamException(APIException):
-    status_code = 404
+    status_code = 400
     default_detail = 'Could not determine an appropriate data set to retrieve, please ensure ' \
                      'the supplied parameters are correct.'
     default_code = 'invalid_parameters'
