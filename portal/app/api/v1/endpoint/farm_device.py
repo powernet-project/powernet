@@ -28,6 +28,7 @@ class FarmDeviceViewSet(viewsets.ModelViewSet):
 
 
 class FarmDataViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     serializer_class = FarmDataSerializer
     authentication_classes = (CsrfExemptAuth.CsrfExemptSessionAuthentication, TokenAuthentication)
 
