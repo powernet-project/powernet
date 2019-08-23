@@ -23,7 +23,7 @@ class SonnenApiInterface:
             return data
 
         except requests.exceptions.HTTPError as err:
-            print('Error get_battery_status_json')
+            print('Error get_battery_status_json: ', err)
             return None
 
     def manual_mode_control(self, serial, mode='charge', value='0'):
@@ -65,3 +65,4 @@ def update_battery_status():
             except FarmDevice.DoesNotExist as e:
                 print('Error update_battery_status for serial: ', dev.device_uid)
                 print(e)
+    return

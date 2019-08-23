@@ -3,9 +3,6 @@ from django.conf import settings
 
 
 class StdApiInterface:
-    """
-    TODO:
-    """
 
     LOGIN_ENDPOINT = '/api/login'
     DEVICE_ENDPOINT = '/api/device'
@@ -22,38 +19,43 @@ class StdApiInterface:
 
     def get_devices_status(self):
         print('Getting devices')
-        resp = requests.get(self.url + self.DEVICE_ENDPOINT, cookies=self.cookie, verify=False)
-        return resp.json()
+        try:
+            resp = requests.get(self.url + self.DEVICE_ENDPOINT, cookies=self.cookie, verify=False)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.exceptions.HTTPError as err:
+            print('Error STD get_devices_status: ', err)
+            return None
 
     def get_single_device_status(self, dev_id):
         try:
             resp = requests.get(self.url + self.DEVICE_ENDPOINT + '/' + dev_id, cookies=self.cookie, verify=False)
             print(resp.text)
+            return resp.json()
         except requests.exceptions.RequestException as exc:
-            print(exc)
-
-        return resp.json()
+            print('Error STD get_single_device_status: ', exc)
+            return None
 
     def post_devices_command(self, dev_id, command='setpower', value='on'):
         try:
             resp = requests.post(self.url + '/api/command/' + dev_id + '?' + command + '=' + value, cookies=self.cookie, verify=False)
+            return resp
         except requests.exceptions.RequestException as exc:
-            print(exc)
-
-        return resp
+            print('Error STD post_devices_command: ', exc)
+            return None
 
     def post_devices_command_all(self, command='setpower', value='on'):
         try:
             resp = requests.post(self.url + '/api/command' + '?' + command + '=' + value, cookies=self.cookie, verify=False)
+            return resp
         except requests.exceptions.RequestException as exc:
-            print(exc)
-
-        return resp
+            print('Error STD post_devices_command_all: ', exc)
+            return None
 
 
 def update_std_device_status():
+    from app.models import FarmDevice, DeviceType, FarmData
 
-    # TODO: will store this in the DB later
     username = settings.SUN_TECH_DRIVE_USERNAME
     password = settings.SUN_TECH_DRIVE_PASSWORD
 
@@ -62,8 +64,21 @@ def update_std_device_status():
             std_api = StdApiInterface(url=settings.SUN_TECH_DRIVE_TEST_URL, username=settings.SUN_TECH_DRIVE_USERNAME,
                                       password=settings.SUN_TECH_DRIVE_PASSWORD)
             std_api.login()
-            devices_from_std = std_api.get_devices_status()
-            print(devices_from_std)
-
         except Exception as e:
-            print('Error retrieving data from sun tech drive', e)
+            print('Error in sun tech drive log in', e)
+            return
+
+    devices = FarmDevice.objects.filter(type=DeviceType.PICO_BLENDER)
+    for dev in devices:
+        devices_from_std = std_api.get_devices_status()
+        if devices_from_std is not None:
+            try:
+                farm_device = FarmDevice.objects.get(device_uid=dev.device_uid)
+                farmdata = FarmData(farm_device=farm_device)
+                farmdata.device_data = devices_from_std
+                farmdata.save()
+                print('saving...\n', farmdata.device_data)
+            except FarmDevice.DoesNotExist as e:
+                print('Error update_battery_status for serial: ', dev.device_uid)
+                print(e)
+        return
