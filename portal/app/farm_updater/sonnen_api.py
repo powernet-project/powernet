@@ -65,4 +65,3 @@ def update_battery_status():
             except FarmDevice.DoesNotExist as e:
                 print('Error update_battery_status for serial: ', dev.device_uid)
                 print(e)
-    return
