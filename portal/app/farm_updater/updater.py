@@ -4,7 +4,6 @@ import sonnen_api
 import egauge_api
 from app.algorithms import battery_load_control
 from apscheduler.schedulers.background import BackgroundScheduler
-from app.algorithms import std_control
 
 
 logging.basicConfig()
