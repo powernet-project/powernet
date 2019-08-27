@@ -17,8 +17,9 @@ class EgaugeInterface():
         # Initializing parameters
         self.t_sample = t_sample
         self.keys_db = ['raw', 'processed']
-        self.keys = ['L1 - VOLTAGE_C', 'L2 - VOLTAGE_A', 'POWER_CIRCUIT1', 'POWER_FACTOR_CIRCUIT1', 'POWER_CIRCUIT2',
-                     'POWER_FACTOR_CIRCUIT2', 'POWER_CIRCUIT1_NEUTRAL', 'SHED_POWER', 'CONTROL_FAN_POWER', 'ts', 'timestamp']
+        self.keys = ['L1 - VOLTAGE_C', 'L2 - VOLTAGE_A', 'POWER_CIRCUIT1', 'POWER_CIRCUIT1*', 'POWER_CIRCUIT2',
+                     'POWER_CIRCUIT2*', 'SHED_POWER', 'CONTROL_FAN_POWER', 'CONTROL_FAN_POWER*',
+                     'POWER_TEST_PEN', 'POWER_TEST_PEN*', 'ts', 'timestamp']
 
     # Function to get and format e-gauge data
     def get_egauge_data(self, request):
@@ -29,24 +30,9 @@ class EgaugeInterface():
         if timestamp is not None:
             for r in root.findall('r'):
                 for child in r:
-                    if r.get('n') == 'L1 - VOLTAGE_C':
-                        power_values['L1 - VOLTAGE_C'] = (int(child.text))
-                    elif r.get('n') == 'L2 - VOLTAGE_A':
-                        power_values['L2 - VOLTAGE_A'] = (int(child.text))
-                    elif r.get('n') == 'POWER_CIRCUIT1':
-                        power_values['POWER_CIRCUIT1'] = (int(child.text))
-                    elif r.get('n') == 'POWER_FACTOR_CIRCUIT1':
-                        power_values['POWER_FACTOR_CIRCUIT1'] = (int(child.text))
-                    elif r.get('n') == 'POWER_CIRCUIT2':
-                        power_values['POWER_CIRCUIT2'] = (int(child.text))
-                    elif r.get('n') == 'POWER_FACTOR_CIRCUIT2':
-                        power_values['POWER_FACTOR_CIRCUIT2'] = (int(child.text))
-                    elif r.get('n') == 'POWER_CIRCUIT1_NEUTRAL':
-                        power_values['POWER_CIRCUIT1_NEUTRAL'] = (int(child.text))
-                    elif r.get('n') == 'SHED_POWER':
-                        power_values['SHED_POWER'] = (int(child.text))
-                    elif r.get('n') == 'CONTROL_FAN_POWER':
-                        power_values['CONTROL_FAN_POWER'] = (int(child.text))
+                    for k in self.keys:
+                        if r.get('n') == k:
+                            power_values[k] = (int(child.text))
 
             power_values['ts'] = int(timestamp)
 
@@ -110,23 +96,19 @@ class EgaugeInterface():
             print('time difference between samples need to be greater than zero')
             return None
 
-        power_values['ts'] = data_current['ts']
-        power_values['timestamp'] = datetime.datetime.fromtimestamp(data_current['ts']).strftime('%Y-%m-%d %H:%M:%S')
-        power_values['L1 - VOLTAGE_C'] = ((data_current['L1 - VOLTAGE_C'] - data_prev['L1 - VOLTAGE_C']) / ts_delta)\
-                                         / 1000
-        power_values['L2 - VOLTAGE_A'] = ((data_current['L2 - VOLTAGE_A'] - data_prev['L2 - VOLTAGE_A']) / ts_delta)\
-                                         / 1000
-        power_values['POWER_CIRCUIT1'] = (data_current['POWER_CIRCUIT1'] - data_prev['POWER_CIRCUIT1']) / ts_delta
-        power_values['POWER_FACTOR_CIRCUIT1'] = (data_current['POWER_FACTOR_CIRCUIT1'] -
-                                                 data_prev['POWER_FACTOR_CIRCUIT1']) / ts_delta
-        power_values['POWER_CIRCUIT2'] = (data_current['POWER_CIRCUIT2'] - data_prev['POWER_CIRCUIT2']) / ts_delta
-        power_values['POWER_FACTOR_CIRCUIT2'] = (data_current['POWER_FACTOR_CIRCUIT2'] -
-                                                 data_prev['POWER_FACTOR_CIRCUIT2']) / ts_delta
-        power_values['POWER_CIRCUIT1_NEUTRAL'] = (data_current['POWER_CIRCUIT1_NEUTRAL'] - data_prev[
-            'POWER_CIRCUIT1_NEUTRAL']) / ts_delta
-        power_values['SHED_POWER'] = (data_current['SHED_POWER'] - data_prev['SHED_POWER']) / ts_delta
-        power_values['CONTROL_FAN_POWER'] = (data_current['CONTROL_FAN_POWER'] - data_prev[
-            'CONTROL_FAN_POWER']) / ts_delta
+        for k in self.keys:
+            if k == 'ts':
+                power_values['ts'] = data_current['ts']
+            elif k == 'timestamp':
+                power_values['timestamp'] = datetime.datetime.fromtimestamp(data_current['ts']).strftime(
+                    '%Y-%m-%d %H:%M:%S')
+            elif k == 'L1 - VOLTAGE_C' or k == 'L2 - VOLTAGE_A':
+                power_values[k] = ((data_current[k] - data_prev[k]) / ts_delta) / 1000
+            else:
+                if k in data_prev:
+                    power_values[k] = (data_current[k] - data_prev[k]) / ts_delta
+                else:
+                    data_prev[k] = 0
 
         egauge_data['processed'] = power_values
         return json.dumps(egauge_data)
