@@ -4,7 +4,7 @@ CVXcanon==0.1.1
 cvxpy==0.4.11
 decorator==4.3.0
 dill==0.2.7.1
-Django==1.11.15
+Django==1.11.23
 django-enumfields==0.9.0
 djangorestframework==3.9.3
 django-ipware==1.1.6
