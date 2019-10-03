@@ -2,6 +2,7 @@ import json, datetime, numpy as np
 import pandas as pd
 from app.farm_updater import sonnen_api
 from django.conf import settings
+import time
 
 
 
@@ -49,6 +50,49 @@ def prepareSolarForecaster(n_samples, training_data=None):
         forecaster_s.input_training_mean(training_mean_s, model_name='s')
 
     return forecaster_s
+
+def dynamicData(d_name, solar_data):
+    # this data should changed and input each time
+
+    # load simulation power data
+    power = np.loadtxt(d_name)
+    power = power.reshape((1, len(power)))
+
+    # s_name will be solar_data
+    solar_full = solar_data.to_numpy()
+
+    # Where in the dataset are we starting the simulation
+    # for a standard run, the dataset should consist of at least 3 days of historical data (4 * 24 * 3 points)
+    # This is so the forecaster can use the historical data to make a prediction
+    # when training the forecaster, the dataset should be at least 7 days of history so start_idx = 4 * 24 * 7 points
+    start_idx = 4 * 24 * 3
+
+    # keep track of night to improve solar forecast. (ex. night time from 6am to 8pm in July)
+    # data can be found at https://www.timeanddate.com/sun/usa/palo-alto
+    sun_start = 6 * 4  # number of 15 minute intervals after midnight that the sun rises
+    sun_stop = 19 * 4
+    # creating the solar mask
+    night_mask = np.hstack((np.zeros(sun_start, dtype=int), np.ones(sun_stop - sun_start, dtype=int),
+                            np.zeros(4 * 4, dtype=int)))
+    night_mask_full = np.tile(night_mask, 31)
+
+    # approximate start and end times of the fans to improve predictions
+    f_start = 7 * 4
+    f_end = 20 * 4
+
+    f_on = 0
+
+    # initial battery charge in kWh
+    Q0 = 0.1
+
+    # last peak power consumption in billing period
+    Pmax0 = 1.5
+
+    # current time (number of 15 minute intervals past midnight)
+    time_curr = 0
+
+    return power, solar_full, start_idx, f_start, f_end, f_on, Q0, night_mask_full, Pmax0, time_curr
+
 
 
 def batt_opt():
@@ -112,6 +156,12 @@ def batt_opt():
     hour = int(datetime.datetime.today().hour)
     minute = int(datetime.datetime.today().minute)
     time_current = hour*4 + int(minute/15)
+
+    st = time.time()
+
+    # loading the dynamic data to be input to the main function
+    power, solar_full, start_idx, f_start, f_end, f_on, Q0, night_mask_full, Pmax0, time_curr = \
+        dynamicData('synthFarmData_15minJuly.csv', solar_data)
 
 
 
