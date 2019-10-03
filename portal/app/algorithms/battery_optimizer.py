@@ -3,6 +3,54 @@ import pandas as pd
 from app.farm_updater import sonnen_api
 from django.conf import settings
 
+
+
+
+
+def trainForecaster(data_p, n_samples, fname):
+    # train models
+
+    data_p = data_p.reshape((data_p.size, 1))
+
+    # for training
+    training_data = data_p[0:n_samples]
+
+    # print('training data', training_data)
+
+    training_mean = np.mean(training_data)
+    print('mean', training_mean)
+
+    forecaster = Forecaster(my_order=(3, 0, 3), my_seasonal_order=(3, 0, 3, 24), pos=False)
+    forecaster.train(training_data, model_name='p')
+    forecaster_params = forecaster.model_params_p
+
+    np.savez('forecast_models/' + fname + str(n_samples) + '.npz', forecaster_params=forecaster_params,
+             training_mean=training_mean)
+    print('SAVED forecaster params at', 'forecast_models/' + fname + str(n_samples) + '.npz')
+
+    return forecaster, training_mean
+
+def prepareSolarForecaster(n_samples, training_data=None):
+    if training_data is not None:
+        # train SARIMA forecaster
+        print('no solar forecaster data found, so training new forecaster')
+        forecaster_s, training_mean_s = trainForecaster(training_data, n_samples, 'SARIMA_SolarModel_params')
+        forecaster_s.input_training_mean(training_mean_s, model_name='s')
+    else:
+        # load SARIMA forecaster
+        print('Loading solar forecaster parameters from',
+              'forecast_models/SARIMA_SolarModel_params' + str(n_samples) + '.npz')
+        model_data = np.load('forecast_models/SARIMA_SolarModel_params' + str(n_samples) + '.npz')
+        forecaster_params = model_data['forecaster_params']
+        training_mean_s = model_data['training_mean']
+        forecaster_s = Forecaster(my_order=(3, 0, 3), my_seasonal_order=(3, 0, 3, 24), pos=False)
+        model_fitted_p = forecaster_params
+        forecaster_s.loadModels(model_params_p=model_fitted_p)
+        forecaster_s.input_training_mean(training_mean_s, model_name='s')
+
+    return forecaster_s
+
+
 def batt_opt():
     from app.models import FarmDevice, FarmData, DeviceType
 
@@ -31,6 +79,7 @@ def batt_opt():
     egauge_pd = pd.DataFrame(test_pen_power, columns=['Power','Time'])
     egauge_pd.set_index('Time', inplace=True)
     load_data = egauge_pd['Power'].resample('15min').mean()
+    load_data.fillna(0, inplace=True)
 
     # Getting solar power info
     for data in solar_data:
@@ -40,6 +89,7 @@ def batt_opt():
     blender_pd = pd.DataFrame(blender_solar_power, columns=['PV_Power','Time'])
     blender_pd.set_index('Time', inplace=True)
     solar_data = blender_pd['PV_Power'].resample('15min').mean()
+    solar_data.fillna(0, inplace=True)
 
     # Getting the last value from solar_data - which corresponds to most recent date/time - to get the frequency
     f_on = blender_data[0]['frq']
