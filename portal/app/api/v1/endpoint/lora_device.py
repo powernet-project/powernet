@@ -21,7 +21,7 @@ class LoraDeviceViewSet(APIView):
             timestamp = ts.strftime("%Y-%m-%d %H:%M:%S")
             dev_internal_id = data['device']['id']
             device_uid = data['device']['thing_name'][1:3]
-            if int(device_uid) > 16 & int(device_uid) < 25:
+            if 16 < int(device_uid) < 25:
                 co2 = data['event_data']['payload'][4]['value']
                 return [device_uid, json.dumps({'temperature': temperature,
                                             'rel_humidity': rel_humidity,
