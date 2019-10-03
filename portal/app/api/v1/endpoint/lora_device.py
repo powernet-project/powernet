@@ -30,11 +30,11 @@ class LoraDeviceViewSet(APIView):
                                             'timestamp': timestamp})]
             else:
                 batt_value = data['event_data']['payload'][4]['value']
-            return [device_uid, json.dumps({'temperature': temperature,
-                                            'rel_humidity': rel_humidity,
-                                            'co2': batt_value,
-                                            'dev_internal_id': dev_internal_id,
-                                            'timestamp': timestamp})]
+                return [device_uid, json.dumps({'temperature': temperature,
+                                                'rel_humidity': rel_humidity,
+                                                'batt_value': batt_value,
+                                                'dev_internal_id': dev_internal_id,
+                                                'timestamp': timestamp})]
 
         except Exception as e:
             print('Error in Lora _data_parsing: ', e)
