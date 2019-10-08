@@ -3,6 +3,7 @@ import pandas as pd
 from app.farm_updater import sonnen_api
 from django.conf import settings
 import time
+from app.algorithms.Classes import Forecaster
 
 
 
@@ -53,47 +54,16 @@ def prepareSolarForecaster(n_samples, training_data=None):
 
     return forecaster_s
 
-def dynamicData(d_name, solar_data):
+def dynamicData(d_name, s_name, f_on):
     from app.models import FarmDevice, FarmData, DeviceType
 
     # this data should changed and input each time
 
     # load simulation power data
-    power = np.loadtxt(d_name)
-    power = power.reshape((1, len(power)))
+    power = d_name
 
     # s_name will be solar_data
-    solar_full = solar_data.to_numpy()
-
-
-    #####################
-    # Collecting solar data
-    start_date = datetime.datetime.today() - datetime.timedelta(days=3)
-    end_date = datetime.datetime.today()
-    solar_data = FarmData.objects.filter(farm_device=blender_device, timestamp__range=[start_date, end_date]).order_by(
-        'timestamp')
-    blender_solar_power = []
-
-    # Getting solar power info
-    for data in solar_data:
-        blender_data = data.device_data
-        # print(blender_data[0]['pv_power'])
-        blender_solar_power.append([blender_data[0]['pv_power'], data.timestamp])
-    blender_pd = pd.DataFrame(blender_solar_power, columns=['PV_Power', 'Time'])
-    blender_pd.set_index('Time', inplace=True)
-    solar_data = blender_pd['PV_Power'].resample('15min').mean()
-    solar_data.fillna(0, inplace=True)
-    solar_full = solar_data.to_numpy()
-
-    # Getting the last value from solar_data - which corresponds to most recent date/time - to get the frequency
-    f_on = blender_data[0]['frq']
-
-    # Power data: all zeros as we are assuming there are no other significant loads besides the fans
-    power = np.zeros(len(solar_full))
-
-
-
-
+    solar_full = s_name
 
     # Where in the dataset are we starting the simulation
     # for a standard run, the dataset should consist of at least 3 days of historical data (4 * 24 * 3 points)
@@ -104,7 +74,7 @@ def dynamicData(d_name, solar_data):
     # keep track of night to improve solar forecast. (ex. night time from 6am to 8pm in July)
     # data can be found at https://www.timeanddate.com/sun/usa/palo-alto
     sun_start = 6 * 4  # number of 15 minute intervals after midnight that the sun rises
-    sun_stop = 19 * 4
+    sun_stop = 20 * 4
     # creating the solar mask
     night_mask = np.hstack((np.zeros(sun_start, dtype=int), np.ones(sun_stop - sun_start, dtype=int),
                             np.zeros(4 * 4, dtype=int)))
@@ -114,16 +84,33 @@ def dynamicData(d_name, solar_data):
     f_start = 7 * 4
     f_end = 20 * 4
 
-    f_on = 0
+    f_on = f_on
 
-    # initial battery charge in kWh
-    Q0 = 0.1
+    # Getting sonnen USOC
+    sonnen_queryset = FarmDevice.objects.filter(type=DeviceType.SONNEN)
+    soc_current = []
+    for item in sonnen_queryset:
+        batt = FarmData.objects.filter(farm_device=item).order_by('-id')[0]
+        batt_serial = item.device_uid
+        try:
+            soc_current.append(batt.device_data['USOC'])
+        except Exception as exc:
+            print('Battery exception: ', exc)
+            soc_current.append(0)
+    # Get the smallest soc between the two batteries.
+    soc_min = np.min(np.asarray(soc_current))
+
+    # initial battery charge in kWh (battery capacity 10kWh)
+    Q0 = soc_min * 10
 
     # last peak power consumption in billing period
     Pmax0 = 1.5
 
     # current time (number of 15 minute intervals past midnight)
-    time_curr = 0
+    # Getting current datetime
+    hour = int(datetime.datetime.today().hour)
+    minute = int(datetime.datetime.today().minute)
+    time_curr = hour * 4 + int(minute / 15)
 
     return power, solar_full, start_idx, f_start, f_end, f_on, Q0, night_mask_full, Pmax0, time_curr
 
@@ -183,49 +170,43 @@ def batt_opt():
 
     start_date = datetime.datetime.today()-datetime.timedelta(days=3)
     end_date = datetime.datetime.today()
-    power_data = FarmData.objects.filter(farm_device=egauge_device, timestamp__range=[start_date, end_date]).order_by('timestamp')
     solar_data = FarmData.objects.filter(farm_device=blender_device, timestamp__range=[start_date, end_date]).order_by(
         'timestamp')
-    # batt_instance = sonnen_api.SonnenApiInterface()
-    test_pen_power = []
     blender_solar_power = []
 
-    # Getting egauge info
-    for data in power_data:
-        egauge_data = json.loads(data.device_data)
-        test_pen_power.append([egauge_data['processed']['POWER_CIRCUIT1'] + egauge_data['processed']['POWER_CIRCUIT2'], data.timestamp])
-        # print('Egauge_data: ',test_pen_power)
-    egauge_pd = pd.DataFrame(test_pen_power, columns=['Power','Time'])
-    egauge_pd.set_index('Time', inplace=True)
-    load_data = egauge_pd['Power'].resample('15min').mean()
-    load_data.fillna(0, inplace=True)
+    # Getting solar power info
+    for data in solar_data:
+        blender_data = data.device_data
+        # print(blender_data[0]['pv_power'])
+        blender_solar_power.append([blender_data[0]['pv_power'], data.timestamp])
+    blender_pd = pd.DataFrame(blender_solar_power, columns=['PV_Power', 'Time'])
+    blender_pd.set_index('Time', inplace=True)
+    blender_pd.index = blender_pd.index.tz_convert('America/Los_Angeles')
+    blender_pd = blender_pd.sort_index()
+    solar_data = blender_pd['PV_Power'].resample('15min').mean()
+    solar_data.fillna(0, inplace=True)
+    solar_full = solar_data.to_numpy()
 
+    # Getting the last value from solar_data - which corresponds to most recent date/time - to get the frequency
+    f_on = blender_data[0]['frq']
 
+    # Power data: all zeros as we are assuming there are no other significant loads besides the fans
+    power = np.zeros(len(solar_full))
 
-    # Getting sonnen USOC
-    sonnen_queryset = FarmDevice.objects.filter(type=DeviceType.SONNEN)
-    soc_current = []
-    for item in sonnen_queryset:
-        batt = FarmData.objects.filter(farm_device=item).order_by('-id')[0]
-        batt_serial = item.device_uid
-        try:
-            soc_current.append(batt.device_data['USOC'])
-        except Exception as exc:
-            print('Battery exception: ', exc)
-            soc_current.append(0)
-    # Get the smallest soc between the two batteries.
-    soc_min = np.min(np.asarray(soc_current))
-
-    # Getting current datetime
-    hour = int(datetime.datetime.today().hour)
-    minute = int(datetime.datetime.today().minute)
-    time_current = hour*4 + int(minute/15)
-
-    st = time.time()
+    # # Getting egauge info
+    # for data in power_data:
+    #     egauge_data = json.loads(data.device_data)
+    #     test_pen_power.append([egauge_data['processed']['POWER_CIRCUIT1'] + egauge_data['processed']['POWER_CIRCUIT2'], data.timestamp])
+    #     # print('Egauge_data: ',test_pen_power)
+    # egauge_pd = pd.DataFrame(test_pen_power, columns=['Power','Time'])
+    # egauge_pd.set_index('Time', inplace=True)
+    # load_data = egauge_pd['Power'].resample('15min').mean()
+    # load_data.fillna(0, inplace=True)
 
     # loading the dynamic data to be input to the main function
     power, solar_full, start_idx, f_start, f_end, f_on, Q0, night_mask_full, Pmax0, time_curr = \
-        dynamicData('synthFarmData_15minJuly.csv', solar_data)
+        dynamicData(power, solar_full, f_on)
+
 
 
 
