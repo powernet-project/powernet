@@ -8,6 +8,8 @@ import time
 
 
 
+
+
 def trainForecaster(data_p, n_samples, fname):
     # train models
 
@@ -52,6 +54,8 @@ def prepareSolarForecaster(n_samples, training_data=None):
     return forecaster_s
 
 def dynamicData(d_name, solar_data):
+    from app.models import FarmDevice, FarmData, DeviceType
+
     # this data should changed and input each time
 
     # load simulation power data
@@ -60,6 +64,36 @@ def dynamicData(d_name, solar_data):
 
     # s_name will be solar_data
     solar_full = solar_data.to_numpy()
+
+
+    #####################
+    # Collecting solar data
+    start_date = datetime.datetime.today() - datetime.timedelta(days=3)
+    end_date = datetime.datetime.today()
+    solar_data = FarmData.objects.filter(farm_device=blender_device, timestamp__range=[start_date, end_date]).order_by(
+        'timestamp')
+    blender_solar_power = []
+
+    # Getting solar power info
+    for data in solar_data:
+        blender_data = data.device_data
+        # print(blender_data[0]['pv_power'])
+        blender_solar_power.append([blender_data[0]['pv_power'], data.timestamp])
+    blender_pd = pd.DataFrame(blender_solar_power, columns=['PV_Power', 'Time'])
+    blender_pd.set_index('Time', inplace=True)
+    solar_data = blender_pd['PV_Power'].resample('15min').mean()
+    solar_data.fillna(0, inplace=True)
+    solar_full = solar_data.to_numpy()
+
+    # Getting the last value from solar_data - which corresponds to most recent date/time - to get the frequency
+    f_on = blender_data[0]['frq']
+
+    # Power data: all zeros as we are assuming there are no other significant loads besides the fans
+    power = np.zeros(len(solar_full))
+
+
+
+
 
     # Where in the dataset are we starting the simulation
     # for a standard run, the dataset should consist of at least 3 days of historical data (4 * 24 * 3 points)
@@ -95,6 +129,47 @@ def dynamicData(d_name, solar_data):
 
 
 
+def adjustedStaticData(t_res=15. / 60.):
+    ### This function sets prices (TOU, Demand Charge), battery and fan param
+    # this data should be adjusted once before running the first time
+
+    # TOU charge
+    s_peak = 0.31752        # $/kWh
+    s_offpeak = 0.16888     # $/kWh
+    prices = np.hstack((s_offpeak * np.ones((1, 12 * 4)), s_peak * np.ones((1, 6 * 4)), s_offpeak * np.ones((1, 6 * 4)))) / 4 / 2
+    prices_full = np.reshape(np.tile(prices, (1, 31)), (31 * 24 * 4, 1)).T
+    prices_full = prices_full * t_res  # scale prices to reflect hours instead of true time resolution
+
+    # demand charge
+    # d_price = 18.26
+
+    # battery info
+    # Qmax = 17 * 24 * 0.2
+    # print('Battery energy capacity (kWh)', Qmax)
+    # cmax = Qmax / 3.  # max charging rate
+    # print('Battery power capacity (kW)', cmax)
+    # dmax = cmax  # max discharging rate
+    # fmax = 1. / 8. * cmax  # max power consumed by a single fan
+    # print('maximum fan power for a single fan', fmax)
+    # print('shape of uncontrollable demand', power.shape)
+
+    # n_f = 8 # the number of fans
+
+    d_price = 10.77     # demand charge $/kW
+
+    # batt info
+    Qmin = 0            # min battery energy
+    Qmax = 10           # max battery energy
+    cmax = 8            # max battery charging rate kW
+    dmax = 8            # max battery discharging rate kW
+
+    # fan info
+    fmax = 1.7  # max power consumed by a single fan kW
+    n_f = 15 # number of fans
+
+
+    return prices_full, d_price, Qmin, Qmax, cmax, dmax, fmax, n_f
+
 def batt_opt():
     from app.models import FarmDevice, FarmData, DeviceType
 
@@ -125,18 +200,7 @@ def batt_opt():
     load_data = egauge_pd['Power'].resample('15min').mean()
     load_data.fillna(0, inplace=True)
 
-    # Getting solar power info
-    for data in solar_data:
-        blender_data = data.device_data
-        # print(blender_data[0]['pv_power'])
-        blender_solar_power.append([blender_data[0]['pv_power'], data.timestamp])
-    blender_pd = pd.DataFrame(blender_solar_power, columns=['PV_Power','Time'])
-    blender_pd.set_index('Time', inplace=True)
-    solar_data = blender_pd['PV_Power'].resample('15min').mean()
-    solar_data.fillna(0, inplace=True)
 
-    # Getting the last value from solar_data - which corresponds to most recent date/time - to get the frequency
-    f_on = blender_data[0]['frq']
 
     # Getting sonnen USOC
     sonnen_queryset = FarmDevice.objects.filter(type=DeviceType.SONNEN)
