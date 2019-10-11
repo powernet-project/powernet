@@ -7,6 +7,9 @@ import cvxpy as cvx
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 
 
+# all units should be in kW
+# Power consumed is positive
+# Power generated is negative
 
 class Controller(object):
 
@@ -92,7 +95,7 @@ class Controller(object):
             fan = self.fmax * np.ones((self.n_f, duration))
             start = self.T - time_curr + f_start
 
-        f_p[:, start:start + duration] = fan
+        f_p[:, start:start + duration] = fan    # Need to define all the cases or set a default state
 
         return f_p
 
@@ -275,6 +278,7 @@ class Forecaster:
 
         return yhat
 
+
 def trainForecaster(data_p, n_samples, fname):
     # train models
 
@@ -297,26 +301,6 @@ def trainForecaster(data_p, n_samples, fname):
     print('SAVED forecaster params at', 'forecast_models/' + fname + str(n_samples) + '.npz')
 
     return forecaster, training_mean
-
-# def prepareSolarForecaster(n_samples, training_data=None):
-#     if training_data is not None:
-#         # train SARIMA forecaster
-#         print('no solar forecaster data found, so training new forecaster')
-#         forecaster_s, training_mean_s = trainForecaster(training_data, n_samples, 'SARIMA_SolarModel_params')
-#         forecaster_s.input_training_mean(training_mean_s, model_name='s')
-#     else:
-#         # load SARIMA forecaster
-#         print('Loading solar forecaster parameters from',
-#               'forecast_models/SARIMA_SolarModel_params' + str(n_samples) + '.npz')
-#         model_data = np.load('forecast_models/SARIMA_SolarModel_params' + str(n_samples) + '.npz')
-#         forecaster_params = model_data['forecaster_params']
-#         training_mean_s = model_data['training_mean']
-#         forecaster_s = Forecaster(my_order=(3, 0, 3), my_seasonal_order=(3, 0, 3, 24), pos=False)
-#         model_fitted_p = forecaster_params
-#         forecaster_s.loadModels(model_params_p=model_fitted_p)
-#         forecaster_s.input_training_mean(training_mean_s, model_name='s')
-#
-#     return forecaster_s
 
 
 def dynamicData(d_name, s_name, f_on):
@@ -356,7 +340,6 @@ def dynamicData(d_name, s_name, f_on):
     soc_current = []
     for item in sonnen_queryset:
         batt = FarmData.objects.filter(farm_device=item).order_by('-id')[0]
-        batt_serial = item.device_uid
         try:
             soc_current.append(batt.device_data['USOC'])
         except Exception as exc:
@@ -364,12 +347,13 @@ def dynamicData(d_name, s_name, f_on):
             soc_current.append(0)
     # Get the smallest soc between the two batteries.
     soc_min = np.min(np.asarray(soc_current))
+    print('soc_min: ', soc_min)
 
     # initial battery charge in kWh (battery capacity 10kWh)
-    Q0 = soc_min * 10
-
-    # last peak power consumption in billing period
-    Pmax0 = 1.5
+    Q0 = soc_min * 10/100
+    print('Q0: ', Q0)
+    # last peak power consumption in billing period - update later for max power from previous day
+    Pmax0 = 15 # kW
 
     # current time (number of 15 minute intervals past midnight)
     # Getting current datetime
@@ -398,7 +382,7 @@ def staticData(n_f):
 
     # leakage < 1 encourages the optimization to charge immediately before it is needed which can be risky
     # l_eff = 0.9995  # 15 minute battery leakage efficiency = 94.4% daily leakage
-    l_eff = 1.0001
+    l_eff = 1
     c_eff = 0.975  # charging efficiency
     d_eff = 1 / 0.975  # round trip efficiency = 0.95
 
@@ -426,31 +410,16 @@ def adjustedStaticData(t_res=15. / 60.):
     prices_full = np.reshape(np.tile(prices, (1, 31)), (31 * 24 * 4, 1)).T
     prices_full = prices_full * t_res  # scale prices to reflect hours instead of true time resolution
 
-    # demand charge
-    # d_price = 18.26
-
-    # battery info
-    # Qmax = 17 * 24 * 0.2
-    # print('Battery energy capacity (kWh)', Qmax)
-    # cmax = Qmax / 3.  # max charging rate
-    # print('Battery power capacity (kW)', cmax)
-    # dmax = cmax  # max discharging rate
-    # fmax = 1. / 8. * cmax  # max power consumed by a single fan
-    # print('maximum fan power for a single fan', fmax)
-    # print('shape of uncontrollable demand', power.shape)
-
-    # n_f = 8 # the number of fans
-
     d_price = 10.77     # demand charge $/kW
 
     # batt info
-    Qmin = 0            # min battery energy
-    Qmax = 10           # max battery energy
-    cmax = 8            # max battery charging rate kW
-    dmax = 8            # max battery discharging rate kW
+    Qmin = 0.2            # min battery energy
+    Qmax = 9.8           # max battery energy
+    cmax = 7.9            # max battery charging rate kW
+    dmax = 7.9            # max battery discharging rate kW
 
     # fan info
-    fmax = 1.7  # max power consumed by a single fan kW
+    fmax = 1.6  # max power consumed by a single fan kW
     n_f = 15 # number of fans
 
 
@@ -499,24 +468,72 @@ def preparePowerForecaster(n_samples, training_data=None):
 
     return forecaster
 
+
 def getHistoryforForecast(power, start_idx, offset, t_horizon, i):
     prev_data_p = power[:, start_idx - offset + t_horizon * i:start_idx + t_horizon * i]
     prev_data_p = prev_data_p.reshape((prev_data_p.size, 1))
     return prev_data_p
 
-def batt_opt():
+
+def net_load():
     from app.models import FarmDevice, FarmData, DeviceType
+
+    try:
+        egauge_device = FarmDevice.objects.get(device_uid=settings.EGAUGE_ID)
+    except Exception as exc:
+        print('Error: ', exc)
+        return None
+
+    farmdata = FarmData.objects.filter(farm_device=egauge_device).order_by('-id')[0:3]
+    test_pen_power = []
+
+    # Getting egauge info
+    for data in farmdata:
+        egauge_data = json.loads(data.device_data)
+        test_pen_power.append(egauge_data['processed']['POWER_CIRCUIT1'] + egauge_data['processed']['POWER_CIRCUIT2'])
+
+    return -np.average(np.asarray(test_pen_power))/1000
+
+
+def realTimeUpdate(p_net, pmax, u_curr, price_curr):
+    # takes the most current readings and makes real time adjustments
+    # purpose is to compensate for forecaster errors
+
+    if p_net > pmax:
+        u_new = u_curr + pmax - p_net
+    elif p_net < 0:
+        u_new = u_curr - p_net
+    else:
+        u_new = u_curr
+
+    return u_new
+
+
+def batt_act(mode='charge', val=0):
+    from app.models import FarmDevice, FarmData, DeviceType
+    batt_instance = sonnen_api.SonnenApiInterface()
+    sonnen_queryset = FarmDevice.objects.filter(type=DeviceType.SONNEN)
+    for item in sonnen_queryset:
+        batt_serial = item.device_uid
+        print('Battery Serial: ', batt_serial)
+        print('mode: ', mode)
+        print('value: ', val)
+        batt_instance.manual_mode_control(serial=batt_serial, mode=mode, value=str(val))
+
+
+
+def batt_opt():
+    from app.models import FarmDevice, FarmData
     # from app.algorithms.Classes import Forecaster, Controller
 
     ### Dynamic inputs
     try:
-        egauge_device = FarmDevice.objects.get(device_uid=settings.EGAUGE_ID)
         blender_device = FarmDevice.objects.get(device_uid='100000')
     except Exception as exc:
         print('Error: ', exc)
         return
 
-    start_date = datetime.datetime.today()-datetime.timedelta(days=3)
+    start_date = datetime.datetime.today()-datetime.timedelta(days=4)
     end_date = datetime.datetime.today()
     solar_data = FarmData.objects.filter(farm_device=blender_device, timestamp__range=[start_date, end_date]).order_by(
         'timestamp')
@@ -533,7 +550,10 @@ def batt_opt():
     blender_pd = blender_pd.sort_index()
     solar_data = blender_pd['PV_Power'].resample('15min').mean()
     solar_data.fillna(0, inplace=True)
-    solar_full = solar_data.to_numpy()
+    solar_full = np.array([solar_data.to_numpy()])
+
+    # Converting solar values to kW
+    solar_full = solar_full / 1000
 
     # Getting the last value from solar_data - which corresponds to most recent date/time - to get the frequency
     if blender_data is not None:
@@ -542,7 +562,9 @@ def batt_opt():
         f_on = 0
 
     # Power data: all zeros as we are assuming there are no other significant loads besides the fans
-    power = np.zeros(len(solar_full))
+    # power = np.array(np.zeros(solar_full.size))
+    power = np.zeros(solar_full.size)
+    power = power.reshape(1, power.size)
 
     # # Getting egauge info
     # for data in power_data:
@@ -558,7 +580,8 @@ def batt_opt():
     power, solar_full, start_idx, f_start, f_end, f_on, Q0, night_mask_full, Pmax0, time_curr = \
         dynamicData(power, solar_full, f_on)
 
-    # This is where main starts:
+
+    #################### This is where main starts ####################
     # Define all the needed static info
     ### This function sets the prices
     prices_full, d_price, Qmin, Qmax, cmax, dmax, fmax, n_f = adjustedStaticData()
@@ -588,9 +611,62 @@ def batt_opt():
     night_mask = night_mask_full[time_curr:time_curr + t_lookahead]
     solar_curr = solar_curr * night_mask
 
+    p_curr = np.zeros(solar_curr.size)
+    p_curr = p_curr.reshape(1,p_curr.size)
+
     # get prices for current time
     prices_curr = prices_full[:, time_curr:time_curr + t_lookahead]
 
+    # simplified fan prediction that only uses current time and indicator if fan is on
+    f_p = contr.fanPredictionSimple(f_on, time_curr, f_start, f_end)
+
+    c_s, d_s, Q_s, prob_s, Pmax_ex = contr.optimize(p_curr, solar_curr, prices_curr, Q0, Pmax0, f_p)
 
 
+    if prob_s != 'optimal':
+        print('optimization status', prob_s)
 
+    print('Old max power', Pmax0, 'new expected maximum power', Pmax_ex)
+
+    # input real time values for net power, battery power (u_curr = charge - discharge power), price
+    real_time_data_point_for_net_power = net_load()
+    p_net = real_time_data_point_for_net_power
+    u_curr = c_s[:, 0] - d_s[:, 0]
+    price_curr = prices_curr[:, 0]
+
+    # Getting current Power from Battery
+    ####
+
+    u_new = realTimeUpdate(p_net, Pmax_ex, u_curr, price_curr)
+    if u_new != u_curr:
+        print('value of u changed from', u_curr)
+        print('to', u_new)
+        if u_new < 0:
+            d_s[0][0] = -u_new
+            c_s[0][0] = 0
+        else:
+            c_s[0][0] = u_new
+            d_s[0][0] = 0
+
+    c_s = c_s.astype(int)
+    d_s = d_s.astype(int)
+
+    c_curr = c_s[0][0]
+    d_curr = d_s[0][0]
+    print('c_s: ', c_s[0][0:5])
+    print('d_s: ', d_s[0][0:5])
+    # Actuating in the battery:
+    if c_curr != 0 and d_curr == 0:
+        batt_act(mode='charge', val=c_curr*1000)
+        print('Charge: ', c_curr)
+    elif c_curr == 0 and d_curr != 0:
+        batt_act(mode='discharge', val=d_curr*1000)
+        print('Discharge: ', d_curr)
+    elif c_curr == 0 and d_curr == 0:
+        # Stop dis/charging
+        batt_act(mode='charge', val=0)
+        print('Battery idle')
+    else:
+        print('Inconsistent results: Either c_curr or d_curr needs to be zero')
+
+    # return c_s[0][0], d_s[0][0]
