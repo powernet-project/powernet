@@ -350,14 +350,20 @@ def dynamicData(d_name, s_name, f_on):
     print('soc_min: ', soc_min)
 
     # initial battery charge in kWh (battery capacity 10kWh)
-    Q0 = soc_min * 10/100
+    Q0 = soc_min * 10./100
     print('Q0: ', Q0)
     # last peak power consumption in billing period - update later for max power from previous day
     Pmax0 = 15 # kW
 
     # current time (number of 15 minute intervals past midnight)
     # Getting current datetime
-    hour = int(datetime.datetime.today().hour)
+    hour_day_utc = int(datetime.datetime.today().hour)
+    # Converting hours from UTC to local
+    if hour_day_utc < 7:
+        hour = hour_day_utc + 24 - 7
+    else:
+        hour = hour_day_utc - 7
+
     minute = int(datetime.datetime.today().minute)
     time_curr = hour * 4 + int(minute / 15)
 
@@ -413,7 +419,7 @@ def adjustedStaticData(t_res=15. / 60.):
     d_price = 10.77     # demand charge $/kW
 
     # batt info
-    Qmin = 0.2            # min battery energy
+    Qmin = 0.5            # min battery energy
     Qmax = 9.8           # max battery energy
     cmax = 7.9            # max battery charging rate kW
     dmax = 7.9            # max battery discharging rate kW
@@ -490,9 +496,9 @@ def net_load():
     # Getting egauge info
     for data in farmdata:
         egauge_data = json.loads(data.device_data)
-        test_pen_power.append(egauge_data['processed']['POWER_CIRCUIT1'] + egauge_data['processed']['POWER_CIRCUIT2'])
-
-    return -np.average(np.asarray(test_pen_power))/1000
+        test_pen_power.append(egauge_data['processed']['POWER_TEST_PEN'])
+    print('egauge_load: ', test_pen_power)
+    return np.average(np.asarray(test_pen_power))/1000
 
 
 def realTimeUpdate(p_net, pmax, u_curr, price_curr):
@@ -629,8 +635,9 @@ def batt_opt():
     print('Old max power', Pmax0, 'new expected maximum power', Pmax_ex)
 
     # input real time values for net power, battery power (u_curr = charge - discharge power), price
-    real_time_data_point_for_net_power = net_load()
+    real_time_data_point_for_net_power = -net_load()
     p_net = real_time_data_point_for_net_power
+    print('net_load: ', p_net)
     u_curr = c_s[:, 0] - d_s[:, 0]
     price_curr = prices_curr[:, 0]
 
@@ -653,8 +660,8 @@ def batt_opt():
 
     c_curr = c_s[0][0]
     d_curr = d_s[0][0]
-    print('c_s: ', c_s[0][0:5])
-    print('d_s: ', d_s[0][0:5])
+    # print('c_s: ', c_s[0][0:5])
+    # print('d_s: ', d_s[0][0:5])
     # Actuating in the battery:
     if c_curr != 0 and d_curr == 0:
         batt_act(mode='charge', val=c_curr*1000)

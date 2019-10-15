@@ -125,7 +125,7 @@ def update_egauge_data():
             farmdata = FarmData(farm_device=farm_device)
             farmdata.device_data = egauge_data
             farmdata.save()
-            print('saving...\n', farmdata.device_data)
+            print('saving...\n')
 
         except FarmDevice.DoesNotExist as e:
             print('Error update_egauge_data', e)
