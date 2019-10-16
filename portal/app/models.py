@@ -174,3 +174,5 @@ class FarmData(models.Model):
     farm_device = models.ForeignKey(FarmDevice, null=True)
     device_data = JSONField(null=True, blank=True, default=None)
     timestamp = models.DateTimeField(default=timezone.now)
+
+

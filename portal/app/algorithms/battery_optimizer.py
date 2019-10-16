@@ -322,7 +322,7 @@ def dynamicData(d_name, s_name, f_on):
 
     # keep track of night to improve solar forecast. (ex. night time from 6am to 8pm in July)
     # data can be found at https://www.timeanddate.com/sun/usa/palo-alto
-    sun_start = 6 * 4  # number of 15 minute intervals after midnight that the sun rises
+    sun_start = 7 * 4  # number of 15 minute intervals after midnight that the sun rises
     sun_stop = 20 * 4
     # creating the solar mask
     night_mask = np.hstack((np.zeros(sun_start, dtype=int), np.ones(sun_stop - sun_start, dtype=int),
@@ -330,7 +330,7 @@ def dynamicData(d_name, s_name, f_on):
     night_mask_full = np.tile(night_mask, 31)
 
     # approximate start and end times of the fans to improve predictions
-    f_start = 7 * 4
+    f_start = 12 * 4
     f_end = 20 * 4
 
     f_on = f_on
@@ -353,7 +353,7 @@ def dynamicData(d_name, s_name, f_on):
     Q0 = soc_min * 10./100
     print('Q0: ', Q0)
     # last peak power consumption in billing period - update later for max power from previous day
-    Pmax0 = 15 # kW
+    Pmax0 = 12 # kW
 
     # current time (number of 15 minute intervals past midnight)
     # Getting current datetime
