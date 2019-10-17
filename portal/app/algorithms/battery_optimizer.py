@@ -5,6 +5,8 @@ from django.conf import settings
 import os
 import cvxpy as cvx
 from statsmodels.tsa.statespace.sarimax import SARIMAX
+from pytz import timezone
+import pytz
 
 
 # all units should be in kW
@@ -304,7 +306,7 @@ def trainForecaster(data_p, n_samples, fname):
 
 
 def dynamicData(d_name, s_name, f_on):
-    from app.models import FarmDevice, FarmData, DeviceType
+    from app.models import FarmDevice, FarmData, DeviceType, FarmMaxDemand
 
     # this data should changed and input each time
 
@@ -353,7 +355,30 @@ def dynamicData(d_name, s_name, f_on):
     Q0 = soc_min * 10./100
     print('Q0: ', Q0)
     # last peak power consumption in billing period - update later for max power from previous day
-    Pmax0 = 12 # kW
+    # Pmax0 = 12 # kW
+    # Getting current month
+    month_curr = datetime.datetime.now(tz=pytz.utc).astimezone(timezone('US/Pacific')).month
+    queryset_month = FarmMaxDemand.objects.all()
+
+    if queryset_month:
+        print('Theres data - do something')
+        data_month = queryset_month.order_by('-id')[0]
+        if data_month.month_pst != month_curr:
+            data_month.max_power = 0
+            Pmax0 = 0
+            data_month.month_pst = month_curr
+            data_month.save()
+        else:
+            Pmax0 = data_month.max_power
+            print('Pmax0 from db: ', Pmax0)
+
+    else:
+        print('Theres no data - create an entry')
+        # Need to fix home_id. Prod is 11 Dev is 1
+        max_power = FarmMaxDemand(home_id=1, max_power=0, month_pst=month_curr)
+        max_power.save()
+        Pmax0 = 0
+
 
     # current time (number of 15 minute intervals past midnight)
     # Getting current datetime
@@ -529,7 +554,7 @@ def batt_act(mode='charge', val=0):
 
 
 def batt_opt():
-    from app.models import FarmDevice, FarmData
+    from app.models import FarmDevice, FarmData, FarmMaxDemand
     # from app.algorithms.Classes import Forecaster, Controller
 
     ### Dynamic inputs
@@ -585,7 +610,7 @@ def batt_opt():
     # loading the dynamic data to be input to the main function
     power, solar_full, start_idx, f_start, f_end, f_on, Q0, night_mask_full, Pmax0, time_curr = \
         dynamicData(power, solar_full, f_on)
-
+    print('Pmax0_dynamic output: ', Pmax0)
 
     #################### This is where main starts ####################
     # Define all the needed static info
@@ -637,6 +662,16 @@ def batt_opt():
     # input real time values for net power, battery power (u_curr = charge - discharge power), price
     real_time_data_point_for_net_power = -net_load()
     p_net = real_time_data_point_for_net_power
+
+    # Updating db for max_power:
+    queryset_month = FarmMaxDemand.objects.all()
+    if queryset_month:
+        data_month = queryset_month.order_by('-id')[0]
+        if data_month.max_power < p_net:
+            data_month.max_power = p_net
+            data_month.save()
+            print('Saving new max_power: ', p_net)
+
     print('net_load: ', p_net)
     u_curr = c_s[:, 0] - d_s[:, 0]
     price_curr = prices_curr[:, 0]
