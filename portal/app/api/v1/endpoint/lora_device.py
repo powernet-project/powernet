@@ -17,16 +17,25 @@ class LoraDeviceViewSet(APIView):
         try:
             temperature = data['event_data']['payload'][2]['value']
             rel_humidity = data['event_data']['payload'][3]['value']
-            batt_value = data['event_data']['payload'][4]['value']
-            ts = datetime.datetime.fromtimestamp(data['event_data']['timestamp']/1000.)
+            ts = datetime.datetime.fromtimestamp(data['event_data']['timestamp'] / 1000.)
             timestamp = ts.strftime("%Y-%m-%d %H:%M:%S")
             dev_internal_id = data['device']['id']
             device_uid = data['device']['thing_name'][1:3]
-            return [device_uid, json.dumps({'temperature': temperature,
+            if 16 < int(device_uid) < 25:
+                co2 = data['event_data']['payload'][4]['value']
+                return [device_uid, json.dumps({'temperature': temperature,
                                             'rel_humidity': rel_humidity,
-                                            'batt_value': batt_value,
+                                            'co2': co2,
                                             'dev_internal_id': dev_internal_id,
                                             'timestamp': timestamp})]
+            else:
+                batt_value = data['event_data']['payload'][4]['value']
+                return [device_uid, json.dumps({'temperature': temperature,
+                                                'rel_humidity': rel_humidity,
+                                                'batt_value': batt_value,
+                                                'dev_internal_id': dev_internal_id,
+                                                'timestamp': timestamp})]
+
         except Exception as e:
             print('Error in Lora _data_parsing: ', e)
             return None
