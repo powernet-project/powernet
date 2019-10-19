@@ -435,7 +435,7 @@ def adjustedStaticData(t_res=15. / 60.):
     # TOU charge
     s_peak = 0.31752        # $/kWh
     s_offpeak = 0.16888     # $/kWh
-    prices = np.hstack((s_offpeak * np.ones((1, 12 * 4)), s_peak * np.ones((1, 6 * 4)), s_offpeak * np.ones((1, 6 * 4)))) / 4 / 2
+    prices = np.hstack((s_offpeak * np.ones((1, 12 * 4)), s_peak * np.ones((1, 6 * 4)), s_offpeak * np.ones((1, 6 * 4))))
     prices_full = np.reshape(np.tile(prices, (1, 31)), (31 * 24 * 4, 1)).T
     prices_full = prices_full * t_res  # scale prices to reflect hours instead of true time resolution
 
