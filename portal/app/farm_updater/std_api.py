@@ -77,7 +77,7 @@ def update_std_device_status():
                 farmdata = FarmData(farm_device=farm_device)
                 farmdata.device_data = devices_from_std
                 farmdata.save()
-                print('saving...\n', farmdata.device_data)
+                # print('saving...\n', farmdata.device_data)
             except FarmDevice.DoesNotExist as e:
                 print('Error update_battery_status for serial: ', dev.device_uid)
                 print(e)

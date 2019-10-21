@@ -1,5 +1,5 @@
 apscheduler
-numpy==1.14.2
+numpy==1.16.4
 CVXcanon==0.1.1
 cvxpy==0.4.11
 decorator==4.3.0
@@ -23,5 +23,9 @@ scs==2.0.2
 six==1.11.0
 toolz==0.9.0
 pathos==0.2.1
+statsmodels==0.10.1
+tzlocal==1.5.1
+pytz==2018.4
+pandas==0.24.2
 django-rest-swagger
 google-cloud-pubsub

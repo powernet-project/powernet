@@ -174,3 +174,14 @@ class FarmData(models.Model):
     farm_device = models.ForeignKey(FarmDevice, null=True)
     device_data = JSONField(null=True, blank=True, default=None)
     timestamp = models.DateTimeField(default=timezone.now)
+
+
+class FarmMaxDemand(models.Model):
+
+    class Meta:
+        db_table = 'farm_max_power_demand'
+
+    home = models.ForeignKey(Home)
+    max_power = models.FloatField(default=0)
+    month_pst = models.IntegerField(default=0)
+    timestamp = models.DateTimeField(default=timezone.now)
