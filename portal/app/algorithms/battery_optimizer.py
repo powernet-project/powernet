@@ -372,6 +372,7 @@ def dynamicData(d_name, s_name, f_on):
 
     else:
         # Need to fix home_id. Prod is 11 Dev is 1
+
         max_power = FarmMaxDemand(home_id=11, max_power=0, month_pst=month_curr)
         max_power.save()
         Pmax0 = 0.2
