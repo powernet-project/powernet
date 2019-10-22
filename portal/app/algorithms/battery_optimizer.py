@@ -375,7 +375,7 @@ def dynamicData(d_name, s_name, f_on):
 
         max_power = FarmMaxDemand(home_id=11, max_power=0, month_pst=month_curr)
         max_power.save()
-        Pmax0 = 0.2
+        Pmax0 = 15
 
 
     # current time (number of 15 minute intervals past midnight)
