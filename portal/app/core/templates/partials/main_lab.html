@@ -9,6 +9,9 @@
         <h3>Powernet Bits & Watts</h3>
         <br />
     </div>
+
+    <button id="view-ecobee-chart-btn">View Ecobee Chart</button>
+    <div id="ecobee-chart"></div>
 {% endblock main-content %}
 
 {% block page-scripts %}
@@ -21,5 +24,6 @@
         window.localStorage.setItem('homes', JSON.stringify(homeList));
         window.localStorage.setItem('devices', JSON.stringify(deviceList));
     </script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="{% static "js/dashboard.js" %}"></script>
 {% endblock page-scripts %}

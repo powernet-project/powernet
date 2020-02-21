@@ -9,6 +9,7 @@ from app.api.v1.endpoint.hue_states import HueStatesViewSet
 from app.api.v1.endpoint.powernet_user import PowernetUserViewSet
 from app.api.v1.endpoint.home import HomeViewSet, HomeDataViewSet
 from app.api.v1.endpoint.appliance_data import ApplianceJsonDataViewSet
+from app.api.v1.endpoint.ecobee_data import ecobee_data
 from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='Powernet API')
@@ -29,5 +30,6 @@ router.register(r'farm_device_data', FarmDataViewSet, base_name='Farm Data')
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^$', schema_view),
-    url(r'lora_device', LoraDeviceViewSet.as_view())
+    url(r'lora_device', LoraDeviceViewSet.as_view()),
+    url(r'ecobee_data', ecobee_data)
 ]

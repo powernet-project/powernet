@@ -185,3 +185,13 @@ class FarmMaxDemand(models.Model):
     max_power = models.FloatField(default=0)
     month_pst = models.IntegerField(default=0)
     timestamp = models.DateTimeField(default=timezone.now)
+
+
+class EcobeeDevice(models.Model):
+
+    class Meta:
+        db_table = 'ecobee'
+
+    api_key = models.CharField(max_length=100, blank=False, null=False)
+    access_token = models.CharField(max_length=100, blank=False, null=False)
+    refresh_token = models.CharField(max_length=100, blank=False, null=False)

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import PowernetUser, Home, Device, FarmDevice
+from models import PowernetUser, Home, Device, FarmDevice, EcobeeDevice
 
 
 @admin.register(FarmDevice)
@@ -20,3 +20,7 @@ class PowernetUserAdmin(admin.ModelAdmin):
 @admin.register(Device)
 class DeviceAdmin(admin.ModelAdmin):
     list_display = ('name', 'type', 'home', 'status', 'value', 'cosphi')
+
+@admin.register(EcobeeDevice)
+class EcobeeDeviceAdmin(admin.ModelAdmin):
+    list_display = ('api_key', 'access_token', 'refresh_token')
