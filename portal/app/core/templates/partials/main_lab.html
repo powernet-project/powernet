@@ -10,7 +10,21 @@
         <br />
     </div>
 
-    <button id="view-ecobee-chart-btn">View Ecobee Chart</button>
+    <div class="row">
+        <div class="col-md-6">
+            <button id="view-ecobee-chart-btn">View Ecobee Chart</button>
+        </div>
+        <div class="col-md-4">
+            <select id="ecobee-temp"></select>
+            <select id="ecobee-hvac-mode">
+                <option value="heat">Heat</option>
+                <option value="cool">Cool</option>
+                <option value="auto">Auto</option>
+                <option value="off">Off</option>
+            </select>
+            <button id="set-ecobee-temp-mode-params">Set Temp & Mode</button>
+        </div>
+    </div>
     <div id="ecobee-chart"></div>
 {% endblock main-content %}
 

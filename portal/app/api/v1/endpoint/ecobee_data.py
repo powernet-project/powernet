@@ -20,8 +20,7 @@ def refresh_ecobee_token(ecobee):
         ecobee.access_token = r.json()['access_token']
         ecobee.save()
     except Exception as e:
-        print('An exception happened refresh_token: ', r)
-        print(r.json())
+        print('An exception happened refresh_token: ')
         print(e)
 
 
@@ -41,6 +40,5 @@ def ecobee_data(request):
             refresh_ecobee_token(ecobee)
             return Response({"error": "API Called failed " + str(r.status_code)})
     except Exception as e:
-        print('An exception happened', r, e)
-        print(r.json())
+        print('An exception happened', e)
         return Response({"error": "API Called failed"})
