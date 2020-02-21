@@ -23,6 +23,28 @@ $(document).ready(function(ns) {
             selectedMode = $('#ecobee-hvac-mode').val();
 
         console.log(selectedMode, selectedTemp);
+
+        $.ajax({
+            url: '/api/v1/ecobee/temperature/' + selectedTemp,
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
+            },
+            success: function (data) {
+                console.log('Setting ecobee temp', data);
+            }
+        });
+
+        $.ajax({
+            url: '/api/v1/ecobee/mode/' + selectedMode,
+            type: "POST",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
+            },
+            success: function (data) {
+                console.log('Setting ecobee mode', data);
+            }
+        });
     };
 
     let startDataInterval = function() {
@@ -36,7 +58,7 @@ $(document).ready(function(ns) {
 
     let requestEcobeeData = function() {
         $.ajax({
-            url: '/api/v1/ecobee_data',
+            url: '/api/v1/ecobee/data',
             type: "GET",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
