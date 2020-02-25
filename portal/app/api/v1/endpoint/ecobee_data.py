@@ -28,7 +28,7 @@ def refresh_ecobee_token(ecobee):
 def ecobee_data(request):
     ecobee = EcobeeDevice.objects.get(api_key=ECOBEE_API_KEY)
     HEADERS['Authorization'] = 'Bearer ' + ecobee.access_token
-    payload = {'json': '{"selection":{"selectionType":"registered","selectionMatch":"","includeRuntime":"true","includeSettings":"true"}}'}
+    payload = {'json': '{"selection":{"selectionType":"registered","selectionMatch":"","includeRuntime":"true","includeSettings":"true", "includeEvents": "true"}}'}
     url = 'https://api.ecobee.com/1/thermostat'
 
     try:
