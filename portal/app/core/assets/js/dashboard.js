@@ -81,7 +81,7 @@ $(document).ready(function(ns) {
 
                 // if the actual temp, minus the 30 offset, is equal to or greater than the heatHoldTemp,
                 // let's turn the hvac to off.
-                if((data['runtime']['actualTemperature'] - 30) >= data['events'][0]['heatHoldTemp']) {
+                if(data['runtime']['actualTemperature'] >= (data['events'][0]['heatHoldTemp'] - 30)) {
                     console.log('Turning the ecobee off since the actual temp is equal to or greater than the heat hold temp');
                     _setMode('off')
                 }

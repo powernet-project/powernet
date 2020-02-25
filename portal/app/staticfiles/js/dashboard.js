@@ -24,8 +24,14 @@ $(document).ready(function(ns) {
 
         console.log(selectedMode, selectedTemp);
 
+        _setTemp(selectedTemp);
+        _setMode(selectedMode);
+    };
+
+    let _setTemp = function(temp) {
+        console.log('setting temp to ', temp)
         $.ajax({
-            url: '/api/v1/ecobee/temperature/' + selectedTemp,
+            url: '/api/v1/ecobee/temperature/' + (temp + 30), // this offset is on purpose
             type: "POST",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
@@ -34,9 +40,12 @@ $(document).ready(function(ns) {
                 console.log('Setting ecobee temp', data);
             }
         });
+    };
 
+    let _setMode = function(mode) {
+        console.log('setting mode to ', mode)
         $.ajax({
-            url: '/api/v1/ecobee/mode/' + selectedMode,
+            url: '/api/v1/ecobee/mode/' + mode,
             type: "POST",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
@@ -66,17 +75,30 @@ $(document).ready(function(ns) {
             success: function (data) {
                 console.log(data);
                 let actualTemp = data['runtime']['actualTemperature'] / 10,
+                    targetTemp = data['events'].length > 0 ? data['events'][0]['heatHoldTemp'] / 10 : actualTemp,
                     actualTime = data['thermostatTime'],
                     hvacMode = data['settings']['hvacMode'];
-                Plotly.extendTraces('ecobee-chart', {y: [[actualTemp], [hvacMode]], x:[[actualTime], [actualTime]]}, [0, 1]);
+
+                // if the actual temp, minus the 30 offset, is equal to or greater than the heatHoldTemp,
+                // let's turn the hvac to off.
+                if(data['runtime']['actualTemperature'] >= (data['events'][0]['heatHoldTemp'] - 30)) {
+                    console.log('Turning the ecobee off since the actual temp is equal to or greater than the heat hold temp');
+                    _setMode('off')
+                }
+
+                Plotly.extendTraces('ecobee-chart', {
+                    y: [[actualTemp], [targetTemp], [hvacMode]],
+                    x:[[actualTime], [actualTime], [actualTime]]
+                }, [0, 1, 2]);
             }
         });
     };
 
     let displayChart = function() {
         let temperatureTrace = { x: [], y: [], type: 'scatter', name: 'Temperature' },
+            targetTempTrace = { x: [], y: [], type: 'scatter', name: 'Target Temp' },
             hvacModeTrace = { x: [],  y: [], type: 'scatter', name: 'HVAC Mode', yaxis: 'y2' },
-            plotData = [temperatureTrace, hvacModeTrace],
+            plotData = [temperatureTrace, targetTempTrace, hvacModeTrace],
             layout = {
                 title: 'Ecobee Temperature/Mode',
                 yaxis: { title: 'Temp ºF' },
