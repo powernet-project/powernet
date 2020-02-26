@@ -75,7 +75,7 @@ $(document).ready(function(ns) {
             success: function (data) {
                 console.log(data);
                 let actualTemp = data['runtime']['actualTemperature'] / 10,
-                    targetTemp = data['events'].length > 0 ? data['events'][0]['heatHoldTemp'] / 10 : actualTemp,
+                    targetTemp = data['events'].length > 0 ? (data['events'][0]['heatHoldTemp'] / 10) - 3 : actualTemp,
                     actualTime = data['thermostatTime'],
                     hvacMode = data['settings']['hvacMode'];
 
@@ -98,7 +98,7 @@ $(document).ready(function(ns) {
         let temperatureTrace = { x: [], y: [], type: 'scatter', name: 'Temperature' },
             targetTempTrace = { x: [], y: [], type: 'scatter', name: 'Target Temp' },
             hvacModeTrace = { x: [],  y: [], type: 'scatter', name: 'HVAC Mode', yaxis: 'y2' },
-            plotData = [temperatureTrace, targetTempTrace-3, hvacModeTrace],
+            plotData = [temperatureTrace, targetTempTrace, hvacModeTrace],
             layout = {
                 title: 'Ecobee Temperature/Mode',
                 yaxis: { title: 'Temp ºF' },
