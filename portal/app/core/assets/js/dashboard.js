@@ -98,7 +98,7 @@ $(document).ready(function(ns) {
         let temperatureTrace = { x: [], y: [], type: 'scatter', name: 'Temperature' },
             targetTempTrace = { x: [], y: [], type: 'scatter', name: 'Target Temp' },
             hvacModeTrace = { x: [],  y: [], type: 'scatter', name: 'HVAC Mode', yaxis: 'y2' },
-            plotData = [temperatureTrace, targetTempTrace, hvacModeTrace],
+            plotData = [temperatureTrace, targetTempTrace-3, hvacModeTrace],
             layout = {
                 title: 'Ecobee Temperature/Mode',
                 yaxis: { title: 'Temp ºF' },
