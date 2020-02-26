@@ -31,7 +31,7 @@ $(document).ready(function(ns) {
     let _setTemp = function(temp) {
         console.log('setting temp to ', temp)
         $.ajax({
-            url: '/api/v1/ecobee/temperature/' + (temp + 30), // this offset is on purpose
+            url: '/api/v1/ecobee/temperature/' + (temp + 3), // this offset is on purpose. It is 3 bc dropdown is not x10
             type: "POST",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader('Authorization', 'Token ' + window.localStorage.getItem('token'));
