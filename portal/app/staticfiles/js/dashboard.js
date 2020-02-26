@@ -87,7 +87,7 @@ $(document).ready(function(ns) {
                 }
 
                 Plotly.extendTraces('ecobee-chart', {
-                    y: [[actualTemp], [(targetTemp / 10) - 3], [hvacMode]],
+                    y: [[actualTemp], [(targetTemp / 10)], [hvacMode]],
                     x:[[actualTime], [actualTime], [actualTime]]
                 }, [0, 1, 2]);
             }
