@@ -84,6 +84,8 @@ $(document).ready(function(ns) {
                 if(data['runtime']['actualTemperature'] >= targetTemp) {
                     console.log('Turning the ecobee off since the actual temp is equal to or greater than the heat hold temp');
                     _setMode('off')
+                } else {
+                    _setMode('heat')
                 }
 
                 Plotly.extendTraces('ecobee-chart', {
