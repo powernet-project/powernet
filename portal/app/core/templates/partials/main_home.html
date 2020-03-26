@@ -10,59 +10,47 @@
 {% block main-content %}
     <div class="container-fluid">
         <div id="resources-information-content" class="row">
-            <nav class="col-md-2 d-none d-md-block sidebar">
+            <div class="col-md-2 d-none d-md-block sidebar">
                 <h4 class="text-center"> Resources Information </h4>
                 <br/>
                 <div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link text-center" href="/">
-                                <image src="https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/electricity_plug_female_american-512.png" length=60 height=60>
+                                <image src="https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/electricity_plug_female_american-512.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a id="nav-link-devices" class="nav-link text-center" href="/">
-                                <image src="https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png" length=60 height=60>
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a id="nav-link-consumption" class="nav-link text-center" href="/">
-                                <image src="https://static.thenounproject.com/png/725-200.png" length=60 height=60>
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://static.thenounproject.com/png/725-200.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a id="nav-link-consumption" class="nav-link text-center" href="/">
-                                <image src="https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png" length=60 height=60>
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a id="nav-link-consumption" class="nav-link text-center" href="/">
-                                <image src="https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161" length=60 height=60>
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161" height=60>
                             </a>
                         </li>
                     </ul>
                 </div>
-            </nav>
+            </div>
             <main role="main" class="ml-sm-auto col-lg-7 px-4 text-center">
-
-
                 <div id="diagram"></div>
-
-
             </main>
-            <nav class="col-md-3 d-none d-md-block">
-
+            <div class="col-md-3 d-none d-md-block">
                 <h4>
                   <div id="temp"></div>
                 </h4>
-
-<!-- WORKING ON THE WEATHER ICON -->
-                <figure class="icons">
-                    <canvas id="rain" width="30" height="30">
-                    </canvas>
-
-                </figure>
-
+                <figure class="icons"></figure>
                 <br/>
                 <br/>
                 <br/>
@@ -79,18 +67,13 @@
                         </li>
                     </ul>
                 </div>
-            </nav>
-
-
-            <br />
+            </div>
+            <br/>
         </div>
     </div>
 {% endblock main-content %}
 
 {% block page-scripts %}
-    <script src="{% static "js/simple-diagram.js" %}"></script>
-    <script src="{% static "js/screen2.js" %}"></script>
-    <script src="{% static "js/skycon.js" %}"></script>
     <script type="text/javascript">
         let token = '{{ token }}';
         let homeList = {{ homes | safe }};
@@ -99,20 +82,11 @@
         window.localStorage.setItem('token', token);
         window.localStorage.setItem('homes', JSON.stringify(homeList));
         window.localStorage.setItem('devices', JSON.stringify(deviceList));
-
-        // skycons
-        var icons = new Skycons(),
-          list  = [
-            "clear-day", "clear-night", "partly-cloudy-day",
-            "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-            "fog"
-          ],
-          i;
-
-        for(i = list.length; i--; )
-        icons.set(list[i], list[i]);
-
-        icons.play();
     </script>
+
     <script src="{% static "js/dashboard.js" %}"></script>
+    <script src="{% static "js/simple-diagram.js" %}"></script>
+    <script src="{% static "js/controller-diagram.js" %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/skycons/1396634940/skycons.min.js"></script>
+    <script src="{% static "js/weather.js" %}"></script>
 {% endblock page-scripts %}
