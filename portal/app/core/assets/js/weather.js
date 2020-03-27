@@ -26,40 +26,35 @@ $(document).ready(function(ns) {
 
 
 // weather api call
-function weather() {
-    var apiKey = "b9f22b3822b21d37718b37b4d5e92967";
-    var url = "https://api.forecast.io/forecast/";
 
-    navigator.geolocation.getCurrentPosition(success, error);
+var apiKey = "b9f22b3822b21d37718b37b4d5e92967";
+var url = "https://api.forecast.io/forecast/";
 
-    function success(position) {
-        latitude = position.coords.latitude;
-        longitude = position.coords.longitude;
+navigator.geolocation.getCurrentPosition(success, error);
 
-        $.getJSON(
-            url + apiKey + "/" + latitude + "," + longitude + "?callback=?",
-            function(data) {
-                $("#temp").html(data.currently.temperature + "° F");
-                $(".icons").html('<canvas id="' + data.minutely.icon + '" width="30" height="30"></canvas>');
+function success(position) {
+    latitude = position.coords.latitude;
+    longitude = position.coords.longitude;
 
-                var icons = new Skycons();
-                var list = ["clear-day", "clear-night", "partly-cloudy-day",
-                    "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-                    "fog"
-                ];
-                for (i = 0; i < list.length; i++) {
-                    icons.set(list[i], list[i]);
-                    icons.play();
-                }
+    $.getJSON(
+        url + apiKey + "/" + latitude + "," + longitude + "?callback=?",
+        function(data) {
+            $("#temp").html(data.currently.temperature + "° F");
+            $(".icons").html('<canvas id="' + data.minutely.icon + '" width="30" height="30"></canvas>');
+
+            var icons = new Skycons();
+            var list = ["clear-day", "clear-night", "partly-cloudy-day",
+                "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
+                "fog"
+            ];
+            for (i = 0; i < list.length; i++) {
+                icons.set(list[i], list[i]);
+                icons.play();
             }
-        );
-    }
-
-    function error() {
-        temp.innerHTML = "Unable to retrieve your location";
-    }
+        }
+    );
 }
 
-
-
-weather();
+function error() {
+    temp.innerHTML = "Unable to retrieve your location";
+}
