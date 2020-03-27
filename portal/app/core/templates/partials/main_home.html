@@ -50,7 +50,7 @@
                 <h4>
                   <div id="temp"></div>
                 </h4>
-                <figure class="icons"></figure>
+                <div id="icon"></div>
                 <br/>
                 <br/>
                 <br/>
@@ -83,10 +83,8 @@
         window.localStorage.setItem('homes', JSON.stringify(homeList));
         window.localStorage.setItem('devices', JSON.stringify(deviceList));
     </script>
-
     <script src="{% static "js/dashboard.js" %}"></script>
     <script src="{% static "js/simple-diagram.js" %}"></script>
     <script src="{% static "js/controller-diagram.js" %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/skycons/1396634940/skycons.min.js"></script>
     <script src="{% static "js/weather.js" %}"></script>
 {% endblock page-scripts %}

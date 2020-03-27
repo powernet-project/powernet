@@ -14,10 +14,11 @@ $(document).ready(function(ns) {
 
     ns.queryWeatherBasedOnZip = function(zipCode) {
         // Query the OWM API for weather data
+        data = JSON.stringify(data, null, '\t');
         var url = "https://api.openweathermap.org/data/2.5/weather?zip=" + zipCode +
             ",us&APPID=6faafe3de999509b86b118803ee2ca8f";
         $.get(url, function(data) {
-            $("#weather-response").html(JSON.stringify(data, null, '\t'));
+            $("#weather-response").html(data);
         });
     };
 
@@ -25,36 +26,18 @@ $(document).ready(function(ns) {
 }(weather));
 
 
-// weather api call
-
-var apiKey = "b9f22b3822b21d37718b37b4d5e92967";
-var url = "https://api.forecast.io/forecast/";
-
-navigator.geolocation.getCurrentPosition(success, error);
-
-function success(position) {
+// weather functionality for all pages
+navigator.geolocation.getCurrentPosition(function(position) {
     latitude = position.coords.latitude;
     longitude = position.coords.longitude;
+    var urlPosition = "https://api.openweathermap.org/data/2.5/weather?lat=" +
+        latitude + "&lon=" + longitude + "&APPID=6faafe3de999509b86b118803ee2ca8f";
 
-    $.getJSON(
-        url + apiKey + "/" + latitude + "," + longitude + "?callback=?",
-        function(data) {
-            $("#temp").html(data.currently.temperature + "° F");
-            $(".icons").html('<canvas id="' + data.minutely.icon + '" width="30" height="30"></canvas>');
-
-            var icons = new Skycons();
-            var list = ["clear-day", "clear-night", "partly-cloudy-day",
-                "partly-cloudy-night", "cloudy", "rain", "sleet", "snow", "wind",
-                "fog"
-            ];
-            for (i = 0; i < list.length; i++) {
-                icons.set(list[i], list[i]);
-                icons.play();
-            }
-        }
-    );
-}
-
-function error() {
-    temp.innerHTML = "Unable to retrieve your location";
-}
+    $.getJSON(urlPosition, function(data) {
+        urlIcon = "http://openweathermap.org/img/wn/" + data.weather[0].icon + ".png";
+        // kelvin to fahrenheit conversion
+        temp = Math.round((data.main.temp - 273.15) * 1.8 + 32);
+        $("#temp").html(temp + "° F");
+        $("#icon").html("<img src=" + urlIcon +  ">");
+    });
+});
