@@ -12,3 +12,11 @@
 .red {
     fill: red;
 }
+
+.sized-block {
+    height: 30vh;
+}
+
+.center-block {
+    overflow: auto;
+}
