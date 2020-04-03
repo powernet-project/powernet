@@ -1,5 +1,79 @@
 {% extends "resources.html" %}
 {% load static %}
+<<<<<<< HEAD
+=======
+{% block partial_styles %}
+    <link rel="stylesheet" href="{% static "css/dashboard.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/d3js.css" %}"/>
+    <script src="https://d3js.org/d3-selection.v1.min.js"></script>
+    <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+{% endblock %}
+{% block main-content %}
+    <div class="container-fluid">
+        <div id="resources-information-content" class="row">
+            <div class="col-md-2 d-none d-md-block sidebar">
+                <h4 class="text-center"> Resources Information </h4>
+                <br/>
+                <div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/electricity_plug_female_american-512.png" height=60>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png" height=60>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://static.thenounproject.com/png/725-200.png" height=60>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png" height=60>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-center" href="/">
+                                <image src="https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161" height=60>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <main role="main" class="ml-sm-auto col-lg-7 px-4 text-center">
+                <div id="diagram"></div>
+            </main>
+            <div class="col-md-3 d-none d-md-block">
+                <h4>
+                  <div id="temp"></div>
+                </h4>
+                <div id="icon"></div>
+                <br/>
+                <br/>
+                <br/>
+                <div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <h5>Events Participated: 2 / 8</h5>
+                        </li>
+                        <li class="nav-item">
+                            <h5>Tokens Collected: 45</h5>
+                        </li>
+                        <li class="nav-item">
+                            <h5>Participation: HIGH</h5>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <br/>
+        </div>
+    </div>
+{% endblock main-content %}
+>>>>>>> 0d3caa6f0a08104a9b3fe4ba62b0e811f3836b7c
 
 {% block resources-styles %}
 <link rel="stylesheet" href="{% static "css/d3js.css" %}"/>
@@ -11,9 +85,21 @@
 </main>
 {% endblock %}
 
+<<<<<<< HEAD
 {% block resources-scripts %}
 <script src="https://d3js.org/d3-selection.v1.min.js"></script>
 <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
 <script src="{% static "js/simple-diagram.js" %}"></script>
 <script src="{% static "js/controller-diagram.js" %}"></script>
 {% endblock resources-scripts %}
+=======
+        window.localStorage.setItem('token', token);
+        window.localStorage.setItem('homes', JSON.stringify(homeList));
+        window.localStorage.setItem('devices', JSON.stringify(deviceList));
+    </script>
+    <script src="{% static "js/dashboard.js" %}"></script>
+    <script src="{% static "js/simple-diagram.js" %}"></script>
+    <script src="{% static "js/controller-diagram.js" %}"></script>
+    <script src="{% static "js/weather.js" %}"></script>
+{% endblock page-scripts %}
+>>>>>>> 0d3caa6f0a08104a9b3fe4ba62b0e811f3836b7c

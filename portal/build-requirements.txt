@@ -1,5 +1,5 @@
 apscheduler
-Django==1.11.15
+Django==1.11.28
 gunicorn==19.7.1
 psycopg2==2.7.1
 pytz==2018.4
