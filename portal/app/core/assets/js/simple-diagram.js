@@ -568,7 +568,6 @@
 
 	// Function for adding a node shape element to the diagram.
 
-	var icon_size = window.innerWidth*0.04;
 
 	var _addNodeShape = function _addCircleNode(instance, opts, nodeG) {
 
@@ -578,9 +577,9 @@
 
         if (opts.shape === 'solar_panel') {
     		node = nodeG.append('image')
-				.attr('href', 'https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png')\
-                .attr('length', icon_size)
-                .attr('height', icon_size)
+				.attr('href', 'https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png')
+                .attr('length', size)
+                .attr('height', size)
         		.attr('x', coords.x)
         		.attr('y', coords.y);
 		}
@@ -588,8 +587,8 @@
         if (opts.shape === 'grid') {
             node = nodeG.append('image')
                 .attr('href', 'https://cdn4.iconfinder.com/data/icons/environment-ecology-energy/100/21-512.png')
-				.attr('length', icon_size)
-                .attr('height', icon_size)
+				.attr('length', size)
+                .attr('height', size)
         		.attr('x', coords.x)
         		.attr('y', coords.y);
         }
@@ -597,8 +596,8 @@
         if (opts.shape === 'battery') {
             node = nodeG.append('image')
                 .attr('href', 'https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161')
-				.attr('length', icon_size)
-                .attr('height', icon_size)
+				.attr('length', size)
+                .attr('height', size)
         		.attr('x', coords.x)
         		.attr('y', coords.y);
         }
@@ -606,8 +605,8 @@
         if (opts.shape === 'house') {
             node = nodeG.append('image')
                 .attr('href', 'https://cdn2.iconfinder.com/data/icons/internet-of-things-solid-convergence/512/Smart_home-512.png')
-				.attr('length', icon_size)
-                .attr('height', icon_size)
+				.attr('length', size)
+                .attr('height', size)
         		.attr('x', coords.x)
         		.attr('y', coords.y);
         }
@@ -615,8 +614,8 @@
         if (opts.shape === 'washer') {
             node = nodeG.append('image')
                 .attr('href', 'https://cdn0.iconfinder.com/data/icons/home-appliances-set-linear-outline-1/300/213012603Untitled-3-512.png')
-				.attr('length', icon_size)
-                .attr('height', icon_size)
+				.attr('length', size)
+                .attr('height', size)
         		.attr('x', coords.x)
         		.attr('y', coords.y);
         }
@@ -624,8 +623,8 @@
         if (opts.shape === 'charger') {
             node = nodeG.append('image')
                 .attr('href', 'https://static.thenounproject.com/png/725-200.png')
-				.attr('length', icon_size)
-                .attr('height', icon_size)
+				.attr('length', size)
+                .attr('height', size)
         		.attr('x', coords.x)
         		.attr('y', coords.y);
         }
