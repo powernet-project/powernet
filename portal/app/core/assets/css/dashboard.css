@@ -5,6 +5,14 @@
     font-size: 0.5em;
 }
 
+#resources {
+    font-size: x-large;
+}
+
+.icons {
+    padding-top: 3vh;
+}
+
 .green {
     fill: green;
 }
@@ -19,4 +27,17 @@
 
 .center-block {
     overflow: auto;
+}
+
+.loads-container {
+    padding-top: 10vh;
+}
+
+.cell {
+    height: 25vh;
+    font-size: medium;
+}
+
+.nav .current {
+    background-color: #ebebeb;
 }
