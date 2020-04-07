@@ -53,7 +53,7 @@ def consumption(request):
 
 @login_required
 def loads(request):
-    return render(request, 'partials/screen_loads.html')
+    return render(request, 'partials/loads.html', {'resource': 'loads'}) 
 
 #########################################################
 # Actual error page handlers

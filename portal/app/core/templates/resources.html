@@ -2,7 +2,8 @@
 
 {% load static %}
 {% block partial_styles %}
-    <link rel="stylesheet" href="{% static "css/dashboard.css" %}"/>
+    <link rel="stylesheet" href="{% static "css/dashboard.css" %}">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     {% block resources-styles %}{% endblock resources-styles %}
 {% endblock partial_styles %}
 {% block main-content %}
@@ -14,27 +15,27 @@
                 <div>
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link text-center icons" href="/loads">
+                            <a class="nav-link text-center icons w3-bar-item w3-button {% if resource == 'loads' %}current{% endif %}" href="/loads">
                                 <image src="https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/electricity_plug_female_american-512.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-center icons" href="/">
+                            <a class="nav-link text-center icons w3-bar-item w3-button" href="/">
                                 <image src="https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-center icons" href="/">
+                            <a class="nav-link text-center icons w3-bar-item w3-button" href="/">
                                 <image src="https://static.thenounproject.com/png/725-200.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-center icons" href="/">
+                            <a class="nav-link text-center icons w3-bar-item w3-button" href="/">
                                 <image src="https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png" height=60>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-center icons" href="/">
+                            <a class="nav-link text-center icons w3-bar-item w3-button" href="/">
                                 <image src="https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161" height=60>
                             </a>
                         </li>

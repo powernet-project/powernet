@@ -37,3 +37,7 @@
     height: 25vh;
     font-size: medium;
 }
+
+.nav .current {
+    background-color: #ebebeb;
+}
