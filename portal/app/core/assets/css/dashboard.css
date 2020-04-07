@@ -9,6 +9,10 @@
     font-size: x-large;
 }
 
+.icons {
+    padding-top: 3vh;
+}
+
 .green {
     fill: green;
 }
