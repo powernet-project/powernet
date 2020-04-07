@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^settings/', base.settings, name='Home Settings'),
     url(r'^devices/', base.devices, name='Home Devices'),
     url(r'^consumption/', base.consumption, name='Home Consumption'),
+    url(r'^loads/', base.loads, name='Loads'),
 ]
 
 handler404 = 'app.core.views.base.handler404'

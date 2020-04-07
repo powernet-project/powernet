@@ -50,6 +50,11 @@ def devices(request):
 def consumption(request):
     return render(request, 'partials/consumption.html')
 
+
+@login_required
+def loads(request):
+    return render(request, 'partials/screen_loads.html')
+
 #########################################################
 # Actual error page handlers
 #########################################################
