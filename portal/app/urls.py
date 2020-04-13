@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^devices/', base.devices, name='Home Devices'),
     url(r'^consumption/', base.consumption, name='Home Consumption'),
     url(r'^loads/', base.loads, name='Loads'),
+    url(r'^battery/', base.battery, name='Battery'),
 ]
 
 handler404 = 'app.core.views.base.handler404'

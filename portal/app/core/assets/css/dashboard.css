@@ -41,3 +41,11 @@
 .nav .current {
     background-color: #ebebeb;
 }
+
+.padding {
+    padding-top: 6vh;
+}
+
+.large-font {
+    font-size: large;
+}

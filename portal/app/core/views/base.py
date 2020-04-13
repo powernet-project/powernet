@@ -53,8 +53,12 @@ def consumption(request):
 
 @login_required
 def loads(request):
-    return render(request, 'partials/loads.html', {'resource': 'loads'}) 
+    return render(request, 'partials/loads.html', {'resource': 'loads'})
 
+
+@login_required
+def battery(request):
+    return render(request, 'partials/battery.html', {'resource': 'battery'}) 
 #########################################################
 # Actual error page handlers
 #########################################################

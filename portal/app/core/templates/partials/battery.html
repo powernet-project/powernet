@@ -1,0 +1,46 @@
+{% extends "resources.html" %}
+{% load static %}
+
+{% block resources-styles %}
+{% endblock resources-styles %}
+
+{% block dashboard-resources %}
+<main role="main" class="hidden-xs">
+    <div class="container">
+        <div class="row hidden-xs">
+            <div class="col-sm-12">
+                Battery Information
+                <br/>
+                <div class="large-font padding">
+                  State: Discharging
+                  <br/><br/>
+                  Current Power: 600W
+                  <br/><br/>
+                  State of Charge: 54%
+                </div>
+            </div>
+            <div class="col-sm-12 padding">
+                Battery Control
+                <br/>
+                <div class="large-font padding row">
+                    <div class="col-sm">
+                        <label for="state">State:</label>
+                        <select id="state">
+                            <option value="discharge">Discharge</option>
+                        </select>
+                    </div>
+                    <div class="col-sm">
+                        Rate: 700W
+                    </div>
+                    <div class="col-sm">
+                        <button>Set</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block resources-scripts %}
+{% endblock resources-scripts %}
