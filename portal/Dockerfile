@@ -4,7 +4,7 @@ LABEL python_version=python
 
 # Create a virtualenv for dependencies. This isolates these packages from
 # system-level packages.
-RUN virtualenv --no-download /env -p python
+RUN virtualenv --no-download /env -p python3.7
 
 # Setting these environment variables are the same as running
 # source /env/bin/activate.
