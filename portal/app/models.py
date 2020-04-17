@@ -80,7 +80,7 @@ class PowernetUser(models.Model):
     class Meta:
         db_table = 'powernet_user'
 
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.deletion.CASCADE,)
     type = EnumField(PowernetUserType, default=PowernetUserType.HOME, max_length=10)
     first_name = models.CharField(max_length=50, null=True)
     last_name = models.CharField(max_length=50, null=True)
@@ -106,7 +106,7 @@ class Home(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=1000)
     type = EnumField(HomeType, default=HomeType.UNKNOWN, max_length=20)
-    owner = models.ForeignKey(PowernetUser)
+    owner = models.ForeignKey(PowernetUser, on_delete=models.deletion.CASCADE)
 
 
 class HomeData(models.Model):
@@ -114,7 +114,7 @@ class HomeData(models.Model):
     class Meta:
         db_table = 'home_data'
 
-    home = models.ForeignKey(Home)
+    home = models.ForeignKey(Home, on_delete=models.deletion.CASCADE)
     reactive_power = models.FloatField(default=0)
     real_power = models.FloatField(default=0)
     state_of_charge = models.FloatField(default=0)
@@ -126,7 +126,7 @@ class Device(models.Model):
     class Meta:
         db_table = 'device'
 
-    home = models.ForeignKey(Home)
+    home = models.ForeignKey(Home, on_delete=models.deletion.CASCADE)
     name = models.CharField(max_length=200)
     type = EnumField(DeviceType, max_length=40)
     status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN, max_length=40)
@@ -139,7 +139,7 @@ class DeviceState(models.Model):
     class Meta:
         db_table = 'device_state'
 
-    device = models.ForeignKey(Device)
+    device = models.ForeignKey(Device, on_delete=models.deletion.CASCADE)
     watt_consumption = models.FloatField()
     measurement_timestamp = models.DateTimeField(null=False, blank=False)
     additional_information = JSONField(null=True, blank=True)
@@ -150,7 +150,7 @@ class ApplianceJsonData(models.Model):
     class Meta:
         db_table = 'appliance_data'
 
-    home = models.ForeignKey(Home)
+    home = models.ForeignKey(Home, on_delete=models.deletion.CASCADE)
     devices_json = JSONField(null=True, blank=True)
 
 
@@ -160,7 +160,7 @@ class FarmDevice(models.Model):
         db_table = 'farm_device'
         unique_together = ['home', 'device_uid']
 
-    home = models.ForeignKey(Home)
+    home = models.ForeignKey(Home, on_delete=models.deletion.CASCADE)
     device_uid = models.CharField(max_length=100, blank=False, null=False)
     type = EnumField(DeviceType, max_length=40)
     timestamp = models.DateTimeField(default=timezone.now)
@@ -171,7 +171,7 @@ class FarmData(models.Model):
     class Meta:
         db_table = 'farm_device_data'
 
-    farm_device = models.ForeignKey(FarmDevice, null=True)
+    farm_device = models.ForeignKey(FarmDevice, null=True, on_delete=models.deletion.CASCADE)
     device_data = JSONField(null=True, blank=True, default=None)
     timestamp = models.DateTimeField(default=timezone.now)
 
@@ -181,7 +181,7 @@ class FarmMaxDemand(models.Model):
     class Meta:
         db_table = 'farm_max_power_demand'
 
-    home = models.ForeignKey(Home)
+    home = models.ForeignKey(Home, on_delete=models.deletion.CASCADE)
     max_power = models.FloatField(default=0)
     month_pst = models.IntegerField(default=0)
     timestamp = models.DateTimeField(default=timezone.now)

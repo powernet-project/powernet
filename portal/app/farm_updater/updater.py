@@ -1,7 +1,7 @@
 import logging
-import std_api
-import sonnen_api
-import egauge_api
+import app.farm_updater.std_api as std_api
+import app.farm_updater.sonnen_api as sonnen_api
+import app.farm_updater.egauge_api as egauge_api
 from app.algorithms import battery_load_control, battery_optimizer
 from apscheduler.schedulers.background import BackgroundScheduler
 
