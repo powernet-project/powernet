@@ -2,7 +2,7 @@
 
 {% load static %}
 {% block partial_styles %}
-    <link rel="stylesheet" href="{% static "css/dashboard.css" %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     {% block resources-styles %}{% endblock resources-styles %}
 {% endblock partial_styles %}
@@ -35,7 +35,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-center icons w3-bar-item w3-button {% if resource === 'battery' %}current{% endif %}" href="/battery">
+                            <a class="nav-link text-center icons w3-bar-item w3-button {% if resource == 'battery' %}current{% endif %}" href="/battery">
                                 <image src="https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161" height=60>
                             </a>
                         </li>
