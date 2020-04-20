@@ -554,7 +554,7 @@ def batt_opt():
         blender_solar_power.append([blender_data[0]['pv_power'], data.timestamp])
     blender_pd = pd.DataFrame(blender_solar_power, columns=['PV_Power', 'Time'])
     blender_pd.set_index('Time', inplace=True)
-    blender_pd.index = blender_pd.index.tz_convert('America/Los_Angeles')
+    blender_pd = blender_pd.tz_convert('America/Los_Angeles')
     blender_pd = blender_pd.sort_index()
     solar_data = blender_pd['PV_Power'].resample('15min').mean()
     solar_data.fillna(0, inplace=True)

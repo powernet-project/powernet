@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import PowernetUser, Home, Device, FarmDevice, EcobeeDevice
+from app.models import PowernetUser, Home, Device, FarmDevice, EcobeeDevice
 
 
 @admin.register(FarmDevice)

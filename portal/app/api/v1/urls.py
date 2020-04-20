@@ -16,16 +16,16 @@ schema_view = get_swagger_view(title='Powernet API')
 
 # register the default and nested routes
 router = routers.SimpleRouter()
-router.register(r'energy_price', UtilityEnergyPriceViewSet, base_name='utility_energy_price')
-router.register(r'device', DeviceViewSet, base_name='device')
-router.register(r'device_state', DeviceStateViewSet, base_name='device_state')
-router.register(r'rms', ApplianceJsonDataViewSet, base_name='appliance_data')
-router.register(r'hue_states', HueStatesViewSet, base_name='Philips Hue State to Set')
-router.register(r'home', HomeViewSet, base_name='Home')
-router.register(r'home_data', HomeDataViewSet, base_name='Home Data')
-router.register(r'powernet_user', PowernetUserViewSet, base_name='Powernet User')
-router.register(r'farm_device', FarmDeviceViewSet, base_name='Farm Device')
-router.register(r'farm_device_data', FarmDataViewSet, base_name='Farm Data')
+router.register(r'energy_price', UtilityEnergyPriceViewSet, basename='utility_energy_price')
+router.register(r'device', DeviceViewSet, basename='device')
+router.register(r'device_state', DeviceStateViewSet, basename='device_state')
+router.register(r'rms', ApplianceJsonDataViewSet, basename='appliance_data')
+router.register(r'hue_states', HueStatesViewSet, basename='Philips Hue State to Set')
+router.register(r'home', HomeViewSet, basename='Home')
+router.register(r'home_data', HomeDataViewSet, basename='Home Data')
+router.register(r'powernet_user', PowernetUserViewSet, basename='Powernet User')
+router.register(r'farm_device', FarmDeviceViewSet, basename='Farm Device')
+router.register(r'farm_device_data', FarmDataViewSet, basename='Farm Data')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

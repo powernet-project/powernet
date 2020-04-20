@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block partial_styles %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    {% block dashboard-styles %}{% endblock dashboard-styles %}
+{% endblock partial_styles %}
+{% block main-content %}
+<div class="main-panel">
+    <div class="content-wrapper">
+        <div id="resources" class="container-fluid">
+            <div class="row">
+                <div class="col-md-11 grid-margin">
+                    <div class="card card-body row page-header">
+                        <ul class="nav">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">
+                                    <h4 class="page-title">Resources Information</h4>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link icons w3-bar-item w3-button {% if resource == 'loads' %}current{% endif %}" href="/loads">
+                                    <image src="https://cdn3.iconfinder.com/data/icons/devices-and-communication-2/100/electricity_plug_female_american-512.png" height=30>
+                                        Loads
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link icons w3-bar-item w3-button" href="/">
+                                    <image src="https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png" height=30>
+                                        HVAC
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link icons w3-bar-item w3-button" href="/">
+                                    <image src="https://static.thenounproject.com/png/725-200.png" height=30>
+                                        EV
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link icons w3-bar-item w3-button" href="/">
+                                    <image src="https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png" height=30>
+                                        Solar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link icons w3-bar-item w3-button {% if resource == 'battery' %}current{% endif %}" href="/battery">
+                                    <image src="https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161" height=30>
+                                        Battery
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-1 d-none d-md-block ml-md-auto">
+                    <div>
+                        <h4>
+                          <div id="temp"></div>
+                        </h4>
+                        <div id="icon"></div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-9 grid-margin">
+                    <div class="card card-body row">
+                        {% block dashboard-resources %}{% endblock dashboard-resources %}
+                    </div>
+                </div>
+                <div class="col-md-3 grid-margin">
+                    <div class="card card-body">
+                        <div class="d-flex mt-3 py-2 border-bottom font-weight-medium">
+                            Events Participated: 2 / 8
+                        </div>
+                        <div class="d-flex mt-3 py-2 border-bottom font-weight-medium">
+                            Tokens Collected: 45
+                        </div>
+                        <div class="d-flex mt-3 py-2 border-bottom font-weight-medium">
+                            Participation: HIGH
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}
+
+{% block page-scripts %}
+    <script type="text/javascript">
+        let token = '{{ token }}';
+        // let homeList = '{{ homes | safe }}';
+        // let deviceList = '{{ devices | safe }}';
+
+        window.localStorage.setItem('token', token);
+        // window.localStorage.setItem('homes', JSON.stringify(homeList));
+        // window.localStorage.setItem('devices', JSON.stringify(deviceList));
+    </script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/weather.js' %}"></script>
+    {% block dashboard-scripts %}{% endblock dashboard-scripts %}
+{% endblock page-scripts %}

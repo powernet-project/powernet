@@ -4,7 +4,7 @@ LABEL python_version=python
 
 # Create a virtualenv for dependencies. This isolates these packages from
 # system-level packages.
-RUN virtualenv --no-download /env -p python
+RUN virtualenv --no-download /env -p python3.7
 
 # Setting these environment variables are the same as running
 # source /env/bin/activate.
@@ -14,7 +14,7 @@ ENV PATH /env/bin:$PATH
 # Copy the application's requirements.txt and run pip to install all
 # dependencies into the virtualenv.
 ADD requirements.txt /app/
-RUN pip install numpy==1.14.2
+RUN pip install numpy
 RUN pip install -r requirements.txt
 
 # Add the application source code.

@@ -1,0 +1,9 @@
+svg.simple-diagram marker#arrow {
+    fill: #333;
+}
+
+svg.simple-diagram .line {
+    fill: none;
+    stroke: #333;
+    stroke-width: 2px;
+}

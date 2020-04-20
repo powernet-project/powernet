@@ -1,9 +1,9 @@
 apscheduler
-Django==1.11.28
-gunicorn==19.7.1
-psycopg2==2.7.1
-pytz==2018.4
-requests==2.20.0
-django-enumfields==0.9.0
-djangorestframework==3.8.2
+Django
+gunicorn
+psycopg2
+pytz
+requests
+django-enumfields
+djangorestframework
 django-rest-swagger
