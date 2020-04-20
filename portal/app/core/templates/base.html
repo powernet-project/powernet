@@ -6,13 +6,15 @@
     {% load static %}
     <link rel="stylesheet" href="{% static "css/base.css" %}"/>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     {% block partial_styles %}{% endblock %}
 </head>
 <body>
     {% if hide_header %}
         <div></div>
     {% else %}
-        <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+        <nav class="navbar navbar-dark fixed-top flex-md-nowrap p-0 shadow">
             <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="#">Powernet - SU</a>
             {% if user %}
                 <ul class="navbar-nav px-3">
@@ -22,90 +24,96 @@
                 </ul>
             {% endif %}
         </nav>
-        <div class="container-fluid">
-            <div class="row">
-                <nav class="col-md-2 d-none d-md-block bg-light sidebar">
-                    <div class="sidebar-sticky">
-                        <ul class="nav flex-column">
+        <div class="d-flex wrapper">
+            <nav id="sidebar" class="active">
+                <div class="custom-menu">
+                    <button id="sidebar-toggle" type="button" id="sidebarCollapse" class="btn btn-primary" onclick="toggleSideBar()">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                </div>
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column quick-links">
+                        <li class="nav-item">
+                            <a id="nav-link-dashboard" href="/">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="nav-link-settings" href="/settings">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                                Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="nav-link-devices" href="/devices">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                Devices
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="nav-link-consumption" href="/consumption">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                Consumption
+                            </a>
+                        </li>
+                        {% if user.powernetuser.type.value == "LAB" %}
                             <li class="nav-item">
-                                <a id="nav-link-dashboard" class="nav-link" href="/">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                     stroke-linejoin="round" class="feather feather-home">
-                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                </svg>
-                                    Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="nav-link-settings" class="nav-link" href="/settings">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                                    Settings
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a id="nav-link-devices" class="nav-link" href="/devices">
+                                <a id="nav-link-pv" href="/pv/">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                    Devices
+                                    PV / Storage
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a id="nav-link-consumption" class="nav-link" href="/consumption">
+                                <a id="nav-link-control" href="/charts/">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                    Consumption
+                                    Control
                                 </a>
                             </li>
-                            {% if user.powernetuser.type.value == "LAB" %}
-                                <li class="nav-item">
-                                    <a id="nav-link-pv" class="nav-link" href="/pv/">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                        PV / Storage
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="nav-link-control" class="nav-link" href="/charts/">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                        Control
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="nav-link-no-control" class="nav-link" href="/charts_no_control/">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                        No Control
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="nav-link-cost-minimization" class="nav-link" href="/cost-min/">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                                        Cost Min.
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a id="nav-link-home-one" class="nav-link" href="/home/one/">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                                        B&W Home
-                                    </a>
-                                </li>
-                            {% endif %}
                             <li class="nav-item">
-                                <a class="nav-link" href="http://powernet.stanford.edu/our-team" target="_blank">Team</a>
+                                <a id="nav-link-no-control" href="/charts_no_control/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                    No Control
+                                </a>
                             </li>
-                        </ul>
-                    </div>
-                </nav>
-                <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                    {% block main-content %}{% endblock %}
-                </main>
-            </div>
+                            <li class="nav-item">
+                                <a id="nav-link-cost-minimization" href="/cost-min/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                    Cost Min.
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a id="nav-link-home-one" href="/home/one/">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                                    B&W Home
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="http://powernet.stanford.edu/our-team" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                                Team
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <main role="main" id="content" class="px-4 p-md-5">
+                {% block main-content %}{% endblock main-content %}
+            </main>
         </div>
     {% endif %}
-
 
 
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="{% static "js/base.js" %}"></script>
     {% block page-scripts %}{% endblock %}
 </body>
 </html>

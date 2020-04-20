@@ -629,8 +629,16 @@
         		.attr('y', coords.y);
         }
 
+		if (opts.shape === 'hvac') {
+            node = nodeG.append('image')
+                .attr('href', 'https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png')
+				.attr('length', size)
+                .attr('height', size)
+        		.attr('x', coords.x)
+        		.attr('y', coords.y);
+        }
 
-		node.attr('class', 'node-shape ' + opts.shape);
+		node.attr('class', 'node-shape ' + opts.shape + ' border-' + opts.color);
 
 		if (opts.style) {
 			Utils.applyStyles(node, opts.style);

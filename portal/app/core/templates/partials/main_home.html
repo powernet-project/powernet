@@ -1,9 +1,9 @@
-{% extends "resources.html" %}
+{% extends "dashboard.html" %}
 {% load static %}
 
-{% block resources-styles %}
-<link rel="stylesheet" href="{% static "css/d3js.css" %}"/>
-{% endblock resources-styles %}
+{% block dashboard-styles %}
+<link rel="stylesheet" href="{% static 'css/d3js.css' %}"/>
+{% endblock dashboard-styles %}
 
 {% block dashboard-resources %}
 <main role="main" class="px-4 text-center">
@@ -11,9 +11,9 @@
 </main>
 {% endblock %}
 
-{% block resources-scripts %}
+{% block dashboard-scripts %}
 <script src="https://d3js.org/d3-selection.v1.min.js"></script>
 <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
 <script src="{% static "js/simple-diagram.js" %}"></script>
 <script src="{% static "js/controller-diagram.js" %}"></script>
-{% endblock resources-scripts %}
+{% endblock dashboard-scripts %}
