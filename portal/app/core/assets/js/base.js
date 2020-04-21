@@ -1,18 +1,18 @@
-var toggle = 1;
-
 $(document).ready(function() {
-	if(localStorage.getItem("toggle") == 0){
-		toggleSideBar();
-	}
+    let isSidebarExpanded = localStorage.getItem("isSidebarExpanded");
+	// sidebar expanded by default
+    if (isSidebarExpanded === null) {
+        // value hasn't been set yet
+        localStorage.setItem("isSidebarExpanded", "true");
+    }
+	if (isSidebarExpanded === "false") {
+		// false means not expaded
+        $('#sidebar').toggleClass('active');
+    }
 });
 
 function toggleSideBar() {
 	$('#sidebar').toggleClass('active');
-	if (toggle === 1) {
-		toggle = 0;
-	}
-	else {
-		toggle = 1;
-	}
-	localStorage.setItem("toggle", toggle);
+	let isSidebarExpanded = localStorage.getItem("isSidebarExpanded") === "true";
+	localStorage.setItem("isSidebarExpanded", (!isSidebarExpanded).toString());
 }

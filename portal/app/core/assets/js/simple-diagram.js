@@ -620,18 +620,18 @@
         		.attr('y', coords.y);
         }
 
-        if (opts.shape === 'charger') {
+		if (opts.shape === 'charger') {
             node = nodeG.append('image')
                 .attr('href', 'https://static.thenounproject.com/png/725-200.png')
 				.attr('length', size)
                 .attr('height', size)
         		.attr('x', coords.x)
         		.attr('y', coords.y);
-        }
+		}
 
 		if (opts.shape === 'hvac') {
-            node = nodeG.append('image')
-                .attr('href', 'https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png')
+			node = nodeG.append('image')
+				.attr('href', 'https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png')
 				.attr('length', size)
                 .attr('height', size)
         		.attr('x', coords.x)

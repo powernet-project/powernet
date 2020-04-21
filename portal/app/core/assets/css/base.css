@@ -19,9 +19,6 @@ body {
    bottom: 0;
    z-index: 100; /* Behind the navbar */
    padding: 48px 0 0; /* Height of navbar */
-   -webkit-transition: all 0.3s;
-   -o-transition: all 0.3s;
-   transition: all 0.3s;
    position: relative;
  }
 
