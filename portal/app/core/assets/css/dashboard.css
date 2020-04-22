@@ -145,3 +145,7 @@ input:checked + .slider:before {
   width: 60%;
   background-color: #8c1515;
 }
+
+.button-padding {
+  padding: 5px 50px;
+}

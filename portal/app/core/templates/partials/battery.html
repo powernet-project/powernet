@@ -46,29 +46,29 @@
             <div class="col-md-6">
                 <div class="card-title">Battery Control</div>
                 <div class="card card-body">
-
-
-
                     <div>
-                        <div class="wrapper border-bottom mb-2 pb-2">
-                            <p class="mb-0">State:</p>
-                            <div class="d-flex align-items-center">
-                                <select class="form-control" id="exampleFormControlSelect1">
-                                      <option>Charge</option>
-                                      <option>Discharge</option>
-                                      <option>Idle</option>
-                                </select>
-                                <div class="dot-indicator bg-secondary ml-auto"></div>
+                        <form>
+                            <div class="wrapper border-bottom mb-2 pb-2">
+                                <p class="mb-0">State:</p>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-control" id="exampleFormControlSelect1">
+                                          <option>Charge</option>
+                                          <option>Discharge</option>
+                                          <option>Idle</option>
+                                    </select>
+                                    <div class="dot-indicator bg-secondary ml-auto"></div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="wrapper">
-                            <p class="mb-0">Rate:</p>
-                            <div class="d-flex align-items-center">
-                                <input class="form-control" id="exampleFormControlInput1">
-                                Watts
-                                <div class="dot-indicator bg-primary ml-auto"></div>
+                            <div class="wrapper form-group">
+                                <p class="mb-0">Rate:</p>
+                                <div class="d-flex align-items-center">
+                                    <input class="form-control" id="exampleFormControlInput1">
+                                    Watts
+                                    <div class="dot-indicator bg-primary ml-auto"></div>
+                                </div>
                             </div>
-                        </div>
+                            <button type="submit" class="btn btn-primary button-padding">Set</button>
+                        </form>
                     </div>
                 </div>
             </div>
