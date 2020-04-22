@@ -5,35 +5,70 @@
 {% endblock dashboard-styles %}
 
 {% block dashboard-resources %}
-<main role="main" class="hidden-xs">
+<main role="main">
     <div class="container">
         <div class="row hidden-xs">
-            <div class="col-sm-12">
-                Battery Information
-                <br/>
-                <div class="large-font padding">
-                  State: Discharging
-                  <br/><br/>
-                  Current Power: 600W
-                  <br/><br/>
-                  State of Charge: 54%
+            <div class="col-md-6">
+                <div class="card-title">Sales Statistics Overview</div>
+                <div class="card card-body">
+                    <div class="row">
+                        <div class="col-5 col-md-5">
+                            <div class="wrapper border-bottom mb-2 pb-2">
+                                <p class="mb-0">State:</p>
+                                <div class="d-flex align-items-center">
+                                    <h4 class="font-weight-semibold mb-0">Discharging</h4>
+                                    <div class="dot-indicator bg-secondary ml-auto"></div>
+                                </div>
+                            </div>
+                            <div class="wrapper">
+                                <p class="mb-0">Current Power:</p>
+                                <div class="d-flex align-items-center">
+                                    <h4 class="font-weight-semibold mb-0">600W</h4>
+                                    <div class="dot-indicator bg-primary ml-auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5 col-md-7">
+                            <p class="mb-0">Chargin State:</p>
+                            <div class="align-items-center">
+                                <h4 class="font-weight-semibold mb-0">60%</h4>
+                                <br/>
+                                <div class="w3-border">
+                                    <div class="d-flex align-items-center">
+                                    <div class="charge"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-sm-12 padding">
-                Battery Control
-                <br/>
-                <div class="large-font padding row">
-                    <div class="col-sm">
-                        <label for="state">State:</label>
-                        <select id="state">
-                            <option value="discharge">Discharge</option>
-                        </select>
-                    </div>
-                    <div class="col-sm">
-                        Rate: 700W
-                    </div>
-                    <div class="col-sm">
-                        <button>Set</button>
+            <div class="col-md-6">
+                <div class="card-title">Battery Control</div>
+                <div class="card card-body">
+                    <div>
+                        <form>
+                            <div class="wrapper border-bottom mb-2 pb-2">
+                                <p class="mb-0">State:</p>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-control" id="exampleFormControlSelect1">
+                                          <option>Charge</option>
+                                          <option>Discharge</option>
+                                          <option>Idle</option>
+                                    </select>
+                                    <div class="dot-indicator bg-secondary ml-auto"></div>
+                                </div>
+                            </div>
+                            <div class="wrapper form-group">
+                                <p class="mb-0">Rate:</p>
+                                <div class="d-flex align-items-center">
+                                    <input class="form-control" id="exampleFormControlInput1">
+                                    Watts
+                                    <div class="dot-indicator bg-primary ml-auto"></div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary button-padding">Set</button>
+                        </form>
                     </div>
                 </div>
             </div>

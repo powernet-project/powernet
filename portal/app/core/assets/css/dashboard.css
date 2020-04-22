@@ -70,6 +70,10 @@
 }
 
 /*
+ * Loads
+ */
+
+/*
  * Rounded sliders
  */
 
@@ -130,4 +134,18 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/*
+ * Battery
+ */
+
+.charge {
+  height: 24px;
+  width: 60%;
+  background-color: #8c1515;
+}
+
+.button-padding {
+  padding: 5px 50px;
 }
