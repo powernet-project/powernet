@@ -1,0 +1,40 @@
+{% extends "dashboard.html" %}
+{% load static %}
+
+{% block dashboard-styles %}
+{% endblock dashboard-styles %}
+
+{% block dashboard-resources %}
+<div class="row card hidden-xs">
+    <div class="container">
+        <div class="row hidden-xs">
+            <div class="col-md-6 list-item">
+                <div class="card-body">
+                    <div class="card-title">Electric Vehicle Information</div>
+                    <div class="row battery">
+                        <div class="col-5 col-md-5">
+                            <div class="wrapper border-bottom mb-2 pb-2">
+                                <p class="mb-0">State:</p>
+                                <div class="d-flex align-items-center">
+                                    <h4 class="font-weight-semibold mb-0">Charging</h4>
+                                    <div class="dot-indicator bg-secondary ml-auto"></div>
+                                </div>
+                            </div>
+                            <div class="wrapper">
+                                <p class="mb-0">Current Power:</p>
+                                <div class="d-flex align-items-center">
+                                    <h4 class="font-weight-semibold mb-0">2000W</h4>
+                                    <div class="dot-indicator bg-primary ml-auto"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block dashboard-scripts %}
+{% endblock dashboard-scripts %}

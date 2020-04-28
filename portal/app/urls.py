@@ -31,6 +31,9 @@ urlpatterns = [
     url(r'^consumption/', base.consumption, name='Home Consumption'),
     url(r'^loads/', base.loads, name='Loads'),
     url(r'^battery/', base.battery, name='Battery'),
+    url(r'^solar/', base.solar, name='Solar'),
+    url(r'^hvac/', base.hvac, name='HVAC'),
+    url(r'^ev/', base.ev, name='EV'),
 ]
 
 handler404 = 'app.core.views.base.handler404'
