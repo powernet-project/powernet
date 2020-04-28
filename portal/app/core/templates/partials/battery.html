@@ -5,13 +5,13 @@
 {% endblock dashboard-styles %}
 
 {% block dashboard-resources %}
-<main role="main">
+<div class="row card hidden-xs">
     <div class="container">
         <div class="row hidden-xs">
-            <div class="col-md-6">
-                <div class="card-title">Sales Statistics Overview</div>
-                <div class="card card-body">
-                    <div class="row">
+            <div class="col-md-6 list-item">
+                <div class="card-body">
+                    <div class="card-title">Sales Statistics Overview</div>
+                    <div class="row battery">
                         <div class="col-5 col-md-5">
                             <div class="wrapper border-bottom mb-2 pb-2">
                                 <p class="mb-0">State:</p>
@@ -21,7 +21,7 @@
                                 </div>
                             </div>
                             <div class="wrapper">
-                                <p class="mb-0">Current Power:</p>
+                                <p class="mb-0">Power:</p>
                                 <div class="d-flex align-items-center">
                                     <h4 class="font-weight-semibold mb-0">600W</h4>
                                     <div class="dot-indicator bg-primary ml-auto"></div>
@@ -29,9 +29,9 @@
                             </div>
                         </div>
                         <div class="col-5 col-md-7">
-                            <p class="mb-0">Chargin State:</p>
-                            <div class="align-items-center">
-                                <h4 class="font-weight-semibold mb-0">60%</h4>
+                            <p class="mb-0">Charging State:</p>
+                            <div class="text-center">
+                                <h4 class="font-weight-semibold">60%</h4>
                                 <br/>
                                 <div class="w3-border">
                                     <div class="d-flex align-items-center">
@@ -43,38 +43,40 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card-title">Battery Control</div>
-                <div class="card card-body">
-                    <div>
-                        <form>
-                            <div class="wrapper border-bottom mb-2 pb-2">
-                                <p class="mb-0">State:</p>
-                                <div class="d-flex align-items-center">
-                                    <select class="form-control" id="exampleFormControlSelect1">
-                                          <option>Charge</option>
-                                          <option>Discharge</option>
-                                          <option>Idle</option>
-                                    </select>
-                                    <div class="dot-indicator bg-secondary ml-auto"></div>
+            <div class="col-md-6 list-item">
+                <div class="card-body">
+                    <div class="battery">
+                        <div class="card-title">Battery Control</div>
+                        <div>
+                            <form>
+                                <div class="wrapper mb-2 pb-2">
+                                    <p class="mb-0">State:</p>
+                                    <div class="d-flex align-items-center">
+                                        <select class="form-control" id="exampleFormControlSelect1">
+                                              <option>Charge</option>
+                                              <option>Discharge</option>
+                                              <option>Idle</option>
+                                        </select>
+                                        <div class="dot-indicator bg-secondary ml-auto"></div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="wrapper form-group">
-                                <p class="mb-0">Rate:</p>
-                                <div class="d-flex align-items-center">
-                                    <input class="form-control" id="exampleFormControlInput1">
-                                    Watts
-                                    <div class="dot-indicator bg-primary ml-auto"></div>
+                                <div class="wrapper form-group">
+                                    <p class="mb-0">Rate:</p>
+                                    <div class="d-flex align-items-center">
+                                        <input class="form-control" id="exampleFormControlInput1">
+                                        Watts
+                                        <div class="dot-indicator bg-primary ml-auto"></div>
+                                    </div>
                                 </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary button-padding">Set</button>
-                        </form>
+                                <button type="submit" class="btn btn-primary button-padding float-right">Set</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</main>
+</div>
 {% endblock %}
 
 {% block dashboard-scripts %}
