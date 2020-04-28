@@ -163,3 +163,11 @@ input:checked + .slider:before {
 .button-padding {
   padding: 5px 50px;
 }
+
+/*
+ * Battery
+ */
+
+ .temp-input {
+   width: 25%;
+ }

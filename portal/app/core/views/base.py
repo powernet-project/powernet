@@ -58,7 +58,23 @@ def loads(request):
 
 @login_required
 def battery(request):
-    return render(request, 'partials/battery.html', {'resource': 'battery'}) 
+    return render(request, 'partials/battery.html', {'resource': 'battery'})
+
+
+@login_required
+def solar(request):
+    return render(request, 'partials/solar.html', {'resource': 'solar'})
+
+
+@login_required
+def hvac(request):
+    return render(request, 'partials/hvac.html', {'resource': 'hvac'})
+
+
+@login_required
+def ev(request):
+    return render(request, 'partials/ev.html', {'resource': 'ev'})
+
 #########################################################
 # Actual error page handlers
 #########################################################
