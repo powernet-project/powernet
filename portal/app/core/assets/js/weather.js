@@ -29,9 +29,11 @@ $(document).ready(function(ns) {
             let longitude = position.coords.longitude;
             ns.owmApiCall(null, latitude, longitude).then(function(data) {
                 let urlIcon = "http://openweathermap.org/img/wn/" + data.weather[0].icon + ".png";
-                let temp = data.main.temp;
+                let temp = Math.round(data.main.temp);
                 $("#temp").html(temp + "° F");
                 $("#icon").html("<img src=" + urlIcon +  ">");
+            }).fail(function(){
+                $("#temp").html("- -");
             });
         });
     };

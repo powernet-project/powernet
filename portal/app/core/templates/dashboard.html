@@ -7,15 +7,16 @@
 {% endblock partial_styles %}
 {% block main-content %}
 <div class="main-panel">
-    <div class="content-wrapper">
+    <div class="content-wrapper match-height">
         <div id="resources" class="container-fluid">
             <div class="row">
-                <div class="col-md-11 grid-margin">
+                <div class="col-md-10 grid-margin">
                     <div class="card card-body row page-header">
                         <ul class="nav">
                             <li class="nav-item">
                                 <a class="nav-link" href="/">
-                                    <h4 class="page-title">Resources Information</h4>
+                                    <h4>Resources</h4>
+                                    <h4>Information</h4>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -51,10 +52,10 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-1 d-none d-md-block ml-md-auto">
-                    <div>
+                <div class="col-md-2 d-none d-md-block ml-md-auto">
+                    <div class="card card-body text-center">
                         <h4>
-                          <div id="temp"></div>
+                          <div id="temp">- -</div>
                         </h4>
                         <div id="icon"></div>
                     </div>
@@ -63,19 +64,31 @@
 
 
             <div class="row">
-                <div class="col-md-9 grid-margin">
+                <div class="col-md-9">
                     {% block dashboard-resources %}{% endblock dashboard-resources %}
                 </div>
-                <div class="col-md-3 grid-margin">
+                <div class="col-md-3">
                     <div class="card card-body">
-                        <div class="d-flex mt-3 py-2 border-bottom">
-                            Events Participated: 2 / 8
+                        <div class="wrapper border-bottom mb-2 pb-2">
+                            <p class="mb-0">Events Participated:</p>
+                            <div class="d-flex align-items-center">
+                                <h4 class="font-weight-semibold mb-0"> 2 / 8</h4>
+                                <div class="dot-indicator bg-secondary ml-auto"></div>
+                            </div>
                         </div>
-                        <div class="d-flex mt-3 py-2 border-bottom">
-                            Tokens Collected: 45
+                        <div class="wrapper border-bottom mb-2 pb-2">
+                            <p class="mb-0">Tokens Collected:</p>
+                            <div class="d-flex align-items-center">
+                                <h4 class="font-weight-semibold mb-0">45</h4>
+                                <div class="dot-indicator bg-secondary ml-auto"></div>
+                            </div>
                         </div>
-                        <div class="d-flex mt-3 py-2 border-bottom">
-                            Participation: HIGH
+                        <div class="wrapper border-bottom mb-2 pb-2">
+                            <p class="mb-0">Participation:</p>
+                            <div class="d-flex align-items-center">
+                                <h4 class="font-weight-semibold mb-0">HIGH</h4>
+                                <div class="dot-indicator bg-secondary ml-auto"></div>
+                            </div>
                         </div>
                     </div>
                 </div>

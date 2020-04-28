@@ -2,13 +2,14 @@
 {% load static %}
 
 {% block dashboard-styles %}
+<link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
 {% endblock dashboard-styles %}
 
 {% block dashboard-resources %}
-<div class="card-title">Home Circuit and Plug Loads</div>
-<main role="main" class="row card card-body hidden-xs">
+<div class="row card card-body hidden-xs">
+    <div class="card-title">Home Circuit and Plug Loads</div>
     <div class="container">
-        <div class="row hidden-xs loads-container">
+        <div class="row hidden-xs">
             <div class="col-sm-4" align="center">
                 Living Room: 200W
             </div>
@@ -40,23 +41,20 @@
                 <img src="https://static.thenounproject.com/png/1011325-200.png" height="120">
             </div>
             <div class="col-sm-4 cell" align="center">
-                <br/><br/>
-                <label class="switch">
-                    <input type="checkbox">
-                    <span class="slider round"></span>
-                </label>
+                <br/>
+                <br/>
+                <input type="checkbox" data-toggle="toggle">
             </div>
             <div class="col-sm-4 cell" align="center">
-                <br/><br/>
-                <label class="switch">
-                    <input type="checkbox" checked>
-                    <span class="slider round"></span>
-                </label>
+                <br/>
+                <br/>
+                <input type="checkbox" data-toggle="toggle" checked>
             </div>
         </div>
     </div>
-</main>
+</div>
 {% endblock %}
 
 {% block dashboard-scripts %}
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 {% endblock dashboard-scripts %}

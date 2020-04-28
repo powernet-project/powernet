@@ -1,8 +1,8 @@
 #svg-author-attribution {
-    position: absolute;
-    bottom: 0;
-    right: 10px;
-    font-size: 0.5em;
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  font-size: 0.5em;
 }
 
 /*
@@ -10,16 +10,16 @@
  */
 
 .icons {
-    padding-top: 2vh;
+  padding-top: 2vh;
 }
 
 .cell {
-    height: 25vh;
-    font-size: medium;
+  height: 25vh;
+  font-size: medium;
 }
 
 .nav .current {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
 
 .bg-topbar {
@@ -37,21 +37,23 @@
   -webkit-box-flex: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
+  display: table;
 }
 
 .grid-margin {
-    margin-bottom: 25px;
+  margin-bottom: 25px;
+  display: flex;
 }
 
 .card {
   -webkit-box-shadow: 0 0 0 0 rgba(90, 113, 208, 0.11), 0 4px 16px 0 rgba(167, 175, 183, 0.33);
   box-shadow: 0 0 0 0 rgba(90, 113, 208, 0.11), 0 4px 16px 0 rgba(167, 175, 183, 0.33);
   border: solid 1px #dde4eb;
-  border-radius: 0px;
 }
 
 .card .card-title {
   color: #212529;
+  padding-bottom: 25px;
 }
 
 .card .card-header {
@@ -65,8 +67,20 @@
   padding: 1.25rem;
 }
 
+.card-body .battery {
+  padding: 10px 20px;
+}
+
 .font-weight-semibold {
   font-weight: 600;
+}
+
+.match-heigh {
+  display: flex;
+}
+
+.list-item {
+  display: flex;
 }
 
 /*
@@ -78,10 +92,10 @@
  */
 
  .switch {
-   position: relative;
-   display: inline-block;
-   width: 60px;
-   height: 34px;
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
 }
 
 .switch input {
@@ -91,7 +105,7 @@
 }
 
 .slider {
-position: absolute;
+  position: absolute;
   cursor: pointer;
   top: 0;
   left: 0;
