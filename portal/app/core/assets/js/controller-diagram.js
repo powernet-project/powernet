@@ -7,11 +7,11 @@ var diagram = new SimpleDiagram('#diagram', {
 
 var nodes = [
     {name: 'A', row: 5, column: 1, connectsTo: 'D', shape: 'grid', source: './'},
-    {name: 'B', row: 1, column: 9, connectsTo: 'D', shape: 'solar_panel', source: '/solar', color: 'red'},
-    {name: 'C', row: 3, column: 10, connectsTo: 'D', shape: 'washer', source: './'},
+    {name: 'B', row: 1, column: 9, connectsTo: 'D', shape: 'solar_panel', source: '/solar'},
+    {name: 'C', row: 3, column: 10, connectsTo: 'D', shape: 'washer', source: '/loads'},
     {name: 'D', row: 5, column: 4, shape: 'house', source: './'},
     {name: 'E', row: 7, column: 10, connectsTo: 'D', shape: 'battery', source: '/battery'},
-    {name: 'F', row: 9, column: 9, connectsTo: 'D', shape: 'charger', source: './'},
+    {name: 'F', row: 9, column: 9, connectsTo: 'D', shape: 'charger', source: '/ev'},
     {name: 'G', row: 5, column: 11, connectsTo: 'D', shape: 'hvac', source: '/hvac'},
 ];
 
@@ -26,7 +26,6 @@ nodes.forEach(function(node) {
         row: node.row,
         column: node.column,
         source: node.source,
-        color: node.color
     });
 
 });
