@@ -8,6 +8,9 @@
 /*
  * Top Bar
  */
+.height-top {
+  height: 15vh;
+}
 
 .icons {
   padding-top: 2vh;
