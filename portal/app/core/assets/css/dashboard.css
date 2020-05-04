@@ -29,6 +29,16 @@
   background-color: #8c1515;
 }
 
+.btn-farm {
+  border: 2px solid #e7e7e7;
+  background-color: white;
+  color: black;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4%;
+}
+
 /*
  * Contents
  */
@@ -167,10 +177,49 @@ input:checked + .slider:before {
   padding: 5px 50px;
 }
 
+.temp-input {
+  width: 25%;
+}
+
 /*
- * Battery
+ * Main Farm
  */
 
- .temp-input {
-   width: 25%;
- }
+.col-xs-3.fixed {
+  width:20%;
+}
+
+.light-display {
+  width: 25px;
+  height: 25px;
+  background: red;
+  border-color: black;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.led-red {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  background-color: #F00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 12px;
+}
+
+.led-green {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  background-color: #ABFF00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+}
+
+.led-pad {
+  padding: 5px;
+}
+
+.led-top {
+  padding-top: 5px;
+}
