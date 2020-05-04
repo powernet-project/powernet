@@ -177,8 +177,12 @@ input:checked + .slider:before {
   padding: 5px 50px;
 }
 
+/*
+ * hvac
+ */
+
 .temp-input {
-  width: 25%;
+ width: 25%;
 }
 
 /*
