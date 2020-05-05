@@ -153,3 +153,11 @@ def charts_no_control(request):
     if request.user.powernetuser.type == PowernetUserType.LAB:
         return render(request, 'partials/chart_plots_no_control.html')
     return render(request, 'partials/404.html')
+
+
+@login_required
+def local_fan_info(request):
+    if request.user.powernetuser.type == PowernetUserType.FARM:
+        return render(request, 'partials/local_fan.html')
+    else:
+        return render(request, 'partials/404.html')
