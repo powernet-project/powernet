@@ -1,51 +1,229 @@
 #svg-author-attribution {
-    position: absolute;
-    bottom: 0;
-    right: 10px;
-    font-size: 0.5em;
+  position: absolute;
+  bottom: 0;
+  right: 10px;
+  font-size: 0.5em;
 }
 
-#resources {
-    font-size: x-large;
+/*
+ * Top Bar
+ */
+.height-top {
+  height: 15vh;
 }
 
 .icons {
-    padding-top: 3vh;
-}
-
-.green {
-    fill: green;
-}
-
-.red {
-    fill: red;
-}
-
-.sized-block {
-    height: 30vh;
-}
-
-.center-block {
-    overflow: auto;
-}
-
-.loads-container {
-    padding-top: 10vh;
+  padding-top: 2vh;
 }
 
 .cell {
-    height: 25vh;
-    font-size: medium;
+  height: 25vh;
+  font-size: medium;
 }
 
 .nav .current {
-    background-color: #ebebeb;
+  background-color: #ebebeb;
 }
 
-.padding {
-    padding-top: 6vh;
+.bg-topbar {
+  background-color: #8c1515;
 }
 
-.large-font {
-    font-size: large;
+.btn-farm {
+  border: 2px solid #e7e7e7;
+  background-color: white;
+  color: black;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4%;
+}
+
+/*
+ * Contents
+ */
+
+.content-wrapper {
+  background: #F3F3F3;
+  padding: 1.5rem 1.7rem;
+  width: 100%;
+  -webkit-box-flex: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  display: table;
+}
+
+.grid-margin {
+  margin-bottom: 25px;
+  display: flex;
+}
+
+.card {
+  -webkit-box-shadow: 0 0 0 0 rgba(90, 113, 208, 0.11), 0 4px 16px 0 rgba(167, 175, 183, 0.33);
+  box-shadow: 0 0 0 0 rgba(90, 113, 208, 0.11), 0 4px 16px 0 rgba(167, 175, 183, 0.33);
+  border: solid 1px #dde4eb;
+}
+
+.card .card-title {
+  color: #212529;
+  padding-bottom: 25px;
+}
+
+.card .card-header {
+  background: #fff;
+}
+
+.card-body {
+  -webkit-box-flex: 1;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  padding: 1.25rem;
+}
+
+.card-body .battery {
+  padding: 10px 20px;
+}
+
+.font-weight-semibold {
+  font-weight: 600;
+}
+
+.match-heigh {
+  display: flex;
+}
+
+.list-item {
+  display: flex;
+}
+
+/*
+ * Loads
+ */
+
+/*
+ * Rounded sliders
+ */
+
+ .switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/*
+ * Battery
+ */
+
+.charge {
+  height: 24px;
+  width: 60%;
+  background-color: #8c1515;
+}
+
+.button-padding {
+  padding: 5px 50px;
+}
+
+/*
+ * hvac
+ */
+
+.temp-input {
+ width: 25%;
+}
+
+/*
+ * Main Farm
+ */
+
+.col-xs-3.fixed {
+  width:20%;
+}
+
+.light-display {
+  width: 25px;
+  height: 25px;
+  background: red;
+  border-color: black;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.led-red {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  background-color: #F00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 12px;
+}
+
+.led-green {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  background-color: #ABFF00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+}
+
+.led-pad {
+  padding: 5px;
+}
+
+.led-top {
+  padding-top: 5px;
 }

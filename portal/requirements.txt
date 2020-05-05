@@ -14,7 +14,7 @@ fastcache
 gunicorn
 multiprocess
 networkx
-psycopg2
+psycopg2-binary==2.8.5
 PYPOWER
 pytz
 requests
