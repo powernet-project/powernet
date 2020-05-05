@@ -22,6 +22,7 @@ handlers:
   static_dir: staticfiles/*
 - url: .*
   script: app.wsgi.application
+  secure: always
 
 beta_settings:
   cloud_sql_instances: pwrnet-158117:us-central1:pwrnet-dev-store
