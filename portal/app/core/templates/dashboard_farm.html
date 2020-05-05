@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block partial_styles %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    {% block dashboard-styles %}{% endblock dashboard-styles %}
+{% endblock partial_styles %}
+{% block main-content %}
+<div class="main-panel">
+    <div class="content-wrapper match-height">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-10 grid-margin">
+                    <div class="card card-body row page-header height-top">
+                        <ul class="nav">
+                            <li class="nav-item col-md-6 text-center">
+                                <a class="nav-link icons w3-bar-item w3-button btn-farm" href="">
+                                        Local Fan Information
+                                </a>
+                            </li>
+                            <li class="nav-item col-md-6 text-center">
+                                <a class="nav-link icons w3-bar-item w3-button btn-farm" href="">
+                                        Energy Summary
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 d-none d-md-block">
+                    <div class="card card-body text-center height-top">
+                        <h4>
+                          <div id="temp">- -</div>
+                        </h4>
+                        <div id="icon"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 d-none d-md-block">
+                    {% block dashboard-main %}{% endblock dashboard-main %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock main-content %}
+
+{% block page-scripts %}
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/weather.js' %}"></script>
+    {% block dashboard-scripts %}{% endblock dashboard-scripts %}
+{% endblock page-scripts %}
