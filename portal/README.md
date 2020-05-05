@@ -19,7 +19,7 @@ pip install -r requirements.txt
 - Boot the DB (you can use pgadmin and connect to the DB.) Look in the gains_debug settings file to view expected params. 
 Also, once you connect to *your local* db for the very first time, run:
 ```
-python manage.py migrate  #please don't run this against the prod DB config
+python manage.py migrate --settings=app.settings.gains_debug #please don't run this against the prod DB config
 ```
 
 - Lastly, run the django server:
