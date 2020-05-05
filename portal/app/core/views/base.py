@@ -159,5 +159,4 @@ def charts_no_control(request):
 def local_fan_info(request):
     if request.user.powernetuser.type == PowernetUserType.FARM:
         return render(request, 'partials/local_fan.html')
-    else:
-        return render(request, 'partials/404.html')
+    return render(request, 'partials/403.html')
