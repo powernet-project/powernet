@@ -105,6 +105,7 @@ class Home(models.Model):
 
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=1000)
+    description = models.CharField(max_length=1000, null=True)
     type = EnumField(HomeType, default=HomeType.UNKNOWN, max_length=20)
     owner = models.ForeignKey(PowernetUser, on_delete=models.deletion.CASCADE)
 
@@ -128,6 +129,7 @@ class Device(models.Model):
 
     home = models.ForeignKey(Home, on_delete=models.deletion.CASCADE)
     name = models.CharField(max_length=200)
+    description = models.CharField(max_length=1000, null=True)
     type = EnumField(DeviceType, max_length=40)
     status = EnumField(DeviceStatus, default=DeviceStatus.UNKNOWN, max_length=40)
     value = models.IntegerField(default=0)
