@@ -25,6 +25,9 @@ urlpatterns = [
     url(r'^home/two/', base.home_two, name='Home Two'),
     url(r'^cost-min/', base.opf, name='OPF'),
 
+    # View for farm account only
+    url(r'^local_fan_info/', base.local_fan_info, name='Local Fan Info'),
+
     # Powernet Application Views
     url(r'^settings/', base.settings, name='Home Settings'),
     url(r'^devices/', base.devices, name='Home Devices'),
