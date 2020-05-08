@@ -24,6 +24,9 @@ ALLOWED_HOSTS = [
 ROOT_URLCONF = 'app.urls'
 WSGI_APPLICATION = 'app.wsgi.application'
 
+SECURE_SSL_REDIRECT = not DEBUG
+
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
