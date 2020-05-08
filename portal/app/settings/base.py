@@ -24,8 +24,10 @@ ALLOWED_HOSTS = [
 ROOT_URLCONF = 'app.urls'
 WSGI_APPLICATION = 'app.wsgi.application'
 
-SECURE_SSL_REDIRECT = not DEBUG
 
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
 
 # Application definition
 INSTALLED_APPS = [
