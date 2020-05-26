@@ -1,10 +1,4 @@
 
-var d = new Date(0);
-
-d.setUTCSeconds(Object.values(device_data["timestamp"])[0]);
-
-console.log(d)
-
 var temperature = {
     x: Object.values(device_data["timestamp"]),
     y: Object.values(device_data["temperature"]),
