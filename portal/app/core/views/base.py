@@ -6,7 +6,6 @@ from app.models import Home, Device, PowernetUserType, FarmData
 from app.api.v1.endpoint.device import DeviceSerializer
 from django.contrib.auth.decorators import login_required
 from app.api.v1.endpoint.farm_device import FarmDataSerializer
-from rest_framework.views import APIView
 from app.api.v1.endpoint.farm_data_parser import *
 import datetime
 
