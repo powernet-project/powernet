@@ -1,0 +1,24 @@
+{% extends "dashboard_farm.html" %}
+
+{% load static %}
+{% block dashboard-styles %}
+    <link rel="stylesheet" href="{% static "css/dashboard.css" %}"/>
+{% endblock %}
+{% block dashboard-main %}
+
+<div class="row">
+    <div class="card hidden-xs card-body">
+        <div id='temperature-plot'></div>
+        <div id='humidity-plot'></div>
+    </div>
+</div>
+
+{% endblock dashboard-main %}
+
+{% block  dashboard-scripts %}
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<script type="text/javascript">
+    var device_data = JSON.parse(JSON.stringify({{ device_data|safe }}));
+</script>
+<script src="{% static 'js/energy_summary.js' %}"></script>
+{% endblock dashboard-scripts %}

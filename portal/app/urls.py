@@ -27,6 +27,7 @@ urlpatterns = [
 
     # View for farm account only
     url(r'^local_fan_info/', base.local_fan_info, name='Local Fan Info'),
+    url(r'^energy_summary/', base.energy_summary, name='Energy Summary'),
 
     # Powernet Application Views
     url(r'^settings/', base.settings, name='Home Settings'),

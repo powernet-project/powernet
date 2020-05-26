@@ -2,9 +2,13 @@ import json
 from django.shortcuts import render
 from rest_framework.authtoken.models import Token
 from app.api.v1.endpoint.home import HomeSerializer
-from app.models import Home, Device, PowernetUserType
+from app.models import Home, Device, PowernetUserType, FarmData
 from app.api.v1.endpoint.device import DeviceSerializer
 from django.contrib.auth.decorators import login_required
+from app.api.v1.endpoint.farm_device import FarmDataSerializer
+from rest_framework.views import APIView
+from app.api.v1.endpoint.farm_data_parser import *
+import datetime
 
 
 @login_required
@@ -28,7 +32,6 @@ def index(request):
         template = 'partials/main_farm.html'
     else:
         template = 'partials/main_home.html'
-
     return render(request, template, {
         'token': token,
         'homes': serialized_homes,
@@ -158,5 +161,28 @@ def charts_no_control(request):
 @login_required
 def local_fan_info(request):
     if request.user.powernetuser.type == PowernetUserType.FARM:
-        return render(request, 'partials/local_fan.html')
+        return render(request, 'partials/local_fan.html', {'resource': 'local_fan'})
+    return render(request, 'partials/403.html')
+
+
+@login_required
+def energy_summary(request):
+    if request.user.powernetuser.type == PowernetUserType.FARM:
+        # query the last timestamp
+        last_object = FarmData.objects.filter(farm_device_id = 01).latest('timestamp')
+        serialized_last_object = FarmDataSerializer(last_object).data
+        last_timestamp = datetime.datetime.strptime(serialized_last_object["timestamp"], '%Y-%m-%dT%H:%M:%S.%fZ')
+        # last timestamp - 24 hours
+        time_24_hours_ago = last_timestamp - datetime.timedelta(days=1)
+
+        # query farm data for the last 24 hours for farm_device_id 01
+        farm_device = FarmData.objects.filter(farm_device_id = 01, timestamp__gte = time_24_hours_ago).order_by('-timestamp')
+        serialized_farm_data = FarmDataSerializer(farm_device, many=True).data
+
+        # pass list to farm_data_parser with wanted fields
+        # make sure serialized data is the last element
+        argv = ["temperature", "rel_humidity", "timestamp", serialized_farm_data]
+        device_data = farm_data_parser(argv)
+
+        return render(request, 'partials/energy_summary.html', {'resource': 'energy_summary', 'device_data': device_data})
     return render(request, 'partials/403.html')

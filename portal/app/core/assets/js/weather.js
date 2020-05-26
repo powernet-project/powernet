@@ -30,7 +30,8 @@ $(document).ready(function(ns) {
             ns.owmApiCall(null, latitude, longitude).then(function(data) {
                 let urlIcon = "http://openweathermap.org/img/wn/" + data.weather[0].icon + ".png";
                 let temp = Math.round(data.main.temp);
-                $("#temp").html(temp + "° F");
+                let windSpeed = Math.round(data.wind.speed);
+                $("#temp").html(temp + "° F - " + windSpeed + "mph");
                 $("#icon").html("<img src=" + urlIcon +  ">");
             }).fail(function(){
                 $("#temp").html("- -");
