@@ -51,16 +51,7 @@
 {% endblock main-content %}
 
 {% block page-scripts %}
-    <script type="text/javascript">
-        // let token = '{{ token }}';
-        // let homeList = {{ homes | safe }};
-        // let deviceList = {{ devices | safe }};
-
-        // window.localStorage.setItem('token', token);
-        // window.localStorage.setItem('homes', JSON.stringify(homeList));
-        // window.localStorage.setItem('devices', JSON.stringify(deviceList));
-    </script>
+    {% block dashboard-scripts %}{% endblock dashboard-scripts %}
     <script src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/weather.js' %}"></script>
-    {% block dashboard-scripts %}{% endblock dashboard-scripts %}
 {% endblock page-scripts %}

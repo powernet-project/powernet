@@ -15,10 +15,8 @@ def farm_data_parser(argv):
     # creates dataframe with argument fields as columns
     farm_df = pd.DataFrame(farm_data)[argv[:-1]]
 
-    try:
-        farm_df["timestamp"] = pd.to_datetime(farm_df["timestamp"])
-    except KeyError:
-        print("Timestamp column not found.")
+    farm_df["timestamp"] = pd.to_datetime(farm_df["timestamp"])
 
+    farm_df = farm_df.resample('5Min', on="timestamp").mean().reset_index()
     # prepares json to be sent to javascript
     return farm_df.to_json(date_format='iso')

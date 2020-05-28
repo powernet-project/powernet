@@ -12,7 +12,7 @@ var humidity = {
 }
 
 var temperature_data = [temperature];
-var humidity_data = [humidity]
+var humidity_data = [humidity];
 
 Plotly.newPlot('temperature-plot', temperature_data, {title: {text: 'temperature'}});
 Plotly.newPlot('humidity-plot', humidity_data, {title: {text: 'humidity'}});
