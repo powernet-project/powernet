@@ -176,7 +176,7 @@ def energy_summary(request):
             time_24_hours_ago = last_timestamp - datetime.timedelta(days=1)
 
             # query farm data for the last 24 hours for farm_device_id 01
-            farm_device = FarmData.objects.filter(farm_device_id__gte = 01, farm_device_id__lte = 18, timestamp__gte = time_24_hours_ago).order_by('-timestamp')
+            farm_device = FarmData.objects.filter(farm_device_id__gte = 01, farm_device_id__lte = 16, timestamp__gte = time_24_hours_ago).order_by('-timestamp')
             serialized_farm_data = FarmDataSerializer(farm_device, many=True).data
 
             # pass list to farm_data_parser with wanted fields
