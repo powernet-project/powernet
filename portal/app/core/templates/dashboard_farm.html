@@ -13,13 +13,18 @@
                 <div class="col-md-10 grid-margin">
                     <div class="card card-body row page-header height-top">
                         <ul class="nav">
-                            <li class="nav-item col-md-6 text-center">
-                                <a class="nav-link icons w3-bar-item w3-button btn-farm {% if resource == 'local_fan_info' %}current{% endif %}" href="/local_fan_info">
+                            <li class="nav-item col-md-4 text-center">
+                                <a class="nav-link icons w3-bar-item w3-button btn-farm" href="/">
+                                        Overview
+                                </a>
+                            </li>
+                            <li class="nav-item col-md-4 text-center">
+                                <a class="nav-link icons w3-bar-item w3-button btn-farm {% if resource == 'local_fan' %}current{% endif %}" href="/local_fan_info">
                                         Local Fan Information
                                 </a>
                             </li>
-                            <li class="nav-item col-md-6 text-center">
-                                <a class="nav-link icons w3-bar-item w3-button btn-farm" href="">
+                            <li class="nav-item col-md-4 text-center">
+                                <a class="nav-link icons w3-bar-item w3-button btn-farm {% if resource == 'energy_summary' %}current{% endif %}" href="/energy_summary">
                                         Energy Summary
                                 </a>
                             </li>
@@ -46,16 +51,7 @@
 {% endblock main-content %}
 
 {% block page-scripts %}
-    <script type="text/javascript">
-        let token = '{{ token }}';
-        let homeList = {{ homes | safe }};
-        let deviceList = {{ devices | safe }};
-
-        window.localStorage.setItem('token', token);
-        window.localStorage.setItem('homes', JSON.stringify(homeList));
-        window.localStorage.setItem('devices', JSON.stringify(deviceList));
-    </script>
+    {% block dashboard-scripts %}{% endblock dashboard-scripts %}
     <script src="{% static 'js/dashboard.js' %}"></script>
     <script src="{% static 'js/weather.js' %}"></script>
-    {% block dashboard-scripts %}{% endblock dashboard-scripts %}
 {% endblock page-scripts %}
