@@ -38,21 +38,24 @@ def batt_dispatch():
         print('Battery Serial: ', batt_serial)
 
         if hour_day < 7:
-            if soc < 98:
+            if soc < 90:
+                batt_instance.enable_manual_mode(serial=batt_serial)
                 batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='2000')
                 print('Battery charging at 2kW...')
             else:
-                batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='0')
+                batt_instance.enable_self_consumption(serial=batt_serial)
+                batt_instance.self_consumption_backup(serial=batt_serial, value='90')
 
         elif hour_day < 18:
-            batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='0')
-            print('Battery in idle mode...')
+            batt_instance.enable_self_consumption(serial=batt_serial)
+            batt_instance.self_consumption_backup(serial=batt_serial, value='90')
+            print('Battery in self consumption mode, backup 90%...')
 
         elif hour_day < 22:
             if avg_test_pen_power < -4000:
                 if soc > 5:
-                    batt_instance.manual_mode_control(serial=batt_serial, mode='discharge', value='4000')
-                    print('Battery discharging at 4kW')
+                    batt_instance.manual_mode_control(serial=batt_serial, mode='discharge', value='4500')
+                    print('Battery discharging at 4.5kW')
                 else:
                     batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='0')
             else:
