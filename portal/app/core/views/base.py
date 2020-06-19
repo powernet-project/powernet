@@ -169,14 +169,14 @@ def energy_summary(request):
     if request.user.powernetuser.type == PowernetUserType.FARM:
         # query the last timestamp
         try:
-            last_object = FarmData.objects.filter(farm_device_id__gte = 01, farm_device_id__lte = 16).latest('timestamp')
+            last_object = FarmData.objects.filter(farm_device_id__gte = 1, farm_device_id__lte = 16).latest('timestamp')
             serialized_last_object = FarmDataSerializer(last_object).data
             last_timestamp = datetime.datetime.strptime(serialized_last_object["timestamp"], '%Y-%m-%dT%H:%M:%S.%fZ')
             # last timestamp - 24 hours
             time_24_hours_ago = last_timestamp - datetime.timedelta(days=1)
 
             # query farm data for the last 24 hours for farm_device_id 01
-            farm_device = FarmData.objects.filter(farm_device_id__gte = 01, farm_device_id__lte = 16, timestamp__gte = time_24_hours_ago).order_by('-timestamp')
+            farm_device = FarmData.objects.filter(farm_device_id__gte = 1, farm_device_id__lte = 16, timestamp__gte = time_24_hours_ago).order_by('-timestamp')
             serialized_farm_data = FarmDataSerializer(farm_device, many=True).data
 
             # pass list to farm_data_parser with wanted fields

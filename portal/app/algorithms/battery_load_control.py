@@ -54,13 +54,17 @@ def batt_dispatch():
         elif hour_day < 22:
             if avg_test_pen_power < -4000:
                 if soc > 5:
+                    batt_instance.enable_manual_mode(serial=batt_serial)
                     batt_instance.manual_mode_control(serial=batt_serial, mode='discharge', value='4500')
                     print('Battery discharging at 4.5kW')
                 else:
+                    batt_instance.enable_manual_mode(serial=batt_serial)
                     batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='0')
             else:
+                batt_instance.enable_manual_mode(serial=batt_serial)
                 batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='0')
 
         else:
+            batt_instance.enable_manual_mode(serial=batt_serial)
             batt_instance.manual_mode_control(serial=batt_serial, mode='charge', value='2000')
             print('Battery charging at 2kW...')
