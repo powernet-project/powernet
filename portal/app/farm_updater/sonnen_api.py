@@ -39,9 +39,9 @@ class SonnenApiInterface:
             print('Error enable_self_consumption: ', err)
             return None
 
-    def self_consumption_backup(self, serial, value='85'):
+    def self_consumption_backup(self, serial, value='90'):
         try:
-            resp = requests.get(self.url_ini + serial + self.scbk_endpoint + value, headers=self.headers)
+            resp = requests.get(self.url + serial + self.scbk_endpoint + value, headers=self.headers)
             resp.raise_for_status()
             return resp.json()
 
