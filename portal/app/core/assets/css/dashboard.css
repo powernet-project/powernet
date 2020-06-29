@@ -190,7 +190,8 @@ input:checked + .slider:before {
  */
 
 .col-xs-3.fixed {
-  width:20%;
+  width: 20%;
+  vertical-align: middle;
 }
 
 .light-display {
