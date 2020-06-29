@@ -213,7 +213,7 @@ def energy_summary(request):
                                                         '%Y-%m-%dT%H:%M:%S.%fZ')
             # last timestamp - 24 hours
             time_24_hours_ago = last_timestamp - datetime.timedelta(days=1)
-
+         
             # query farm data for the last 24 hours for farm_device_id 01 - 16
             farm_device = FarmData.objects.filter(farm_device_id__gte = 1, farm_device_id__lte = 16,
                                                   timestamp__gte = time_24_hours_ago).order_by('-timestamp')
