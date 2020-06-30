@@ -8,6 +8,8 @@
 
 <div class="row">
     <div class="card hidden-xs card-body">
+        <div id='power-plot'></div>
+        <div id='energy-plot'></div>
         <div id='temperature-plot'></div>
         <div id='humidity-plot'></div>
     </div>
@@ -19,6 +21,8 @@
 <script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
 <script type="text/javascript">
     var device_data = JSON.parse(JSON.stringify({{ device_data|safe }}));
+    var farm_data = JSON.parse(JSON.stringify({{ farm_data|safe }}));
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
 <script src="{% static 'js/energy_summary.js' %}"></script>
 {% endblock dashboard-scripts %}
