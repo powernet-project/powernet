@@ -20,6 +20,8 @@ class LoraDeviceViewSet(APIView):
                     temperature = round(i['value']*1.8 + 32, 2)   # Coverting to F and limiting to 2 decimal places
                 elif i['name'] == 'Humidity':
                     rel_humidity = i['value']
+                elif i['name'] == 'Battery':
+                    batt_value = i['value']
                 else:
                     pass
             ts = datetime.datetime.fromtimestamp(data['event_data']['timestamp'] / 1000.)
@@ -34,7 +36,6 @@ class LoraDeviceViewSet(APIView):
                                             'dev_internal_id': dev_internal_id,
                                             'timestamp': timestamp})]
             else:
-                batt_value = data['event_data']['payload'][4]['value']
                 return [device_uid, json.dumps({'temperature': temperature,
                                                 'rel_humidity': rel_humidity,
                                                 'batt_value': batt_value,
