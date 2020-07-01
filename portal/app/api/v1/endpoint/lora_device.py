@@ -42,6 +42,7 @@ class LoraDeviceViewSet(APIView):
             return None
 
     def post(self, request):
+        print('Lora Request: ', request.data)
         lora_data = self._data_parsing(request.data)
         if lora_data is not None:
             try:
