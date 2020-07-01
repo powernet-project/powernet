@@ -15,6 +15,7 @@ class LoraDeviceViewSet(APIView):
     def _data_parsing(self, data):
 
         try:
+            print('Lora Data: ', data)
             temperature = data['event_data']['payload'][2]['value']
             rel_humidity = data['event_data']['payload'][3]['value']
             ts = datetime.datetime.fromtimestamp(data['event_data']['timestamp'] / 1000.)
