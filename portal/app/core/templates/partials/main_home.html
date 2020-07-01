@@ -7,13 +7,41 @@
 
 {% block dashboard-resources %}
 <main role="main" class="row card card-body px-4 text-center">
-    <div id="diagram"></div>
+    <svg id="box" viewBox="0 0 1300 1000">
+    <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+        <g>
+            <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+                <rect fill="url(#gridpattern)" stroke-width="0" y="0" x="0" height="100%" width="100%"/>
+            </g>
+        </g>
+        <g>
+            <a href="./"><image stroke="null" href="https://cdn2.iconfinder.com/data/icons/internet-of-things-solid-convergence/512/Smart_home-512.png" id="svg_3" height="8%" width="8%" y="500" x="503.00001" src="./"/></a>
+            <a href="/hvac"><image stroke="null" href="https://cdn1.iconfinder.com/data/icons/universal-mobile-line-icons-vol-7/48/310-512.png" id="svg_5" height="8%" width="8%" y="204" x="902"/></a>
+            <a href="./"><image stroke="null" href="https://cdn4.iconfinder.com/data/icons/environment-ecology-energy/100/21-512.png" id="svg_6" height="8%" width="8%" y="501" x="201"/></a>
+            <a href="/loads"><image stroke="null" href="https://cdn0.iconfinder.com/data/icons/home-appliances-set-linear-outline-1/300/213012603Untitled-3-512.png" id="svg_7" height="8%" width="8%" y="100" x="700"/></a>
+            <a href="/solar"><image stroke="null" href="https://cdn2.iconfinder.com/data/icons/energy-and-resources/80/14_energy_solar_pannel-512.png" id="svg_8" height="8%" width="8%" y="603.00001" x="901"/></a>
+            <a href="/battery"><image stroke="null" href="https://s3.amazonaws.com/iconbros/icons/icon_pngs/000/002/243/original/battery.png?1561490161" id="svg_9" height="8%" width="8%" y="801.99999" x="702"/></a>
+            <a href="/ev"><image stroke="null" href="https://static.thenounproject.com/png/725-200.png" id="svg_10" height="8%" width="8%" y="400" x="1001"/></a>
+            <path stroke="#000" id="svg_11" d="m536.5,498l0.53322,-348l159.96678,0.99429" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="2.5" fill="#fff"/>
+            <path id="svg_13" d="m952.5,331" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="2.5" stroke="#000" fill="#fff"/>
+            <path id="svg_17" d="m580.5,500l0.5,-101l368,1l1,-105" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="2.5" stroke="#000" fill="none"/>
+            <path id="svg_19" d="m599.5,542l446.5,0l0,-42" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="2.5" stroke="#000" fill="none"/>
+            <path id="svg_21" d="m601.5,580c0,0 55,1 54.5,1c0.5,0 0.5,73 0,73c0.5,0 243.5,0 243,0" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="2.5" stroke="#000" fill="none"/>
+            <path id="svg_22" d="m569.5,602l-0.5,249l128,0" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="2.5" stroke="#000" fill="none"/>
+            <path id="svg_23" d="m300.5,551l198.5,0" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="2.5" stroke="#000" fill="none"/>
+        </g>
+    </svg>
+
+
+
+
+
+
+
 </main>
 {% endblock %}
 
 {% block dashboard-scripts %}
 <script src="https://d3js.org/d3-selection.v1.min.js"></script>
 <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
-<script src="{% static "js/simple-diagram.js" %}"></script>
-<script src="{% static "js/controller-diagram.js" %}"></script>
 {% endblock dashboard-scripts %}

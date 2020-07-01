@@ -1,4 +1,3 @@
-
 var temperature = {
     x: Object.values(device_data["timestamp"]),
     y: Object.values(device_data["temperature"]),

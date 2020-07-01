@@ -19,7 +19,7 @@ body {
    bottom: 0;
    z-index: 100; /* Behind the navbar */
    padding: 48px 0 0; /* Height of navbar */
-   position: relative;
+   position: fixed;
  }
 
  #sidebar.active {
