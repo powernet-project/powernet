@@ -15,9 +15,13 @@ class LoraDeviceViewSet(APIView):
     def _data_parsing(self, data):
 
         try:
-            print('Lora Data: ', data)
-            temperature = data['event_data']['payload'][2]['value']
-            rel_humidity = data['event_data']['payload'][3]['value']
+            for i in data['event_data']['payload']:
+                if i['name'] == 'Internal Temp':
+                    temperature = round(i['value']*1.8 + 32, 2)   # Coverting to F and limiting to 2 decimal places
+                elif i['name'] == 'Humidity':
+                    rel_humidity = i['value']
+                else:
+                    pass
             ts = datetime.datetime.fromtimestamp(data['event_data']['timestamp'] / 1000.)
             timestamp = ts.strftime("%Y-%m-%d %H:%M:%S")
             dev_internal_id = data['device']['id']
@@ -42,7 +46,6 @@ class LoraDeviceViewSet(APIView):
             return None
 
     def post(self, request):
-        print('Lora Request: ', request.data)
         lora_data = self._data_parsing(request.data)
         if lora_data is not None:
             try:
