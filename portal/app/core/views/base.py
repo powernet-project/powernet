@@ -60,6 +60,7 @@ def index(request):
 
             return_dict.update({'pen_power' : pen_power, "pen1_fan" : pen1_fan, 'temp_hum' : temp_hum})
             template = 'partials/main_farm.html'
+            
         except (TypeError, KeyError):
             return render(request, 'partials/404.html')
 
