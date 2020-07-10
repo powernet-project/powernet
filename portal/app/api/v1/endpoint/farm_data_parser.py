@@ -71,8 +71,12 @@ def main_power_parser(data):
     farm_df = pd.DataFrame(farm_data)
 
     farm_df["POWER_TEST_PEN"] = farm_df["POWER_TEST_PEN"].abs() / 1000
-    farm_df["energy"] = farm_df["POWER_TEST_PEN"] / 12
+
     # timezone changed from utc to pacific
     farm_df["timestamp"] = utc_to_pst(farm_df["timestamp"])
+    farm_df = farm_df.resample('5Min', on="timestamp").mean().reset_index()
+    farm_df.loc[0, "energy"] = farm_df.loc[0, "POWER_TEST_PEN"]
+    for i in range(1, len(farm_df)):
+        farm_df.loc[i, "energy"] = farm_df.loc[i, "POWER_TEST_PEN"] / 12 + farm_df.loc[i-1, "energy"]
 
     return farm_df.to_json(date_format="iso")

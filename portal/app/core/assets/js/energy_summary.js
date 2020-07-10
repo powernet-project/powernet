@@ -15,6 +15,8 @@ var power = {
     y: Object.values(farm_data["POWER_TEST_PEN"]),
     type: 'scatter'
 };
+console.log(Object.values(farm_data["timestamp"]))
+console.log(Object.values(farm_data["POWER_TEST_PEN"]))
 
 var energy = {
     x: Object.values(farm_data["timestamp"]),
