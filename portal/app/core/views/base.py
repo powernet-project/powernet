@@ -36,7 +36,6 @@ def index(request):
     elif request.user.powernetuser.type == PowernetUserType.FARM:
 
         try:
-            fd_obj = FarmData.objects
             # querying power consumption data
             # pen_power also used for bottom row control fan power
             last_object = FarmData.objects.filter(farm_device_id = 17).latest('timestamp')
@@ -60,7 +59,7 @@ def index(request):
 
             return_dict.update({'pen_power' : pen_power, "pen1_fan" : pen1_fan, 'temp_hum' : temp_hum})
             template = 'partials/main_farm.html'
-            
+
         except (TypeError, KeyError):
             return render(request, 'partials/404.html')
 
