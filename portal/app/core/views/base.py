@@ -7,6 +7,7 @@ from app.api.v1.endpoint.device import DeviceSerializer
 from django.contrib.auth.decorators import login_required
 from app.api.v1.endpoint.farm_device import FarmDataSerializer
 from app.api.v1.endpoint.farm_data_parser import *
+from django.utils import timezone
 import datetime
 
 
@@ -35,34 +36,36 @@ def index(request):
         template = 'partials/main_lab.html'
     elif request.user.powernetuser.type == PowernetUserType.FARM:
 
-        # querying power consumption data
-        # pen_power also used for bottom row control fan power
-        last_object = FarmData.objects.filter(farm_device_id = 17).latest('timestamp')
-        serialized_farm_data = FarmDataSerializer(last_object).data
-        pen_power = json.dumps(main_farm_parser(serialized_farm_data))
+        try:
+            current_ts = datetime.datetime.now(tz=timezone.utc)
+            time_2_hours_ago = current_ts - datetime.timedelta(hours=2)
 
-        # querying pen1 test data for the top row of fans
-        farm_device = FarmData.objects.filter(farm_device_id = 20).values('device_data').order_by('-timestamp')
-        serialized_farm_data = FarmDataSerializer(farm_device, many=True).data
-        pen1_fan = local_fan_info_parser(serialized_farm_data)
+            farm_data = FarmData.objects.filter(farm_device_id__gte=1, farm_device_id__lte=20, timestamp__gte=time_2_hours_ago).order_by('-timestamp')
+            farm_data_l = list(farm_data)
 
-        # querying to get latest timestamp value
-        last_object = FarmData.objects.filter(farm_device_id__gte = 1,
-                                              farm_device_id__lte = 16).latest('timestamp')
-        serialized_last_object = FarmDataSerializer(last_object).data
-        last_timestamp = datetime.datetime.strptime(serialized_last_object['timestamp'],
-                                                    '%Y-%m-%dT%H:%M:%S.%fZ')
-        # last timestamp - 2 hours
-        time_2_hours_ago = last_timestamp - datetime.timedelta(hours=2)
-        # querying the last 2 hours of data for average humidity and average temperature
-        farm_device = FarmData.objects.filter(farm_device_id__gte = 1, farm_device_id__lte = 16,
-                                              timestamp__gte = time_2_hours_ago)
-        serialized_farm_data = FarmDataSerializer(farm_device, many=True).data
-        argv = ['temperature', 'rel_humidity', 'timestamp', serialized_farm_data]
-        temp_hum = energy_summary_parser(argv)
+            # querying power consumption data
+            # pen_power also used for bottom row control fan power
+            pen_power_prep = [element for element in farm_data_l if element.farm_device_id == 17]
+            serialized_farm_data = FarmDataSerializer(pen_power_prep, many=True).data
+            pen_power = main_farm_parser(serialized_farm_data[0])
 
-        return_dict.update({'pen_power' : pen_power, "pen1_fan" : pen1_fan, 'temp_hum' : temp_hum})
-        template = 'partials/main_farm.html'
+            # querying pen1 test data for the top row of fans
+            pen_1_prep = [element for element in farm_data_l if element.farm_device_id == 20]
+            serialized_farm_data = FarmDataSerializer(pen_1_prep, many=True).data
+            pen1_fan = local_fan_info_parser(serialized_farm_data)
+
+            # querying the last 2 hours of data for average humidity and average temperature
+            temp_hum_prep = [element for element in farm_data_l if 0 < element.farm_device_id < 17]
+            serialized_farm_data = FarmDataSerializer(temp_hum_prep, many=True).data
+            argv = ['temperature', 'rel_humidity', 'timestamp', serialized_farm_data]
+            temp_hum = energy_summary_parser(argv)
+
+            return_dict.update({'pen_power' : pen_power, 'pen1_fan' : pen1_fan, 'temp_hum' : temp_hum})
+            template = 'partials/main_farm.html'
+
+        except (TypeError, KeyError):
+            return render(request, 'partials/404.html')
+
     else:
         template = 'partials/main_home.html'
     return render(request, template, return_dict)
@@ -195,7 +198,6 @@ def local_fan_info(request):
         farm_device = FarmData.objects.filter(farm_device_id = 20).values('device_data').order_by('-timestamp')
         serialized_farm_data = FarmDataSerializer(farm_device, many=True).data
         farm_data2 = local_fan_info_parser(serialized_farm_data)
-
         return_dict = {'resource': 'local_fan', 'farm_data2' : farm_data2}
 
         return render(request, 'partials/local_fan.html', return_dict)
@@ -204,36 +206,32 @@ def local_fan_info(request):
 
 @login_required
 def energy_summary(request):
-    if request.user.powernetuser.type == PowernetUserType.FARM:
-        # query the last timestamp
-        try:
-            last_object = FarmData.objects.filter(farm_device_id__gte = 1, farm_device_id__lte = 16).latest('timestamp')
-            serialized_last_object = FarmDataSerializer(last_object).data
-            last_timestamp = datetime.datetime.strptime(serialized_last_object['timestamp'],
-                                                        '%Y-%m-%dT%H:%M:%S.%fZ')
-            # last timestamp - 24 hours
-            time_24_hours_ago = last_timestamp - datetime.timedelta(days=1)
-         
-            # query farm data for the last 24 hours for farm_device_id 01 - 16
-            farm_device = FarmData.objects.filter(farm_device_id__gte = 1, farm_device_id__lte = 16,
-                                                  timestamp__gte = time_24_hours_ago).order_by('-timestamp')
-            serialized_farm_data = FarmDataSerializer(farm_device, many=True).data
+    if request.user.powernetuser.type != PowernetUserType.FARM:
+        return render(request, 'partials/403.html')
 
-            # pass list to farm_data_parser with wanted fields
-            # make sure serialized data is the last element
-            argv = ['temperature', 'rel_humidity', 'timestamp', serialized_farm_data]
-            device_data = energy_summary_parser(argv)
+    try:
+        current_ts = datetime.datetime.now(tz=timezone.utc)
+        time_24_hours_ago = current_ts - datetime.timedelta(days=1)
 
-            #query farm data for the same timerange as above for device_id = 17 to obtain power data
-            power_device = FarmData.objects.filter(farm_device_id = 17, timestamp__gte =
-                                                   time_24_hours_ago).order_by('-timestamp')
+        farm_data = FarmData.objects.filter(farm_device_id__gte=1, farm_device_id__lte=17, timestamp__gte=time_24_hours_ago).order_by('-timestamp')
+        farm_data_l = list(farm_data)
 
-            serialized_power_data = FarmDataSerializer(power_device, many=True).data
-            farm_data = main_power_parser(serialized_power_data)
+        # query farm data for the last 24 hours for farm_device_id 01 - 16
+        energy_prep1 = [element for element in farm_data_l if element.farm_device_id != 17]
+        serialized_energy1 = FarmDataSerializer(energy_prep1, many=True).data
 
-        except TypeError:
-            return render(request, 'partials/404.html')
+        # pass list to farm_data_parser with wanted fields
+        # make sure serialized data is the last element
+        argv = ['temperature', 'rel_humidity', 'timestamp', serialized_energy1]
+        device_data = energy_summary_parser(argv)
+
+        #query farm data for the same timerange as above for device_id = 17 to obtain power data
+        energy_prep2 = [element for element in farm_data_l if element.farm_device_id == 17]
+        serialized_energy2 = FarmDataSerializer(energy_prep2, many=True).data
+        farm_data = main_power_parser(serialized_energy2)
 
         return_dict = {'resource': 'energy_summary', 'device_data': device_data, 'farm_data': farm_data}
         return render(request, 'partials/energy_summary.html', return_dict)
-    return render(request, 'partials/403.html')
+
+    except (TypeError, KeyError):
+        return render(request, 'partials/404.html')

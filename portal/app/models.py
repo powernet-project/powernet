@@ -175,7 +175,7 @@ class FarmData(models.Model):
 
     farm_device = models.ForeignKey(FarmDevice, null=True, on_delete=models.deletion.CASCADE)
     device_data = JSONField(null=True, blank=True, default=None)
-    timestamp = models.DateTimeField(default=timezone.now)
+    timestamp = models.DateTimeField(default=timezone.now, db_index=True)
 
 
 class FarmMaxDemand(models.Model):
