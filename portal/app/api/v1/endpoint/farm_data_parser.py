@@ -68,7 +68,11 @@ def main_power_parser(data):
         Parses json blob for device_id = 17 and returns processed data
         Converts power from W to kW and adds field energy to the dataframe
     """
-    farm_data = [ main_farm_parser(row) for row in data if main_farm_parser != None]
+    farm_data = []
+    for row in data:
+        row_val = main_farm_parser(row)
+        if row_val != None:
+            farm_data.append(row_val)
 
     farm_df = pd.DataFrame(farm_data)
     farm_df["POWER_TEST_PEN"] = farm_df["POWER_TEST_PEN"].abs() / 1000
