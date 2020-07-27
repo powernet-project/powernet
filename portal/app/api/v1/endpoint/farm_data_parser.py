@@ -34,7 +34,7 @@ def energy_summary_parser(argv):
     farm_df["timestamp"] = utc_to_pst(farm_df["timestamp"])
 
     # average every 10 minute time interval
-    farm_df = farm_df.resample('5Min', on="timestamp").mean().reset_index()
+    farm_df = farm_df.resample('15Min', on="timestamp").mean().reset_index()
 
     # prepares json to be sent to javascript
     return farm_df.to_json(date_format="iso")
@@ -58,7 +58,6 @@ def main_farm_parser(data):
     """
     device_data = json.loads(data["device_data"])
     farm_data = device_data.get("processed")
-
     return farm_data
 
 
@@ -67,9 +66,13 @@ def main_power_parser(data):
         Parses json blob for device_id = 17 and returns processed data
         Converts power from W to kW and adds field energy to the dataframe
     """
-    farm_data = [ main_farm_parser(row) for row in data ]
-    farm_df = pd.DataFrame(farm_data)
+    farm_data = []
+    for row in data:
+        row_val = main_farm_parser(row)
+        if row_val is not None:
+            farm_data.append(row_val)
 
+    farm_df = pd.DataFrame(farm_data)
     farm_df["POWER_TEST_PEN"] = farm_df["POWER_TEST_PEN"].abs() / 1000
     farm_df["energy"] = farm_df["POWER_TEST_PEN"] / 12
     # timezone changed from utc to pacific
