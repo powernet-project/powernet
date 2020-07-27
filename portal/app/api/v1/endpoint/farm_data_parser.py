@@ -45,9 +45,7 @@ def local_fan_info_parser(data):
         Parses json blob for local fan info page and returns the argument fields
         as individual dictionaries in json form
     """
-    with open('response.json') as json_file:
-        data1 = json.load(json_file)
-    farm_data = data1[0].get("device_data")
+    farm_data = data[0].get("device_data")
     columns = {"frq", "pv_power", "grid_power", "a2", "a3", "serial_number"}
     farm_df = pd.DataFrame(farm_data)[columns]
 
@@ -71,7 +69,7 @@ def main_power_parser(data):
     farm_data = []
     for row in data:
         row_val = main_farm_parser(row)
-        if row_val != None:
+        if row_val is not None:
             farm_data.append(row_val)
 
     farm_df = pd.DataFrame(farm_data)
