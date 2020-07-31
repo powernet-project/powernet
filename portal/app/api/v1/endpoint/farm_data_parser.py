@@ -28,13 +28,15 @@ def energy_summary_parser(argv):
     data = argv[-1]
     # pulls device data from the json
     farm_data = [ json.loads(row.get("device_data")) for row in data ]
-    # creates dataframe with argument fields as columns
 
+    # creates dataframe with argument fields as columns
     farm_df = pd.DataFrame(farm_data)[argv[:-1]]
     farm_df["timestamp"] = utc_to_pst(farm_df["timestamp"])
 
     # average every 10 minute time interval
     farm_df = farm_df.resample('15Min', on="timestamp").mean().reset_index()
+    # round df values
+    farm_df = df_round(farm_df)
 
     # prepares json to be sent to javascript
     return farm_df.to_json(date_format="iso")
@@ -60,6 +62,15 @@ def main_farm_parser(data):
     farm_data = device_data.get("processed")
     return farm_data
 
+def df_round(df):
+    """
+        Rounds the values of a dataframe except the timestamp column
+    """
+    for name in df.columns:
+        if name != "timestamp":
+            df[name] = round(df[name])
+    return df
+
 
 def main_power_parser(data):
     """
@@ -67,6 +78,7 @@ def main_power_parser(data):
         Converts power from W to kW and adds field energy to the dataframe
     """
     farm_data = []
+    # remove row if value is None
     for row in data:
         row_val = main_farm_parser(row)
         if row_val is not None:
@@ -77,5 +89,7 @@ def main_power_parser(data):
     farm_df["energy"] = farm_df["POWER_TEST_PEN"] / 12
     # timezone changed from utc to pacific
     farm_df["timestamp"] = utc_to_pst(farm_df["timestamp"])
+    # round df values
+    farm_df = df_round(farm_df)
 
     return farm_df.to_json(date_format="iso")
