@@ -2,22 +2,17 @@ import json
 import pandas as pd
 import datetime
 
-def celsius_to_fahr(temp_c):
-    """
-        Convert Celsius to Fahrenheit
-    """
-    temp_f = temp_c * 9 / 5 + 32
 
-    return temp_f
+# Data Processing
 
-def utc_to_pst(time):
+def main_farm_parser(data):
     """
-        Convert TimeZone UTC to Pacific
+        Parses json blob for device_id = 17 and returns processed data
     """
-    time_utc = pd.to_datetime(time)
-    time_pst = time_utc - datetime.timedelta(hours=8)
+    device_data = json.loads(data["device_data"])
+    farm_data = device_data.get("processed")
+    return farm_data
 
-    return time_pst
 
 def energy_summary_parser(argv):
     """
@@ -54,24 +49,6 @@ def local_fan_info_parser(data):
     return farm_df.to_json()
 
 
-def main_farm_parser(data):
-    """
-        Parses json blob for device_id = 17 and returns processed data
-    """
-    device_data = json.loads(data["device_data"])
-    farm_data = device_data.get("processed")
-    return farm_data
-
-def df_round(df):
-    """
-        Rounds the values of a dataframe except the timestamp column
-    """
-    for name in df.columns:
-        if name != "timestamp":
-            df[name] = round(df[name])
-    return df
-
-
 def main_power_parser(data):
     """
         Parses json blob for device_id = 17 and returns processed data
@@ -93,3 +70,34 @@ def main_power_parser(data):
     farm_df = df_round(farm_df)
 
     return farm_df.to_json(date_format="iso")
+
+
+# Helper functions
+
+def celsius_to_fahr(temp_c):
+    """
+        Convert Celsius to Fahrenheit
+    """
+    temp_f = temp_c * 9 / 5 + 32
+
+    return temp_f
+
+
+def utc_to_pst(time):
+    """
+        Convert TimeZone UTC to Pacific
+    """
+    time_utc = pd.to_datetime(time)
+    time_pst = time_utc - datetime.timedelta(hours=8)
+
+    return time_pst
+
+
+def df_round(df):
+    """
+        Rounds the values of a dataframe except the timestamp column
+    """
+    for name in df.columns:
+        if name != "timestamp":
+            df[name] = round(df[name])
+    return df
