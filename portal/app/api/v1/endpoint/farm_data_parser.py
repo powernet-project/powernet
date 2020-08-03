@@ -93,11 +93,11 @@ def utc_to_pst(time):
     return time_pst
 
 
-def df_round(df):
+def df_round(df, columns_to_ignore=['timestamp']):
     """
-        Rounds the values of a dataframe except the timestamp column
+        Rounds the values of a dataframe unless in columns_to_ignore list
     """
     for name in df.columns:
-        if name != "timestamp":
+        if name not in columns_to_ignore:
             df[name] = round(df[name])
     return df
