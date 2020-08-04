@@ -26,5 +26,4 @@ pathos
 statsmodels
 tzlocal
 pandas
-django-rest-swagger
 google-cloud-pubsub

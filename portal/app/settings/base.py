@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'app.api',
     'app.core',
     'app.farm_api.FarmConfig',
-    'rest_framework_swagger',
     'rest_framework.authtoken',
 ]
 
