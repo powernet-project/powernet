@@ -63,11 +63,14 @@ def main_power_parser(data):
 
     farm_df = pd.DataFrame(farm_data)
     farm_df["POWER_TEST_PEN"] = farm_df["POWER_TEST_PEN"].abs() / 1000
+    # energy = power/12
     farm_df["energy"] = farm_df["POWER_TEST_PEN"] / 12
+    # energy column rounded to first decimal
+    farm_df["energy"] = farm_df["energy"].round(1)
     # timezone changed from utc to pacific
     farm_df["timestamp"] = utc_to_pst(farm_df["timestamp"])
     # round df values
-    farm_df = df_round(farm_df)
+    farm_df = df_round(farm_df,["timestamp", "energy"])
 
     return farm_df.to_json(date_format="iso")
 
