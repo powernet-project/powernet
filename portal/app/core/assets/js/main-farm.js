@@ -1,11 +1,11 @@
-var averageHum = math.mean(Object.keys(tempHum["rel_humidity"]));
-var averageTemp = math.mean(Object.keys(tempHum["temperature"]));
+var averageHum = math.mean(Object.values(tempHum["rel_humidity"]));
+var averageTemp = math.mean(Object.values(tempHum["temperature"]));
 
-$("#average-temp").html(Math.round(averageTemp * (9 / 5) + 32) + "F");
-$("#average-temp2").html(Math.round(averageTemp * (9 / 5) + 32) + "F");
+$("#average-temp").html(Math.round(averageTemp) + "F");
+$("#average-temp2").html(Math.round(averageTemp) + "F");
 
-$("#average-hum").html(Math.abs(averageHum) + "%");
-$("#average-hum2").html(Math.abs(averageHum) + "%");
+$("#average-hum").html(Math.round(averageHum) + "%");
+$("#average-hum2").html(Math.round(averageHum) + "%");
 
 $("#pen1").html(Math.round(Math.abs(penPower["POWER_TEST_PEN"])) + "W");
 $("#pen2").html(Math.round(Math.abs(penPower["CONTROL_FAN_POWER"])) + "W");
