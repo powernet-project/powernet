@@ -11,7 +11,7 @@ $("#pen1").html(Math.round(Math.abs(penPower["POWER_TEST_PEN"])) + "W");
 $("#pen2").html(Math.round(Math.abs(penPower["CONTROL_FAN_POWER"])) + "W");
 
 var fanData = Object.values(pen1Fan["frq"]);
-var controlData = Object.values(penPower["CONTROL_FAN_POWER"]);
+var controlData = penPower["CONTROL_FAN_POWER"];
 var serialNumber = Object.values(pen1Fan["serial_number"]);
 var fanOrder = [697151, 766935, 697145, 766944, 697149, 766929, 697160, 697147, 697156, 766940, 697153, 697144, 697146, 766936, 697157];
 
