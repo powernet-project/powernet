@@ -178,6 +178,29 @@ class FarmData(models.Model):
     timestamp = models.DateTimeField(default=timezone.now, db_index=True)
 
 
+class HomeDevice(models.Model):
+    '''define meta data'''
+    class Meta:
+        db_table = 'home_device'
+        '''This is a list of lists that must be unique when considered together'''
+        unique_together = ['home', 'device_uid']
+    '''4 colmns in the table'''
+    home = models.ForeignKey(Home, on_delete=models.deletion.CASCADE)
+    device_uid = models.CharField(max_length=100, blank=False, null=False)
+    timestamp = models.DateTimeField(default=timezone.now)
+    type = EnumField(DeviceType, max_length=40)
+
+
+class HomeDeviceData(models.Model):
+    '''define meta data'''
+    class Meta:
+        db_table = 'home_device_data'
+    '''3 colmns in the table'''
+    home_device = models.ForeignKey(HomeDevice, null=True, on_delete=models.deletion.CASCADE)
+    device_data = JSONField(null=True, blank=True, default=None)
+    timestamp = models.DateTimeField(default=timezone.now, db_index=True)
+    
+
 class FarmMaxDemand(models.Model):
 
     class Meta:
