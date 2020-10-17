@@ -1,11 +1,14 @@
 from django.contrib import admin
-from app.models import PowernetUser, Home, Device, FarmDevice, EcobeeDevice
+from app.models import PowernetUser, Home, Device, FarmDevice, EcobeeDevice, HomeDevice
 
 
 @admin.register(FarmDevice)
 class FarmDeviceAdmin(admin.ModelAdmin):
     list_display = ('device_uid', 'type', 'home')
 
+@admin.register(HomeDevice)
+class HomeDeviceAdmin(admin.ModelAdmin):
+    list_display = ('device_uid', 'type', 'home')
 
 @admin.register(Home)
 class HomeAdmin(admin.ModelAdmin):

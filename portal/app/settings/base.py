@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'app.api',
     'app.core',
     'app.farm_api.FarmConfig',
+    'app.home_device_api.HomeDeviceConfig',
     'rest_framework.authtoken',
 ]
 
