@@ -80,8 +80,21 @@ class SonnenApiInterface:
 
 # This method is used on scheduler.py to pull data in given periodicity
 def update_battery_status():
-    from app.models import HomeDevice, DeviceType, HomeDeviceData
+    from app.models import Home, HomeDevice, DeviceType, HomeDeviceData
 
+    # Create new sonnen devices if necessary
+    for uid in settings.SONNENID_ID_LIST:
+        if HomeDevice.objects.filter(
+            type=DeviceType.SONNEN,
+            device_uid=uid).count() == 0:
+            home = (Home.objects.filter(name=settings.DEFAULT_HOME_NAME))[0]
+            new_home_device = HomeDevice(
+                device_uid=uid, 
+                type=DeviceType.SONNEN,
+                home=home)
+            new_home_device.save()
+            print('Created sonnen device %s' % uid)
+        
     devices = HomeDevice.objects.filter(type=DeviceType.SONNEN)
     sonnen_api = SonnenApiInterface()
 
