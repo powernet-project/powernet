@@ -106,7 +106,7 @@ def update_battery_status():
                 homedevicedata = HomeDeviceData(home_device=home_device)
                 homedevicedata.device_data = json_batt
                 homedevicedata.save()
-                print('saving...\n')
+                print('saving for sonnen device %s...\n' % dev.device_uid)
             except HomeDevice.DoesNotExist as e:
                 print('Error update_battery_status for serial: ', dev.device_uid)
                 print(e)

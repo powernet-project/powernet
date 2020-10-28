@@ -50,8 +50,7 @@ class EgaugeInterface():
                     if s.find("-") == -1: 
                         continue
                     name = s[s.index("-") + 1:]
-                    if name == 'L1_Voltage' or name == 'L2_Voltage' \
-                    or name.endswith("-P") or name.endswith("-P*"):
+                    if name == 'L1_Voltage' or name == 'L2_Voltage' or name.endswith("-P"):
                         if name in power_values:
                             power_values[name] = (int(child.text))
 
