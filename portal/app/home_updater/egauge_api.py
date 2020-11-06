@@ -72,8 +72,7 @@ class EgaugeInterface():
 
     # Function to process data from e-gauge and convert to useful power values
     def processing_egauge_data(self):
-        from app.models import HomeDevice, HomeDeviceData, Home
-        from app.models import DeviceType
+        from app.models import HomeDevice, HomeDeviceData, Home, DeviceType
 
         power_values = dict.fromkeys(self.keys, None)
         egauge_data = dict.fromkeys(self.keys_db, None)
@@ -87,17 +86,12 @@ class EgaugeInterface():
             print(err)
             return None
 
-        # Create new home device for configured home if necessary
+        # Check whether the eguage device exists
         if HomeDevice.objects.filter(
             type=DeviceType.EGAUGE, 
             device_uid=self.device_uid).count() == 0:
-            home = (Home.objects.filter(name=settings.DEFAULT_HOME_NAME))[0]
-            new_home_device = HomeDevice(
-                device_uid=self.device_uid, 
-                type=DeviceType.EGAUGE,
-                home=home)
-            new_home_device.save()
-            print('No egauge device %s created. Created a new one' % self.device_uid)
+            print('No egauge device %s created. Please create one' % self.device_uid)
+            return None
 
         # Filtering by device_uid and picking the first element in the list
         queryset = HomeDevice.objects.filter(
@@ -145,9 +139,11 @@ class EgaugeInterface():
 
 
 def update_egauge_data():
-    from app.models import HomeDevice, HomeDeviceData
+    from app.models import HomeDevice, HomeDeviceData, DeviceType
 
-    for uid in settings.EGAUGE_ID_LIST:
+    devices = HomeDevice.objects.filter(type=DeviceType.EGAUGE)
+    for dev in devices:
+        uid = dev.device_uid
         url = 'https://egauge%s.egaug.es/cgi-bin/egauge' % uid
         egauge_data = EgaugeInterface(
             url=url, 
