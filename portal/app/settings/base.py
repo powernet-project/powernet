@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INTERNAL_IPS = ('192.168.134.1', '127.0.0.1', '0.0.0.0')
 
 # SECURITY WARNING: keep the secret key used in production secret! # FIXME: put in envar
-SECRET_KEY = 's$#@4*=sz+tvjhcufeijpch-&9&gseo1hn1(vbv+0=8_l+8+_p'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = (os.environ.get('DEBUG', 'True').lower() == 'true')
@@ -91,12 +91,14 @@ TEMPLATES = [
 
 # Database
 # PROD - Config for when this runs on GCPs AppEngine
+
+DB_PASSWORD = ''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
-        'USER': 'jongon',
-        'PASSWORD': '1qaz@WSX3e',
+        'USER': 'powernet-db-user',
+        'PASSWORD': DB_PASSWORD,
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
         'PORT': '5432'
     }

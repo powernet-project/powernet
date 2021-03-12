@@ -4,18 +4,18 @@ jobs:
     # chosen path to do our build
     working_directory: ~/powernet
     docker:
-      - image: circleci/python:3.7  
-    steps:      
+      - image: circleci/python:3.7
+    steps:
       # git convenience method
-      - checkout            
-      - run: 
+      - checkout
+      - run:
           name: Install python's build requirements
           command: |
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
           name: Collect Static assets for later syncing with gcloud
-          command: sudo python portal/manage.py collectstatic --no-input      
+          command: sudo python portal/manage.py collectstatic --no-input
       - run:
           name: Store gcloud Service Account Key
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
@@ -23,7 +23,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths: portal/*
-          
+
   deploy:
     # chosen path where we'll do our deploy from - same as build for convenience
     working_directory: ~/powernet
@@ -31,7 +31,7 @@ jobs:
       - image: google/cloud-sdk
     steps:
       # load the persisted workspace from the build job
-      - attach_workspace:          
+      - attach_workspace:
           at: ~/powernet
       - run:
           name: Overwrite Secrets
@@ -41,11 +41,14 @@ jobs:
             sed -i "s/EGAUGE_PASSWORD=''/EGAUGE_PASSWORD='$EGAUGE_PASSWORD'/g" portal/app/settings/base.py
             sed -i "s/SUN_TECH_DRIVE_PASSWORD=''/SUN_TECH_DRIVE_PASSWORD='$SUN_TECH_DRIVE_PASSWORD'/g" portal/app/settings/base.py
             sed -i "s/SUN_TECH_DRIVE_USERNAME=''/SUN_TECH_DRIVE_USERNAME='$SUN_TECH_DRIVE_USERNAME'/g" portal/app/settings/base.py
+            sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/base.py
+            sed -i "s/SECRET_KEY=''/SECRET_KEY='$SECRET_KEY'/g" portal/app/settings/base.py
+
       - run: |
           gcloud auth activate-service-account --key-file=portal/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
           gcloud config set app/cloud_build_timeout 1200
-          gcloud -q app deploy portal/app.yaml --promote --version=15 --log-http --verbosity=info        
+          gcloud -q app deploy portal/app.yaml --promote --version=15 --log-http --verbosity=info
           gsutil defacl set public-read gs://powernet-app-assets
           gsutil -m rsync -r portal/app/staticfiles gs://powernet-app-assets/
 
