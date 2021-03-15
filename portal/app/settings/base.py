@@ -92,7 +92,7 @@ TEMPLATES = [
 
 # Database
 # PROD - Config for when this runs on GCPs AppEngine
-
+DB_PASSWORD = ''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -135,7 +135,7 @@ EGAUGE_ID = '46613'
 
 # DO NOT MANUALLY EDIT THESE!!!!! THEY ARE INJECTED IN OUR BUILD PIPELINE
 # AND THEREFORE WILL BE OVERWRITTEN ANYWAYS
-EGAUGE_USER=''
+# EGAUGE_USER=''
 SONNEN_TOKEN=''
 EGAUGE_PASSWORD=''
 SUN_TECH_DRIVE_PASSWORD=''
