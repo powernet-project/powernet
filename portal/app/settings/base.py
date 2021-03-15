@@ -1,10 +1,5 @@
 import os
 import mimetypes
-import environ
-
-env = environ.Env()
-# reading .env file
-environ.Env.read_env()
 
 mimetypes.add_type("image/svg+xml", ".svg", True)
 mimetypes.add_type("image/svg+xml", ".svgz", True)
@@ -97,12 +92,15 @@ TEMPLATES = [
 
 # Database
 # PROD - Config for when this runs on GCPs AppEngine
+
+DB_PASSWORD = ''
+print(DB_PASSWORD)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'powernet-db-user',
-        'PASSWORD': env("DB_PASSWORD"),
+        'PASSWORD': DB_PASSWORD,
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
         'PORT': '5432'
     }

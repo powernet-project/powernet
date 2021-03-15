@@ -8,7 +8,6 @@ Django
 django-enumfields
 djangorestframework
 django-ipware
-django-environ
 ecos
 enum34
 fastcache
