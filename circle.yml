@@ -14,6 +14,15 @@ jobs:
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
+          name: Overwrite Secrets
+          command: |
+            sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/base.py
+            sed -i "s/EGAUGE_USER=''/EGAUGE_USER='$EGAUGE_USER'/g" portal/app/settings/base.py
+            sed -i "s/SONNEN_TOKEN=''/SONNEN_TOKEN='$SONNEN_TOKEN'/g" portal/app/settings/base.py
+            sed -i "s/EGAUGE_PASSWORD=''/EGAUGE_PASSWORD='$EGAUGE_PASSWORD'/g" portal/app/settings/base.py
+            sed -i "s/SUN_TECH_DRIVE_PASSWORD=''/SUN_TECH_DRIVE_PASSWORD='$SUN_TECH_DRIVE_PASSWORD'/g" portal/app/settings/base.py
+            sed -i "s/SUN_TECH_DRIVE_USERNAME=''/SUN_TECH_DRIVE_USERNAME='$SUN_TECH_DRIVE_USERNAME'/g" portal/app/settings/base.py
+      - run:
           name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input
       - run:
@@ -33,16 +42,6 @@ jobs:
       # load the persisted workspace from the build job
       - attach_workspace:
           at: ~/powernet
-      - run:
-          name: Overwrite Secrets
-          command: |
-            sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/base.py
-            sed -i "s/EGAUGE_USER=''/EGAUGE_USER='$EGAUGE_USER'/g" portal/app/settings/base.py
-            sed -i "s/SONNEN_TOKEN=''/SONNEN_TOKEN='$SONNEN_TOKEN'/g" portal/app/settings/base.py
-            sed -i "s/EGAUGE_PASSWORD=''/EGAUGE_PASSWORD='$EGAUGE_PASSWORD'/g" portal/app/settings/base.py
-            sed -i "s/SUN_TECH_DRIVE_PASSWORD=''/SUN_TECH_DRIVE_PASSWORD='$SUN_TECH_DRIVE_PASSWORD'/g" portal/app/settings/base.py
-            sed -i "s/SUN_TECH_DRIVE_USERNAME=''/SUN_TECH_DRIVE_USERNAME='$SUN_TECH_DRIVE_USERNAME'/g" portal/app/settings/base.py
-
       - run: |
           gcloud auth activate-service-account --key-file=portal/gcloud-service-key.json
           gcloud --quiet config set project pwrnet-158117
