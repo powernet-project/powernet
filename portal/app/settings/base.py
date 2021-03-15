@@ -1,6 +1,5 @@
 import os
 import mimetypes
-import config
 
 mimetypes.add_type("image/svg+xml", ".svg", True)
 mimetypes.add_type("image/svg+xml", ".svgz", True)
@@ -99,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'powernet-db-user',
-        'PASSWORD': config.DB_PASSWORD,
+        'PASSWORD': DB_PASSWORD,
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
         'PORT': '5432'
     }
