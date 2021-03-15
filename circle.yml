@@ -36,7 +36,6 @@ jobs:
       - run:
           name: Overwrite Secrets
           command: |
-            sed -i "s/SECRET_KEY=''/SECRET_KEY='$SECRET_KEY'/g" portal/app/settings/base.py
             sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/base.py
             sed -i "s/EGAUGE_USER=''/EGAUGE_USER='$EGAUGE_USER'/g" portal/app/settings/base.py
             sed -i "s/SONNEN_TOKEN=''/SONNEN_TOKEN='$SONNEN_TOKEN'/g" portal/app/settings/base.py
