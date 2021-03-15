@@ -92,8 +92,6 @@ TEMPLATES = [
 
 # Database
 # PROD - Config for when this runs on GCPs AppEngine
-
-DB_PASSWORD = ''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
