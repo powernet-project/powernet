@@ -14,10 +14,6 @@ jobs:
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
-          name: Overwrite DB_PASSWORD
-          command: |
-            sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/base.py
-      - run:
           name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input
       - run:
