@@ -96,8 +96,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
-        'USER': 'jongon',
-        'PASSWORD': '1qaz@WSX3e',
+        'USER': 'powernet-db-user',
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
         'PORT': '5432'
     }
