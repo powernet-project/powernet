@@ -10,11 +10,14 @@ jobs:
     steps:
       # git convenience method
       - checkout
-      - run:
-          name: Install python's build requirements
+      -run:
+          name: Test Envvar
           command: |
             echo hello
             echo $DB_PASSWORD_JON
+      - run:
+          name: Install python's build requirements
+          command: |
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
