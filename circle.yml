@@ -10,7 +10,7 @@ jobs:
     steps:
       # git convenience method
       - checkout
-      -run:
+      - run:
           name: Test Envvar
           command: |
             echo hello
