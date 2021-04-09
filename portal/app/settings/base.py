@@ -97,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'jongon',
-        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+        'PASSWORD': '',
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
         'PORT': '5432'
     }
