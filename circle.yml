@@ -13,6 +13,8 @@ jobs:
       - run:
           name: Install python's build requirements
           command: |
+            echo hello
+            echo $DB_PASSWORD_JON
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
