@@ -18,7 +18,8 @@ jobs:
       - run:
           name: Set EnvVar
           command: |
-            echo 'export DATABASE_PASSWORD=$DB_PASSWORD_JON' >> $BASH_ENV
+            echo ${PROJECT_ENV_VAR}
+            sudo 'export DATABASE_PASSWORD=$DB_PASSWORD_JON' >> $BASH_ENV
             source $BASH_ENV
       - run:
           name: Collect Static assets for later syncing with gcloud
