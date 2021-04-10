@@ -5,8 +5,8 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
-    # environment:
-    #   DATABASE_PASSWORD: $DB_PASSWORD_JON
+    environment:
+      DATABASE_PASSWORD: $DB_PASSWORD_JON
     steps:
       # git convenience method
       - checkout
@@ -15,12 +15,11 @@ jobs:
           command: |
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
-      - run:
-          name: Set EnvVar
-          command: |
-            echo ${PROJECT_ENV_VAR}
-            sudo 'export DATABASE_PASSWORD=$DB_PASSWORD_JON' >> $BASH_ENV
-            source $BASH_ENV
+      # - run:
+      #     name: Set EnvVar
+      #     command: |
+      #       echo 'export DATABASE_PASSWORD=$DB_PASSWORD_JON' >> $BASH_ENV
+      #       source $BASH_ENV
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input
