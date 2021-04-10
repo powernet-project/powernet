@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: |
-              sudo export DATABASE_PASSWORD = $DB_PASSWORD_JON
+              sudo DATABASE_PASSWORD = $DB_PASSWORD_JON
               sudo python portal/manage.py collectstatic --no-input
       - run:
           name: Store gcloud Service Account Key
