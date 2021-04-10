@@ -11,20 +11,18 @@ jobs:
       # git convenience method
       - checkout
       - run:
-          name: Test Envvar
-          command: |
-            echo hello
-            echo $DB_PASSWORD_JON
-      - run:
           name: Install python's build requirements
           command: |
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
-          name: Collect Static assets for later syncing with gcloud
+          name: Set EnvVar
           command: |
-              sudo export DATABASE_PASSWORD=$DB_PASSWORD_JON
-              sudo python portal/manage.py collectstatic --no-input
+            echo 'export DATABASE_PASSWORD=$DB_PASSWORD_JON' >> $BASH_ENV
+            source $BASH_ENV
+      - run:
+          name: Collect Static assets for later syncing with gcloud
+          command: sudo python portal/manage.py collectstatic --no-input
       - run:
           name: Store gcloud Service Account Key
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
