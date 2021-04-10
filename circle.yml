@@ -5,8 +5,8 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
-    environment:
-      DATABASE_PASSWORD: $DB_PASSWORD_JON
+    # environment:
+    #   DATABASE_PASSWORD: $DB_PASSWORD_JON
     steps:
       # git convenience method
       - checkout
@@ -23,6 +23,7 @@ jobs:
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: |
+              sudo export DATABASE_PASSWORD = $DB_PASSWORD_JON
               sudo python portal/manage.py collectstatic --no-input
       - run:
           name: Store gcloud Service Account Key
