@@ -5,6 +5,8 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
+    environment:
+        ANYTHING: "anythiung"
     steps:
       # git convenience method
       - checkout
