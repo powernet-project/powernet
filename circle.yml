@@ -12,7 +12,7 @@ jobs:
       - checkout
       - run:
           name: "Setup custom environment variables"
-          command: echo 'export DB_PASSWORD=${EGAUGE_PASSWORD}' >> $BASH_ENV
+          command: printenv
       - run:
           name: Install python's build requirements
           command: |
