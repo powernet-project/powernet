@@ -5,6 +5,8 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
+    environment:
+      EG_PW: $EGAUGE_PASSWORD
     steps:
       # git convenience method
       - checkout
@@ -30,7 +32,7 @@ jobs:
     docker:
       - image: google/cloud-sdk
     environment:
-      DATABASE_PASSWORD: $EGAUGE_PASSWORD
+      EG_PW: $EGAUGE_PASSWORD
     steps:
       # load the persisted workspace from the build job
       - attach_workspace:
