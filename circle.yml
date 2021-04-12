@@ -12,7 +12,10 @@ jobs:
       - checkout
       - run:
           name: "Setup custom environment variables"
-          command: printenv
+          command: |
+            printenv
+            echo 'export VERY_IMPORTANT=derin' >> $BASH_ENV
+            source $BASH_ENV
       - run:
           name: Install python's build requirements
           command: |
