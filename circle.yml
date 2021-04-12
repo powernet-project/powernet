@@ -5,14 +5,9 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
-    environment:
-      DATABASE_PASSWORD1: $EGAUGE_PASSWORD
     steps:
       # git convenience method
       - checkout
-      - run:
-          name: Envvar print
-          command: echo $EGAUGE_PASSWORD
       - run:
           name: Install python's build requirements
           command: |
@@ -34,6 +29,8 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: google/cloud-sdk
+    environment:
+      DATABASE_PASSWORD: $EGAUGE_PASSWORD
     steps:
       # load the persisted workspace from the build job
       - attach_workspace:
