@@ -5,8 +5,6 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
-    environment:
-      EG_PW: $EGAUGE_PASSWORD
     steps:
       # git convenience method
       - checkout
