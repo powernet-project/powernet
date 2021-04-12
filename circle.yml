@@ -6,13 +6,13 @@ jobs:
     docker:
       - image: circleci/python:3.7
     environment:
-      DATABASE_PASSWORD: $DATABASE_PASSWORD
+      DATABASE_PASSWORD: $EGAUGE_PASSWORD
     steps:
       # git convenience method
       - checkout
       - run:
           name: Envvar print
-          command: echo $DATABASE_PASSWORD
+          command: echo $EGAUGE_PASSWORD
       - run:
           name: Install python's build requirements
           command: |
