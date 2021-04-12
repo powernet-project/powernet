@@ -37,9 +37,6 @@ jobs:
       - attach_workspace:
           at: ~/powernet
       - run:
-          name: "Setup custom environment variables deploy"
-          command: echo 'export DB_PASSWORD=${EGAUGE_PASSWORD}' >> $BASH_ENV
-      - run:
           name: Overwrite Secrets
           command: |
             sed -i "s/EGAUGE_USER=''/EGAUGE_USER='$EGAUGE_USER'/g" portal/app/settings/base.py
