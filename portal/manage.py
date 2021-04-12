@@ -2,12 +2,10 @@
 import os
 import sys
 import environ
-from app.settings.base import *
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings.base")
 
     from django.core.management import execute_from_command_line
     env = environ.Env()
-    # print("env", env('DATABASE_PASSWORD'))
-    print("how", EGAUGE_USER)
+    print("env", env('DATABASE_PASSWORD'))
     execute_from_command_line(sys.argv)

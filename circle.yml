@@ -6,20 +6,18 @@ jobs:
     docker:
       - image: circleci/python:3.7
     environment:
-      DATABASE_PASSWORD: $DB_PASSWORD_JON
+      DATABASE_PASSWORD: $TEST_VAR
     steps:
       # git convenience method
       - checkout
+      -run:
+          name: Envvar print
+          command: echo $TEST_VAR
       - run:
           name: Install python's build requirements
           command: |
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
-      # - run:
-      #     name: Set EnvVar
-      #     command: |
-      #       echo 'export DATABASE_PASSWORD=$DB_PASSWORD_JON' >> $BASH_ENV
-      #       source $BASH_ENV
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input
