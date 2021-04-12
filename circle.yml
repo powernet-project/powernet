@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: circleci/python:3.7
     environment:
-      DATABASE_PASSWORD: $DB_PASSWORD
+      DATABASE_PASSWORD: $DATABASE_PASSWORD
     steps:
       # git convenience method
       - checkout
