@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: circleci/python:3.7
     environment:
-      DATABASE_PASSWORD: $EGAUGE_PASSWORD
+      DATABASE_PASSWORD1: $EGAUGE_PASSWORD
     steps:
       # git convenience method
       - checkout
