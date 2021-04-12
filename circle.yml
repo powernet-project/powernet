@@ -12,7 +12,7 @@ jobs:
       - checkout
       - run:
           name: Envvar print
-          command: echo $TEST_VAR
+          command: echo $DATABASE_PASSWORD
       - run:
           name: Install python's build requirements
           command: |

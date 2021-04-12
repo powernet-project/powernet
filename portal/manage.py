@@ -9,5 +9,5 @@ if __name__ == "__main__":
     from django.core.management import execute_from_command_line
 
     env = environ.Env()
-    print("env", env.db('DATABASE_PASSWORD'))
+    print("env", env('DATABASE_PASSWORD'))
     execute_from_command_line(sys.argv)
