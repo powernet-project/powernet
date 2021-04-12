@@ -5,8 +5,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'powernet_local',
-        'USER': 'postgres',
-        'PASSWORD': '1qaz@WSX3e',
+        'USER': 'derins',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '5432'
     }
