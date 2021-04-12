@@ -11,6 +11,9 @@ jobs:
       # git convenience method
       - checkout
       - run:
+          name: "Setup custom environment variables"
+          command: echo 'export DB_PASSWORD=${EGAUGE_PASSWORD}' >> $BASH_ENV
+      - run:
           name: Install python's build requirements
           command: |
             sudo pip install numpy
@@ -31,12 +34,13 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: google/cloud-sdk
-    environment:
-      EG_PW: $EGAUGE_PASSWORD
     steps:
       # load the persisted workspace from the build job
       - attach_workspace:
           at: ~/powernet
+      - run:
+          name: "Setup custom environment variables deploy"
+          command: echo 'export DB_PASSWORD=${EGAUGE_PASSWORD}' >> $BASH_ENV
       - run:
           name: Overwrite Secrets
           command: |
