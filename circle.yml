@@ -11,11 +11,11 @@ jobs:
       - run:
           name: "Setup custom environment variables"
           command: printenv
-      # - run:
-      #     name: Install python's build requirements
-      #     command: |
-      #       sudo pip install numpy
-      #       sudo pip install -r portal/requirements.txt
+      - run:
+          name: Install python's build requirements
+          command: |
+            sudo pip install numpy
+            sudo pip install -r portal/requirements.txt
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input
