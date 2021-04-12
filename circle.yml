@@ -10,7 +10,7 @@ jobs:
     steps:
       # git convenience method
       - checkout
-      -run:
+      - run:
           name: Envvar print
           command: echo $TEST_VAR
       - run:
