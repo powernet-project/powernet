@@ -11,12 +11,6 @@ jobs:
       # git convenience method
       - checkout
       - run:
-          name: "Setup custom environment variables"
-          command: |
-            echo 'export VERY_IMPORTANT=derin' >> $BASH_ENV
-            source $BASH_ENV
-            printenv
-      - run:
           name: Install python's build requirements
           command: |
             sudo pip install numpy
@@ -24,6 +18,9 @@ jobs:
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input
+                   echo 'export VERY_IMPORTANT=derin' >> $BASH_ENV
+                   source $BASH_ENV
+                   printenv
       - run:
           name: Store gcloud Service Account Key
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
