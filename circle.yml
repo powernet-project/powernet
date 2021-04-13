@@ -19,8 +19,14 @@ jobs:
           name: Overwrite DB_PASSWORD
           command: sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/db.py
       - run:
+          name: print env
+          command: printenv
+      - run:
           name: Collect Static assets for later syncing with gcloud
           command: sudo python portal/manage.py collectstatic --no-input
+      - run:
+          name: print env
+          command: printenv
       - run:
           name: Store gcloud Service Account Key
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
