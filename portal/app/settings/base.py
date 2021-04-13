@@ -1,6 +1,7 @@
 import os
 import mimetypes
 import environ
+from db import DB_PASSWORD
 
 env = environ.Env()
 mimetypes.add_type("image/svg+xml", ".svg", True)
@@ -99,7 +100,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'jongon',
-        'PASSWORD': "env('DB_PASSWORD')",
+        'PASSWORD': DB_PASSWORD,
         'HOST': '/cloudsql/pwrnet-158117:us-central1:pwrnet-dev-store',
         'PORT': '5432'
     }

@@ -16,12 +16,11 @@ jobs:
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
+          name: Overwrite DB_PASSWORD
+          command: sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/db.py
+      - run:
           name: Collect Static assets for later syncing with gcloud
-          command: |
-            echo 'export VERY_IMPORTANT=derin' >> $BASH_ENV
-            source $BASH_ENV
-            printenv
-            sudo python portal/manage.py collectstatic --no-input
+          command: sudo python portal/manage.py collectstatic --no-input
       - run:
           name: Store gcloud Service Account Key
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
@@ -44,7 +43,6 @@ jobs:
       - run:
           name: Overwrite Secrets
           command: |
-            printenv
             sed -i "s/EGAUGE_USER=''/EGAUGE_USER='$EGAUGE_USER'/g" portal/app/settings/base.py
             sed -i "s/SONNEN_TOKEN=''/SONNEN_TOKEN='$SONNEN_TOKEN'/g" portal/app/settings/base.py
             sed -i "s/EGAUGE_PASSWORD=''/EGAUGE_PASSWORD='$EGAUGE_PASSWORD'/g" portal/app/settings/base.py
