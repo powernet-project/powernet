@@ -14,20 +14,12 @@ jobs:
             sudo pip install numpy
             sudo pip install -r portal/requirements.txt
       - run:
-          name: print env
-          command: printenv
-      - run:
           name: Collect Static assets for later syncing with gcloud
           command: |
             sudo DB_PASSWORD=$DB_PASSWORD python portal/manage.py collectstatic --no-input
       - run:
-          environment:
-              ANYTHING: "anything"
           name: Store gcloud Service Account Key
           command: echo $GCLOUD_SERVICE_KEY | base64 --decode > portal/gcloud-service-key.json
-      - run:
-          name: print env
-          command: printenv
       # persist the build we just made/verified
       - persist_to_workspace:
           root: .
