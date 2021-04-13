@@ -5,6 +5,8 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
+    environment:
+        ANYTHING2: "anything2"
     steps:
       # git convenience method
       - checkout
@@ -19,7 +21,7 @@ jobs:
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: |
-            sudo ANYTHING="anything" python portal/manage.py collectstatic --no-input
+            sudo python portal/manage.py runserver
       - run:
           environment:
               ANYTHING: "anything"
@@ -38,8 +40,6 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: google/cloud-sdk
-    environment:
-        ANYTHING2: "anything2"
     steps:
       # load the persisted workspace from the build job
       - attach_workspace:
