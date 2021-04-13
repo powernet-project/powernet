@@ -6,7 +6,7 @@ jobs:
     docker:
       - image: circleci/python:3.7
     environment:
-        ANYTHING: "anythiung"
+        ANYTHING: "anything"
     steps:
       # git convenience method
       - checkout
@@ -35,6 +35,8 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: google/cloud-sdk
+    environment:
+        ANYTHING2: "anything2"
     steps:
       # load the persisted workspace from the build job
       - attach_workspace:
@@ -42,6 +44,7 @@ jobs:
       - run:
           name: Overwrite Secrets
           command: |
+            printenv
             sed -i "s/EGAUGE_USER=''/EGAUGE_USER='$EGAUGE_USER'/g" portal/app/settings/base.py
             sed -i "s/SONNEN_TOKEN=''/SONNEN_TOKEN='$SONNEN_TOKEN'/g" portal/app/settings/base.py
             sed -i "s/EGAUGE_PASSWORD=''/EGAUGE_PASSWORD='$EGAUGE_PASSWORD'/g" portal/app/settings/base.py
