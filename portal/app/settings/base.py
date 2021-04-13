@@ -1,7 +1,7 @@
 import os
 import mimetypes
 import environ
-from db import DB_PASSWORD
+from app.settings.db import DB_PASSWORD
 
 env = environ.Env()
 mimetypes.add_type("image/svg+xml", ".svg", True)
