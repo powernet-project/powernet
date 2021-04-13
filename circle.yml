@@ -20,7 +20,7 @@ jobs:
           name: Collect Static assets for later syncing with gcloud
           command: |
             sudo python portal/manage.py collectstatic --no-input
-            sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/db.py
+            # sed -i "s/DB_PASSWORD=''/DB_PASSWORD='$DB_PASSWORD'/g" portal/app/settings/db.py
       - run:
           environment:
               ANYTHING: "anything"

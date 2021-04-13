@@ -5,9 +5,10 @@ import environ
 from app.settings.db import *
 
 if __name__ == "__main__":
-    # env = environ.Env()
+    env = environ.Env()
     print("yooo")
     print(os.environ.items())
+    print("env123", env)
     # print("env", os.environ.get("DB_PASSWORD"))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings.base")
 
