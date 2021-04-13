@@ -5,8 +5,6 @@ jobs:
     working_directory: ~/powernet
     docker:
       - image: circleci/python:3.7
-    environment:
-        ANYTHING2: "anything2"
     steps:
       # git convenience method
       - checkout
@@ -21,7 +19,7 @@ jobs:
       - run:
           name: Collect Static assets for later syncing with gcloud
           command: |
-            sudo python portal/manage.py runserver
+            sudo DB_PASSWORD=$DB_PASSWORD python portal/manage.py collectstatic --no-input
       - run:
           environment:
               ANYTHING: "anything"

@@ -6,7 +6,6 @@ decorator
 dill
 Django
 django-enumfields
-Django-environ
 djangorestframework
 django-ipware
 ecos
