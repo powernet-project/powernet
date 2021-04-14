@@ -6,7 +6,7 @@ import environ
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "app.settings.base")
     env = environ.Env()
-    print(end("DB_PASSWORD"))
+    print(env("DB_PASSWORD"))
     from django.core.management import execute_from_command_line
 
     execute_from_command_line(sys.argv)
