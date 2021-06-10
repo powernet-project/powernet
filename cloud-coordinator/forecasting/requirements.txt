@@ -1,4 +1,4 @@
-django==1.11.29
+django==2.2.24
 djangoajax==2.3.7
 holidays==0.8.1
 matplotlib==1.5.3
