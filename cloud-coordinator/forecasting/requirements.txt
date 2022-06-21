@@ -3,6 +3,6 @@ djangoajax==2.3.7
 holidays==0.8.1
 matplotlib==1.5.3
 mysql-python==1.2.3
-numpy==1.12.0
+numpy==1.22.0
 scikit-learn==0.18
 sqlalchemy==1.1
